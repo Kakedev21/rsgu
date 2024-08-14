@@ -27,10 +27,10 @@ import {
 } from '@/components/ui/tooltip';
 
 import { User } from './user';
-import { VercelLogo } from '@/components/icons';
+
 import Providers from './providers';
 import { NavItem } from './nav-item';
-import { SearchInput } from './search';
+
 import Image from 'next/image';
 
 export default function DashboardLayout({
