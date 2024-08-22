@@ -15,11 +15,13 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
-import { Product } from './products/product';
+
 
 import { useRouter } from 'next/navigation';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Product } from './product';
+import SearchInput from '@/components/SearchInput';
 
 export function ProductsTable({
   products,
@@ -44,9 +46,20 @@ export function ProductsTable({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Products</CardTitle>
         <CardDescription>
-          Manage your products and view their sales performance.
+          <div className='w-full flex justify-between items-center'>
+            <div>
+              <h3 className="text-2xl font-semibold leading-none tracking-tight text-slate-700">Products</h3>
+              <p className='text-xs'>
+                Manage your items and view their sales performance.
+              </p>
+            </div>
+            <div className='mt-2 w-1/2'>
+              <SearchInput
+                placeholder="Search Item..."
+              />
+            </div>
+          </div>
         </CardDescription>
       </CardHeader>
       <CardContent>
