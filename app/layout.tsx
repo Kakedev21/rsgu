@@ -4,6 +4,7 @@ import './globals.css';
 import { Inter as FontSans } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { AuthProvider } from "./Providers";
+import { Toaster } from "@/components/ui/toaster";
 
 
 
@@ -30,6 +31,7 @@ export default function RootLayout({
           <AuthProvider>
             {children}
           </AuthProvider>
+          <Toaster/>
       </body>
  
     </html>

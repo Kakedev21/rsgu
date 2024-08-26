@@ -29,6 +29,6 @@ const UserSchema = new Schema({
 
 }, {timestamps: true});
 
-const User = models.bsu_rgo_users || mongoose.model("bsu_rgo_users", UserSchema);
+const User = models.users || mongoose.model("users", UserSchema);
 
 export default User;
