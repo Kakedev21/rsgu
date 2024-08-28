@@ -51,7 +51,7 @@ const BreadCrumbNav = () => {
                                 </BreadcrumbLink>}
                                 {path.isActive && <BreadcrumbPage className="text-neutral-50">{path.label}</BreadcrumbPage>}
                             </BreadcrumbItem>
-                            {breadCrumb && breadCrumb.length > 1 && (index + 1 < breadCrumb.length) && <BreadcrumbSeparator />}
+                            {breadCrumb && breadCrumb.length > 1 && (index + 1 < breadCrumb.length) && <BreadcrumbSeparator className="text-neutral-300"/>}
                         </div>
                     ))
                 }

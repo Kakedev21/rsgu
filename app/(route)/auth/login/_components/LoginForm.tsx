@@ -36,11 +36,10 @@ const LoginForm = () => {
               
             })
           }
-          console.log(result)
           const parseUrl = new URL(result.url as string);
           const callbackUrl = parseUrl.searchParams.get('callbackUrl');
-          const decodedCallbackUrl = decodeURIComponent(callbackUrl as string);
-          redirect(decodedCallbackUrl || "/admin")
+          const decodedCallbackUrl = new URL(decodeURIComponent(callbackUrl as string));
+          router.replace(decodedCallbackUrl.pathname || "/admin")
     }
   return (
     <form onSubmit={handleLogin} className="my-5 mx-5  sm:flex sm:justify-center bg-white  rounded-t-3xl sm:rounded-3xl  w-full sm:w-1/3 items-center sm:shadow-2xl">
