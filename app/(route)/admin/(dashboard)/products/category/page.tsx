@@ -4,12 +4,12 @@
 
 import { PlusCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { ProductsTable } from './products-table';
-import AddProduct from './_components/AddProduct';
+import { CategoryTable } from './category-table';
 import { useState } from 'react';
+import AddCategory from './_components/AddCategory';
 
 
-const ProductsPage = () => {
+const ProductsCategoryPage = () => {
   const [openAddProduct, setOpenAddProduct] = useState<boolean>( false )
  
 
@@ -19,16 +19,15 @@ const ProductsPage = () => {
         <Button size="sm" className="h-8 gap-1" onClick={() => setOpenAddProduct(true)}>
           <PlusCircle className="h-3.5 w-3.5" />
           <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-            Add Item
+            Add Category
           </span>
         </Button>
       </div>
-      <ProductsTable
-        products={[]}
+      <CategoryTable
         offset={0}
-        totalProducts={0}
+        total={0}
       />
-      <AddProduct
+      <AddCategory
         open={openAddProduct}
         onOpenChange={(value) => setOpenAddProduct(value)}
       />
@@ -37,4 +36,4 @@ const ProductsPage = () => {
   );
 }
 
-export default ProductsPage;
+export default ProductsCategoryPage;

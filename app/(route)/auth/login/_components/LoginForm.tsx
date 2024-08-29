@@ -38,7 +38,7 @@ const LoginForm = () => {
           }
           const parseUrl = new URL(result.url as string);
           const callbackUrl = parseUrl.searchParams.get('callbackUrl');
-          const decodedCallbackUrl = new URL(decodeURIComponent(callbackUrl as string));
+          const decodedCallbackUrl = new URL(decodeURIComponent(callbackUrl as string) || "");
           router.replace(decodedCallbackUrl.pathname || "/admin")
     }
   return (

@@ -1,7 +1,7 @@
 "use client"
 
 import { NavItem } from "./nav-item";
-import { Boxes, CalendarRange, FilePieChart, Home, LayoutDashboard, LineChart, Package, Settings, ShoppingCart, UserCog, Users2 } from "lucide-react";
+import { Boxes, CalendarRange, FileBox, FilePieChart, Home, LayoutDashboard, LineChart, Package, Settings, ShoppingCart, UserCog, Users2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
@@ -23,6 +23,12 @@ export const routeLists = [
         icon:  <Package className="h-5 w-5 hover:text-red-500 transition-all duration-300" />,
         href: "/admin/products",
         id: "products"
+    },
+    {
+        label: "Products Category",
+        icon:  <FileBox className="h-5 w-5 hover:text-red-500 transition-all duration-300" />,
+        href: "/admin/products/category",
+        id: "category"
     },
     {
         label: "Orders",

@@ -1,7 +1,7 @@
 'use client'
 
 import usePageLoader from '@/hooks/usePageLoader';
-import LoadingOverlay from 'react-loading-overlay-ts';
+import LoadingOverlay from "react-loading-overlay-ts"
 const PageLoader = () => {
     const pageLoader = usePageLoader();
     return (
