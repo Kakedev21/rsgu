@@ -7,6 +7,8 @@ import Providers from './providers';
 import DesktopNav from '@/components/navigation/DesktopNav';
 import MobileNav from '@/components/navigation/MobileNav';
 import BreadCrumbNav from '@/components/navigation/BreadCrumb';
+import AxiosInterceptor from '@/components/axiosInterceptor';
+import { Toaster } from '@/components/ui/toaster';
 
 export default function DashboardLayout({
   children
@@ -15,6 +17,7 @@ export default function DashboardLayout({
 }) {
   return (
     <Providers>
+      <AxiosInterceptor/>
       <main className="flex min-h-screen w-full flex-col bg-muted/40">
         <DesktopNav />
         <div className="flex flex-col sm:gap-4  sm:pl-20">
@@ -27,7 +30,7 @@ export default function DashboardLayout({
             {children}
           </main>
         </div>
-  
+        <Toaster />
       </main>
     </Providers>
   );

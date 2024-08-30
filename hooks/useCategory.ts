@@ -24,9 +24,9 @@ export const useCategoryState = create<UseCategoryStateProps>(set => ({
     setSelected: (category: CategoryProps | null) => set(state => ({...state, selected: category}))
 }))
 
-const useCategory = ({page = 1, limit = 10, init = true}: {page: number, limit: number, init?:boolean}) => {
+const useCategory = ({page = 1, limit = 10, init = true}: {page?: number, limit?: number, init?:boolean}) => {
     const [categories, setCategories] = useState<{categories: CategoryProps[], page: number, limit: number, count: number} | null>(null)
-    const [loading, setLoading] = useState<boolean>(true);
+    const [loading, setLoading] = useState<boolean>(false);
     const getAllCategory = async (page: number, limit: number, q?: string | null) => {
         setLoading(true);
         const result = await axios.get(`/api/bff/categories`, {
@@ -43,7 +43,9 @@ const useCategory = ({page = 1, limit = 10, init = true}: {page: number, limit: 
     }
 
     const create = async (payload: CategoryProps) => {
+        setLoading(true);
         const result = await axios.post('/api/bff/categories', payload);
+        setLoading(false);
         return result.data;
     }
 

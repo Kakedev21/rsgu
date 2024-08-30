@@ -1,5 +1,6 @@
+
 import { Dialog, DialogContent, DialogDescription, DialogHeader } from "@/components/ui/dialog";
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import { FileBox } from "lucide-react";
 import AddCategoryForm from "./AddCategoryForm";
 
@@ -7,8 +8,9 @@ import AddCategoryForm from "./AddCategoryForm";
 interface AddCategoryProps {
     open: boolean;
     onOpenChange: (value: boolean) => void;
+    refresh?: () => void;
 }
-const AddCategory: FC<AddCategoryProps> = ({open, onOpenChange}) => {
+const AddCategory: FC<AddCategoryProps> = ({open, onOpenChange, refresh}) => {
 
 
     return (
@@ -29,7 +31,7 @@ const AddCategory: FC<AddCategoryProps> = ({open, onOpenChange}) => {
                             </div>
                            
                         </div>
-                        <AddCategoryForm onOpenChange={onOpenChange}/>
+                        <AddCategoryForm onOpenChange={onOpenChange} refresh={refresh}/>
                     </DialogDescription>
                 </DialogHeader>
             </DialogContent>

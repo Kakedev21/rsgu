@@ -11,14 +11,25 @@ import {
 import { MoreHorizontal } from 'lucide-react';
 import { TableCell, TableRow } from '@/components/ui/table';
 import { CategoryProps } from '@/types/Product';
-
+import moment from "moment";
+import { useCategoryState } from '@/hooks/useCategory';
 
 export function Category({ category }: { category: CategoryProps }) {
+  const categoryState = useCategoryState();
+  const handleDelete = () => {
+    categoryState.setSelected(category);
+    categoryState.setOpenDeleteDialog(true);
+  }
+
+  const handleEdit = () => {
+    categoryState.setSelected(category);
+    categoryState.setOpenFormDialog(true);
+  }
   return (
     <TableRow>
       
       <TableCell className="font-medium">{category.name}</TableCell>
-      
+      <TableCell className="font-medium">{moment(category?.createdAt).format("lll")}</TableCell>      
       <TableCell>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -29,11 +40,12 @@ export function Category({ category }: { category: CategoryProps }) {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem>Edit</DropdownMenuItem>
-            <DropdownMenuItem>
-              <form >
-                <button type="submit">Delete</button>
-              </form>
+            <DropdownMenuItem
+              onClick={handleEdit}
+            >
+              Edit</DropdownMenuItem>
+            <DropdownMenuItem onClick={handleDelete}>
+              Delete
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

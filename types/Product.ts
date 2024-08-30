@@ -3,6 +3,7 @@ import * as z from 'zod';
 export interface CategoryProps {
     _id?: string;
     name: string;
+    createdAt?: string;
 }
 
 export  const categoryFormSchema = z.object({
