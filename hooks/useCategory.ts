@@ -24,7 +24,7 @@ export const useCategoryState = create<UseCategoryStateProps>(set => ({
     setSelected: (category: CategoryProps | null) => set(state => ({...state, selected: category}))
 }))
 
-const useCategory = ({page = 1, limit = 10, init = true}: {page?: number, limit?: number, init?:boolean}) => {
+const useCategory = ({page = 1, limit = 10, init = false}: {page?: number, limit?: number, init?:boolean}) => {
     const [categories, setCategories] = useState<{categories: CategoryProps[], page: number, limit: number, count: number} | null>(null)
     const [loading, setLoading] = useState<boolean>(false);
     const getAllCategory = async (page: number, limit: number, q?: string | null) => {
@@ -62,8 +62,11 @@ const useCategory = ({page = 1, limit = 10, init = true}: {page?: number, limit?
     }
    
     useEffect(() => {
+       
         if (!categories && !loading && init) {
-            getAllCategory(page, limit)
+            setTimeout(() => {
+                getAllCategory(page, limit)
+            }, 300)
         }
     }, [init])
 

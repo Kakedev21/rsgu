@@ -20,6 +20,7 @@ export interface ProductProps {
     description?: string   | undefined;
     price: number;
     quantity?: number;
+    createdAt?: string;
     
   }
 
@@ -28,6 +29,7 @@ export interface ProductProps {
 export  const formSchema = z.object({
     category: z.string().min(1),
     productId: z.string().min(1),
+    description: z.string(),
     name: z.string().min(1),
     price: z.number().nonnegative(),
     quantity: z.number().nonnegative(),

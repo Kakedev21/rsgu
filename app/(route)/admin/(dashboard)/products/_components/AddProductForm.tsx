@@ -10,19 +10,41 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Skeleton } from "@/components/ui/skeleton";
+import useCategory from "@/hooks/useCategory";
+import { orderBy } from "lodash";
+import useProduct, { useProductState } from "@/hooks/useProduct";
+import { useToast } from "@/components/ui/use-toast";
 interface AddProductProps {
     onOpenChange: (value: boolean) => void;
+    refresh?: () => void;
 }
 
-const AddProductForm: FC<AddProductProps> = ({onOpenChange}) => {
-    const [loading, setLoading]  = useState();
+const AddProductForm: FC<AddProductProps> = ({onOpenChange, refresh}) => {
+    const catergoryHook = useCategory({init: true});
+    const productHook = useProduct({init: false});
+    const productState = useProductState();
+    const { toast } = useToast();
     const form = useForm<ProductProps>({
         resolver: zodResolver(formSchema),
-        mode: "all"
+        mode: "all",
+        defaultValues: productState.selected  || {}
       })
 
     const onSubmit: SubmitHandler<ProductProps> = async (data) => {
-        console.log("data", data);
+        let response = productState.selected ? await  productHook.update(data, productState.selected?.["_id"] as string) : await productHook.create(data);
+        if (response?.data?.error) {
+            return toast({
+                title: "Something went wrong",
+                variant: "destructive"
+            })
+        }
+        toast({
+            title: "Save successfully"
+        })
+        form.reset();
+        if (refresh) {
+            refresh()
+        }
     }
     console.log("formState", form.formState)
     return (
@@ -37,15 +59,17 @@ const AddProductForm: FC<AddProductProps> = ({onOpenChange}) => {
                             <FormLabel>
                                 Category <span className="text-red-500">*</span>
                             </FormLabel>
-                            {!loading ? <FormControl>
+                            {(!catergoryHook.loading || !productHook.loading) ? <FormControl>
                                 <Select {...field} onValueChange={(value) => field.onChange(value)}>
                                     <SelectTrigger className="focus:ring-0">
                                         <SelectValue placeholder="Select" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="light">Light</SelectItem>
-                                        <SelectItem value="dark">Dark</SelectItem>
-                                        <SelectItem value="system">System</SelectItem>
+                                       {
+                                        orderBy(catergoryHook.categories?.categories, ["name"], ["asc"])?.map(category => (
+                                            <SelectItem value={category._id as string}>{category.name}</SelectItem>
+                                        ))
+                                       }
                                     </SelectContent>
                                 </Select>
                             </FormControl> : <Skeleton className="h-10 w-[full]"/>}
@@ -60,7 +84,7 @@ const AddProductForm: FC<AddProductProps> = ({onOpenChange}) => {
                             <FormLabel>
                                 Product ID <span className="text-red-500">*</span>
                             </FormLabel>
-                            {!loading ? <FormControl>
+                            {!productHook.loading ? <FormControl>
                                 <Input {...field}/>
                             </FormControl> : <Skeleton className="h-10 w-[full]"/>}
                         </FormItem>
@@ -74,7 +98,7 @@ const AddProductForm: FC<AddProductProps> = ({onOpenChange}) => {
                             <FormLabel>
                                 Name <span className="text-red-500">*</span>
                             </FormLabel>
-                            {!loading ? <FormControl>
+                            {!productHook.loading ? <FormControl>
                                 <Input {...field}/>
                             </FormControl> : <Skeleton className="h-10 w-[full]"/>}
                         </FormItem>
@@ -88,7 +112,7 @@ const AddProductForm: FC<AddProductProps> = ({onOpenChange}) => {
                             <FormLabel>
                                 Description
                             </FormLabel>
-                            {!loading ? <FormControl>
+                            {!productHook.loading ? <FormControl>
                                 <Input {...field}/>
                             </FormControl> : <Skeleton className="h-10 w-[full]"/>}
                         </FormItem>
@@ -103,7 +127,7 @@ const AddProductForm: FC<AddProductProps> = ({onOpenChange}) => {
                                 <FormLabel>
                                     Price <span className="text-red-500">*</span>
                                 </FormLabel>
-                                {!loading ? <FormControl>
+                                {!productHook.loading ? <FormControl>
                                     <Input {...field} onChange={(event) => field.onChange(+event.target.value)}/>
                                 </FormControl> : <Skeleton className="h-10 w-[full]"/>}
                             </FormItem>
@@ -117,7 +141,7 @@ const AddProductForm: FC<AddProductProps> = ({onOpenChange}) => {
                                 <FormLabel>
                                     Quantity <span className="text-red-500">*</span>
                                 </FormLabel>
-                                {!loading ? <FormControl>
+                                {!productHook.loading ? <FormControl>
                                     <Input {...field} onChange={(event) => field.onChange(+event.target.value)}/>
                                 </FormControl> : <Skeleton className="h-10 w-[full]"/>}
                             </FormItem>
@@ -131,11 +155,12 @@ const AddProductForm: FC<AddProductProps> = ({onOpenChange}) => {
                             type="button"
                             variant="ghost"
                             onClick={() => onOpenChange(false)}
+                            disabled={productHook.loading}
                         >
-                            Cancel
+                            Close
                         </Button>
                         <Button type="submit"
-                            disabled={!form.formState.isValid}
+                            disabled={!form.formState.isValid || productHook.loading}
                         >
                             Save
                         </Button>

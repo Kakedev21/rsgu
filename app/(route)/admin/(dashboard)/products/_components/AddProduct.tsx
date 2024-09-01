@@ -7,6 +7,7 @@ import { Package } from "lucide-react";
 interface AddProductProps {
     open: boolean;
     onOpenChange: (value: boolean) => void;
+    refresh?: () => void;
 }
 const AddProduct: FC<AddProductProps> = ({open, onOpenChange}) => {
 

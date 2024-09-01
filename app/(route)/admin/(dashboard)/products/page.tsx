@@ -2,35 +2,58 @@
 
 "use client"
 
-import { PlusCircle } from 'lucide-react';
+import { PlusCircle, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { ProductsTable } from './products-table';
+import ProductsTable from './products-table';
 import AddProduct from './_components/AddProduct';
-import { useState } from 'react';
+import Tooltip from '@/components/ToolTip';
+import useProduct, { useProductState } from '@/hooks/useProduct';
+import { useSearchParams } from 'next/navigation';
 
 
 const ProductsPage = () => {
-  const [openAddProduct, setOpenAddProduct] = useState<boolean>( false )
- 
+  const productHook = useProduct({init: true});
+  const productState = useProductState();
+  const searchParams = useSearchParams();
+  const pageOffset =  Number(searchParams.get("page")) || 1;
+  const handleSearch = (page: number = pageOffset, search: string | null) => {
+    productHook.getAll(page, 10, search);
+  }
+  const handleRefresh = () => {
+    productHook.getAll(pageOffset, 10);
+  }
 
   return (
     <div className="mt-5 space-y-5">
       <div className="flex items-center gap-2 justify-end">
-        <Button size="sm" className="h-8 gap-1" onClick={() => setOpenAddProduct(true)}>
+        <Tooltip
+          trigger={
+            <div className='p-3'  onClick={() => handleRefresh()}>
+              <RefreshCw className="h-3.5 w-3.5"/>
+            </div>
+          }
+          tooltip="Refresh"
+        />
+        <Button size="sm" className="h-8 gap-1" onClick={() => {
+          productState.setSelected(null);
+          productState.setOpenFormDialog(true);
+        }}>
           <PlusCircle className="h-3.5 w-3.5" />
           <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-            Add Item
+            Add Product
           </span>
         </Button>
       </div>
       <ProductsTable
-        products={[]}
-        offset={0}
-        totalProducts={0}
+       {...productHook.products}
+       loading={productHook.loading}
+       handleSearch={handleSearch}
+       refresh={handleRefresh}
       />
       <AddProduct
-        open={openAddProduct}
-        onOpenChange={(value) => setOpenAddProduct(value)}
+        open={productState.openFormDialog}
+        onOpenChange={(value) => productState.setOpenFormDialog(value)}
+        refresh={handleRefresh}
       />
     </div>
     

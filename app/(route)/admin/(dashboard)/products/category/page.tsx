@@ -4,12 +4,10 @@
 
 import { PlusCircle, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useState } from 'react';
 import AddCategory from './_components/AddCategory';
 import Tooltip from '@/components/ToolTip';
 import useCategory, { useCategoryState } from '@/hooks/useCategory';
 import CategoryTable from './category-table';
-import { CategoryProps } from '@/types/Product';
 import { useSearchParams } from 'next/navigation';
 
 
@@ -30,7 +28,7 @@ const ProductsCategoryPage = () => {
       <div className="flex items-center gap-2 justify-end">
         <Tooltip
           trigger={
-            <div className='p-3'  onClick={handleRefresh}>
+            <div className='p-3'  onClick={() => handleRefresh()}>
               <RefreshCw className="h-3.5 w-3.5"/>
             </div>
           }
