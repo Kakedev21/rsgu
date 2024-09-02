@@ -10,6 +10,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/
 import { Skeleton } from "@/components/ui/skeleton";
 import useCategory, { useCategoryState } from "@/hooks/useCategory";
 import { useToast } from "@/components/ui/use-toast";
+import constant from "@/utils/constant";
 interface AddCategoryProps {
     onOpenChange: (value: boolean) => void;
     refresh?: () => void;
@@ -27,10 +28,11 @@ const AddCategoryForm: FC<AddCategoryProps> = ({onOpenChange, refresh}) => {
 
     const onSubmit: SubmitHandler<CategoryProps> = async (data) => {
 
-        let response = categoryState.selected ? await  categoryHook.update(data, categoryState.selected?.["_id"] as string) : await categoryHook.create(data);
-        if (response?.data?.error) {
+        const response = categoryState.selected ? await  categoryHook.update(data, categoryState.selected?.["_id"] as string) : await categoryHook.create(data);
+        if (response?.error) {
             return toast({
                 title: "Something went wrong",
+                description: constant?.error?.[response?.error?.code as string],
                 variant: "destructive"
             })
         }

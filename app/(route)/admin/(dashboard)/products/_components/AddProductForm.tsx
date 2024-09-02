@@ -14,6 +14,7 @@ import useCategory from "@/hooks/useCategory";
 import { orderBy } from "lodash";
 import useProduct, { useProductState } from "@/hooks/useProduct";
 import { useToast } from "@/components/ui/use-toast";
+import constant from "@/utils/constant";
 interface AddProductProps {
     onOpenChange: (value: boolean) => void;
     refresh?: () => void;
@@ -32,9 +33,10 @@ const AddProductForm: FC<AddProductProps> = ({onOpenChange, refresh}) => {
 
     const onSubmit: SubmitHandler<ProductProps> = async (data) => {
         let response = productState.selected ? await  productHook.update(data, productState.selected?.["_id"] as string) : await productHook.create(data);
-        if (response?.data?.error) {
+        if (response?.error) {
             return toast({
                 title: "Something went wrong",
+                description: constant?.error?.[response?.error?.code as string],
                 variant: "destructive"
             })
         }

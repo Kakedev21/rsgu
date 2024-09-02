@@ -9,7 +9,6 @@ const ProductSchema = new Schema({
         type: String,
         required: true,
         unique: true
-
     },
     name: {
         type: String,
@@ -33,7 +32,7 @@ const ProductSchema = new Schema({
    
 
 }, {timestamps: true});
-ProductSchema.index({ productId: 1}, { unique: true });
+
 const Product = models.products || mongoose.model("products", ProductSchema);
 
 export default Product;
