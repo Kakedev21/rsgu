@@ -7,17 +7,9 @@ import {
   TableBody,
   Table
 } from '@/components/ui/table';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
 
 
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { ChevronLeft, ChevronRight, LoaderCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Product } from './product';
@@ -40,16 +32,22 @@ interface ProductTableProps {
 const ProductsTable: FC<ProductTableProps> = ({products, count = 0, limit = 10, page = 1, loading = true, handleSearch, refresh}) => {
   const debounce = useDebounce();
   const productState = useProductState();
-
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const productHook = useProduct({init: false});
   const router = useRouter();
-
-  function prevPage() {
-    router.back();
+  const itemsCount = (products?.length || 0) + limit;
+  const prevPage = () => {
+    const queryParams ={...Object.fromEntries(searchParams.entries()), page: (page - 1)+""};
+    const newQueryString = new URLSearchParams(queryParams).toString();
+    router.push(`${pathname}?${newQueryString}`, { scroll: true})
+    
   }
 
-  function nextPage() {
-    // router.push(`/?offset=${offset}`, { scroll: false });
+  const nextPage = () => {
+    const queryParams ={...Object.fromEntries(searchParams.entries()), page: (page + 1)+""};
+    const newQueryString = new URLSearchParams(queryParams).toString();
+    router.push(`${pathname}?${newQueryString}`, { scroll: true})
   }
 
   useEffect(() => {
@@ -83,6 +81,7 @@ const ProductsTable: FC<ProductTableProps> = ({products, count = 0, limit = 10, 
      {!loading && <Table>
         <TableHeader>
           <TableRow>
+            <TableHead>Product ID</TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Description</TableHead>
             <TableHead>Price</TableHead>
@@ -103,7 +102,7 @@ const ProductsTable: FC<ProductTableProps> = ({products, count = 0, limit = 10, 
         <div className="text-xs text-muted-foreground">
           Showing{' '}
           <strong>
-            {Math.min(10 - 1, count)}
+            {Math.min(page === 1 ? (products?.length || limit) : itemsCount * (page - 1), count)}
           </strong>{' '}
           of <strong>{count}</strong> products
         </div>
@@ -113,7 +112,7 @@ const ProductsTable: FC<ProductTableProps> = ({products, count = 0, limit = 10, 
             variant="ghost"
             size="sm"
             type="submit"
-            disabled={!(Math.ceil(count / Number(limit)) > Number(page))}
+            disabled={!(page > 1)}
           >
             <ChevronLeft className="mr-2 h-4 w-4" />
             Prev
@@ -123,7 +122,7 @@ const ProductsTable: FC<ProductTableProps> = ({products, count = 0, limit = 10, 
             variant="ghost"
             size="sm"
             type="submit"
-            disabled={Number(page) + Number(limit) > (count as number)}
+            disabled={(page) >= Math.ceil(count / limit)}
           >
             Next
             <ChevronRight className="ml-2 h-4 w-4" />

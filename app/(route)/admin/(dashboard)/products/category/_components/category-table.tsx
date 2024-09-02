@@ -7,16 +7,10 @@ import {
   TableBody,
   Table
 } from '@/components/ui/table';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-} from '@/components/ui/card';
 
 
-import { useRouter, useSearchParams } from 'next/navigation';
+
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { ChevronLeft, ChevronRight, LoaderCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Category } from './category';
@@ -26,6 +20,7 @@ import { FC, useEffect, useMemo } from 'react';
 import ConfirmDialog from '@/components/ConfirmationDialog';
 import useDebounce from '@/hooks/useDebounce';
 import { CategoryProps } from '@/types/Product';
+
 
 interface CategoryTableProps {
   categories?: CategoryProps[];
@@ -39,26 +34,31 @@ interface CategoryTableProps {
 const CategoryTable: FC<CategoryTableProps> = ({categories, count = 0, limit = 10, page = 1, loading = true, handleSearch, refresh}) => {
   const debounce = useDebounce();
   const categoryState = useCategoryState();
-
   const categoryHook = useCategory({init: false});
   const router = useRouter();
-
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const itemsCount = (categories?.length || 0) + limit;
 
 
   function prevPage() {
-    router.back();
+    const queryParams ={...Object.fromEntries(searchParams.entries()), page: (page - 1)+""};
+    const newQueryString = new URLSearchParams(queryParams).toString();
+    router.push(`${pathname}?${newQueryString}`, { scroll: true})
+    
   }
 
   function nextPage() {
-    // router.push(`/?offset=${offset}`, { scroll: false });
+    const queryParams ={...Object.fromEntries(searchParams.entries()), page: (page + 1)+""};
+    const newQueryString = new URLSearchParams(queryParams).toString();
+    router.push(`${pathname}?${newQueryString}`, { scroll: true})
   }
 
   useEffect(() => {
-    if (handleSearch) {
+    if (handleSearch && !loading) {
       handleSearch(page, debounce.debounceValue);
     }
   }, [page, debounce.debounceValue]);
-
   return (
     <div className="bg-white shadow-lg rounded-lg p-8 space-y-10">
         <div className='w-full flex justify-between items-center'>
@@ -98,20 +98,20 @@ const CategoryTable: FC<CategoryTableProps> = ({categories, count = 0, limit = 1
             </TableBody>
           </Table>}
         <form className="flex items-center w-full justify-between border-t border-slate-100">
-          <div className="text-xs text-muted-foreground">
+          <div className="mt-3  text-xs text-muted-foreground">
             Showing{' '}
             <strong>
-              {Math.min(10 - 1, count)}
+              {Math.min(page === 1 ? (categories?.length || limit) : itemsCount * (page - 1), count)}
             </strong>{' '}
             of <strong>{count}</strong> categories
           </div>
-          <div className="flex">
+          <div className="mt-3  flex">
             <Button
               formAction={prevPage}
               variant="ghost"
               size="sm"
               type="submit"
-              disabled={!(Math.ceil(count / Number(limit)) > Number(page))}
+              disabled={!(page > 1)}
             >
               <ChevronLeft className="mr-2 h-4 w-4" />
               Prev
@@ -121,7 +121,7 @@ const CategoryTable: FC<CategoryTableProps> = ({categories, count = 0, limit = 1
               variant="ghost"
               size="sm"
               type="submit"
-              disabled={Number(page) + Number(limit) > (count as number)}
+              disabled={(page) >= Math.ceil(count / limit)}
             >
               Next
               <ChevronRight className="ml-2 h-4 w-4" />

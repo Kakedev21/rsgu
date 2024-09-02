@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { create } from "zustand";
 import { CategoryProps } from "@/types/Product";
 
-interface UseCategoryStateProps {
+export interface UseCategoryStateProps {
     selected: CategoryProps | null,
     openDeleteDialog: boolean;
     openFormDialog: boolean;

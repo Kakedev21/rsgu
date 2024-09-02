@@ -25,7 +25,7 @@ const CategoryController = {
             )
             .skip((page - 1) * limit)
             .limit(limit),
-            await Category.countDocuments().exec()
+            await Category.countDocuments({...filter}).exec()
           ])
         return {
             categories,

@@ -31,7 +31,7 @@ const ProductController = {
             )
             .skip((page - 1) * limit)
             .limit(limit),
-            await Product.countDocuments().exec()
+            await Product.countDocuments({...filter}).exec()
           ])
         return {
             products,
