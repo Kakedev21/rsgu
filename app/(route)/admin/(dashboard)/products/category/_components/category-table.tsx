@@ -16,7 +16,7 @@ import { Button } from '@/components/ui/button';
 import { Category } from './category';
 import SearchInput from '@/components/SearchInput';
 import useCategory, { useCategoryState } from '@/hooks/useCategory';
-import { FC, useEffect, useMemo } from 'react';
+import { FC, useEffect } from 'react';
 import ConfirmDialog from '@/components/ConfirmationDialog';
 import useDebounce from '@/hooks/useDebounce';
 import { CategoryProps } from '@/types/Product';
@@ -130,7 +130,7 @@ const CategoryTable: FC<CategoryTableProps> = ({categories, count = 0, limit = 1
         </form>
         <ConfirmDialog
           title="Delete Confirmation"
-          description="This action cannot be undone. This will permanently delete your account
+          description="This action cannot be undone. This will permanently delete
         and remove your data from our servers."
           open={categoryState.openDeleteDialog}
           onOpenChange={categoryState.setOpenDeleteDialog}

@@ -12,16 +12,16 @@ import {
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { ChevronLeft, ChevronRight, LoaderCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Product } from './product';
+import {  User } from './user';
 import SearchInput from '@/components/SearchInput';
-import { ProductProps } from '@/types/Product';
 import { FC, useEffect } from 'react';
 import useDebounce from '@/hooks/useDebounce';
-import useProduct, { useProductState } from '@/hooks/useProduct';
 import ConfirmDialog from '@/components/ConfirmationDialog';
+import { UserProps } from '@/types/User';
+import useUser, { useUserState } from '@/hooks/useUser';
 
-interface ProductTableProps {
-  products?: ProductProps[];
+interface UserTableProps {
+  users?: UserProps[];
   count?: number;
   page?: number;
   limit?: number;
@@ -29,14 +29,14 @@ interface ProductTableProps {
   handleSearch?: (page: number, search: string | null) => void;
   refresh?: () => void;
 }
-const ProductsTable: FC<ProductTableProps> = ({products, count = 0, limit = 10, page = 1, loading = true, handleSearch, refresh}) => {
+const UsersTable: FC<UserTableProps> = ({users, count = 0, limit = 10, page = 1, loading = true, handleSearch, refresh}) => {
   const debounce = useDebounce();
-  const productState = useProductState();
+  const userState = useUserState();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const productHook = useProduct({init: false});
+  const userHook = useUser({init: false});
   const router = useRouter();
-  const itemsCount = (products?.length || 0) + limit;
+  const itemsCount = (users?.length || 0) + limit;
   const prevPage = () => {
     const queryParams ={...Object.fromEntries(searchParams.entries()), page: (page - 1)+""};
     const newQueryString = new URLSearchParams(queryParams).toString();
@@ -60,14 +60,14 @@ const ProductsTable: FC<ProductTableProps> = ({products, count = 0, limit = 10, 
     <div className="bg-white shadow-lg rounded-lg p-8 space-y-10">
       <div className='w-full flex justify-between items-center'>
         <div>
-          <h3 className="text-2xl font-semibold leading-none tracking-tight text-slate-700">Products</h3>
+          <h3 className="text-2xl font-semibold leading-none tracking-tight text-slate-700">Users</h3>
           <p className='text-xs'>
-            Manage your products.
+            Manage your users.
           </p>
         </div>
         <div className='mt-2 w-1/2'>
           <SearchInput
-            placeholder="Search Product..."
+            placeholder="Search user..."
             onChange={(event) => debounce.setValue(event.target.value)}
           />
         </div>
@@ -81,20 +81,18 @@ const ProductsTable: FC<ProductTableProps> = ({products, count = 0, limit = 10, 
      {!loading && <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Product ID</TableHead>
             <TableHead>Name</TableHead>
-            <TableHead>Description</TableHead>
-            <TableHead>Price</TableHead>
-            <TableHead>Qty</TableHead>
-            <TableHead>Created at</TableHead>
+            <TableHead>Department</TableHead>
+            <TableHead>Email</TableHead>
+            <TableHead>Username</TableHead>
             <TableHead>
               <span className="sr-only">Actions</span>
             </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {products?.map((product) => (
-            <Product key={product?.["_id"]} product={product} />
+          {users?.map((user) => (
+            <User key={user?.["_id"]} user={user} />
           ))}
         </TableBody>
       </Table>}
@@ -102,7 +100,7 @@ const ProductsTable: FC<ProductTableProps> = ({products, count = 0, limit = 10, 
         <div className="text-xs text-muted-foreground">
           Showing{' '}
           <strong>
-            {Math.min(page === 1 ? (products?.length || limit) : itemsCount * (page - 1), count)}
+            {Math.min(page === 1 ? (users?.length || limit) : itemsCount * (page - 1), count)}
           </strong>{' '}
           of <strong>{count}</strong> products
         </div>
@@ -131,27 +129,27 @@ const ProductsTable: FC<ProductTableProps> = ({products, count = 0, limit = 10, 
       </div>
       <ConfirmDialog
           title="Delete Confirmation"
-          description="This action cannot be undone. This will permanently delete
+          description="This action cannot be undone. This will permanently delete your account
         and remove your data from our servers."
-          open={productState.openDeleteDialog}
-          onOpenChange={productState.setOpenDeleteDialog}
+          open={userState.openDeleteDialog}
+          onOpenChange={userState.setOpenDeleteDialog}
           confirmLabel="Delete"
           cancelLabel="Cancel"
           handleClickConfirm={async () => {
-            productState.setOpenDeleteDialog(false);
-            await productHook.deleteProduct(productState.selected?._id as string);
-            productState.setSelected(null);
-            productHook.getAll(Number(page), Number(limit));
+            userState.setOpenDeleteDialog(false);
+            await userHook.deleteUser(userState.selected?._id as string);
+            userState.setSelected(null);
+            userHook.getAll(Number(page), Number(limit));
             if (refresh) {
               refresh();
             }
           }}
           handleClickCancel={() => {
-            productState.setSelected(null);
-            productState.setOpenDeleteDialog(false);
+            userState.setSelected(null);
+            userState.setOpenDeleteDialog(false);
           }}
         />
     </div>
   );
 }
-export default ProductsTable;
+export default UsersTable;

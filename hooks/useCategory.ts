@@ -50,7 +50,9 @@ const useCategory = ({page = 1, limit = 10, init = false}: {page?: number, limit
     }
 
     const update = async (payload: CategoryProps, category_id: string) => {
+        setLoading(true);
         const result = await axios.put(`/api/bff/categories/${category_id}`, payload);
+        setLoading(false);
         return result.data;
     }
 

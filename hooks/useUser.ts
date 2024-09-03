@@ -5,32 +5,36 @@ import { create } from "zustand";
 import { UserProps } from "@/types/User";
 
 interface UseUserStateProps {
-    selectedUser: UserProps | null,
+    selected: UserProps | null,
     openDeleteDialog: boolean;
     openFormDialog: boolean;
     openProfile: boolean;
     setOpenProfile: (value: boolean) => void;
     setOpenFormDialog: (value: boolean) => void;
     setOpenDeleteDialog: (value: boolean) => void;
-    setSelectedUser: (student: UserProps | null) => void;
+    setSelected: (student: UserProps | null) => void;
+    updatePassword: boolean;
+    setUpdatePassword: (value: boolean) => void;
 
 }
 
 export const useUserState = create<UseUserStateProps>(set => ({
-    selectedUser: null,
+    selected: null,
     openDeleteDialog: false,
     openFormDialog: false,
     openProfile: false,
+    updatePassword: false,
     setOpenProfile: (value: boolean) => set(state => ({...state, openProfile: value})),
     setOpenFormDialog: (value: boolean) => set(state => ({...state, openFormDialog: value})),
     setOpenDeleteDialog: (value: boolean) => set(state => ({...state, openDeleteDialog: value})),
-    setSelectedUser: (user: UserProps | null) => set(state => ({...state, selectedUser: user}))
+    setSelected: (user: UserProps | null) => set(state => ({...state, selected: user})),
+    setUpdatePassword: (value: boolean) => set(state => ({...state, updatePassword: value}))
 }))
 
-const useUser = (page: number = 1, limit: number = 10, init = true) => {
+const useUser = ({page = 1, limit = 10, init = false}: {page?: number, limit?: number, init?:boolean}) => {
     const [users, setUsers] = useState<{users: UserProps[], page: number, limit: number, count: number} | null>(null)
-    const [loading, setLoading] = useState<boolean>(true);
-    const getAllUser = async (page: number, limit: number, q?: string | null) => {
+    const [loading, setLoading] = useState<boolean>(false);
+    const getAll = async (page: number, limit: number, q?: string | null) => {
         setLoading(true);
         const result = await axios.get(`/api/bff/users`, {
             params: {
@@ -45,13 +49,17 @@ const useUser = (page: number = 1, limit: number = 10, init = true) => {
         }
     }
 
-    const createUser = async (payload: UserProps) => {
+    const create = async (payload: UserProps) => {
+        setLoading(true)
         const result = await axios.post('/api/bff/users', payload);
+        setLoading(false)
         return result.data;
     }
 
-    const updateUser = async (payload: UserProps, user_id: string) => {
+    const update = async (payload: UserProps, user_id: string) => {
+        setLoading(true)
         const result = await axios.put(`/api/bff/users/${user_id}`, payload);
+        setLoading(false)
         return result.data;
     }
 
@@ -67,15 +75,10 @@ const useUser = (page: number = 1, limit: number = 10, init = true) => {
         setLoading(false);
         return result?.data;
     }
-    const chart = async () => {
-        setLoading(true);
-        const result = await axios.get('/api/bff/users/chart');
-        setLoading(false);
-        return result?.data;
-    }
+  
     useEffect(() => {
         if (!users && !loading && init) {
-            getAllUser(page, limit)
+            getAll(page, limit)
         }
     }, [init])
 
@@ -83,13 +86,12 @@ const useUser = (page: number = 1, limit: number = 10, init = true) => {
 
     return {
         users,
-        getAllUser,
+        getAll,
         loading,
-        createUser,
-        updateUser,
+        create,
+        update,
         deleteUser,
         getTotalUserCount,
-        chart
     }
 }
  

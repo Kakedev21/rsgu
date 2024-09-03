@@ -1,9 +1,12 @@
+import { Suspense } from "react";
+import UsersContentPage from "./_components/UsersContent";
+
 const UsersPage = () => {
 
     return (
-        <div>
-            Users page
-        </div>
+        <Suspense>
+            <UsersContentPage/>
+        </Suspense>
     )
 }
 
