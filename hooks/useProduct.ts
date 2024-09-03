@@ -49,7 +49,9 @@ const useProduct = ({page = 1, limit = 10, init = false}: {page?: number, limit?
     }
 
     const update = async (payload: ProductProps, product_id: string) => {
+        setLoading(true);
         const result = await axios.put(`/api/bff/products/${product_id}`, payload);
+        setLoading(false);
         return result.data;
     }
 
