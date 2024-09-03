@@ -51,7 +51,7 @@ const ProductsTable: FC<ProductTableProps> = ({products, count = 0, limit = 10, 
   }
 
   useEffect(() => {
-    if (handleSearch) {
+    if (handleSearch && !loading) {
       handleSearch(page, debounce.debounceValue);
     }
   }, [page, debounce.debounceValue]);
@@ -99,29 +99,27 @@ const ProductsTable: FC<ProductTableProps> = ({products, count = 0, limit = 10, 
         </TableBody>
       </Table>}
       <div className="flex items-center w-full justify-between border-t border-slate-100">
-        <div className="text-xs text-muted-foreground">
+        <div className="mt-3 text-xs text-muted-foreground">
           Showing{' '}
           <strong>
             {Math.min(page === 1 ? (products?.length || limit) : itemsCount * (page - 1), count)}
           </strong>{' '}
           of <strong>{count}</strong> products
         </div>
-        <div className="flex">
+        <div className="mt-3 flex">
           <Button
-            formAction={prevPage}
+            onClick={prevPage}
             variant="ghost"
             size="sm"
-            type="submit"
             disabled={!(page > 1)}
           >
             <ChevronLeft className="mr-2 h-4 w-4" />
             Prev
           </Button>
           <Button
-            formAction={nextPage}
+            onClick={nextPage}
             variant="ghost"
             size="sm"
-            type="submit"
             disabled={(page) >= Math.ceil(count / limit)}
           >
             Next

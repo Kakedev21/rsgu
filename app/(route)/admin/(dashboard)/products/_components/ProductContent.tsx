@@ -17,6 +17,7 @@ const ProductsContentPage = () => {
   const searchParams = useSearchParams();
   const pageOffset =  Number(searchParams.get("page")) || 1;
   const handleSearch = (page: number = pageOffset, search: string | null) => {
+    console.log("triffer", page, pageOffset)
     productHook.getAll(page, 5, search);
   }
   const handleRefresh = () => {
@@ -49,6 +50,7 @@ const ProductsContentPage = () => {
        loading={productHook.loading}
        handleSearch={handleSearch}
        refresh={handleRefresh}
+       page={pageOffset}
       />
       <AddProduct
         open={productState.openFormDialog}

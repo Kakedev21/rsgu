@@ -97,7 +97,7 @@ const CategoryTable: FC<CategoryTableProps> = ({categories, count = 0, limit = 1
               ))}
             </TableBody>
           </Table>}
-        <form className="flex items-center w-full justify-between border-t border-slate-100">
+        <div className="flex items-center w-full justify-between border-t border-slate-100">
           <div className="mt-3  text-xs text-muted-foreground">
             Showing{' '}
             <strong>
@@ -107,27 +107,25 @@ const CategoryTable: FC<CategoryTableProps> = ({categories, count = 0, limit = 1
           </div>
           <div className="mt-3  flex">
             <Button
-              formAction={prevPage}
+              onClick={prevPage}
               variant="ghost"
               size="sm"
-              type="submit"
               disabled={!(page > 1)}
             >
               <ChevronLeft className="mr-2 h-4 w-4" />
               Prev
             </Button>
             <Button
-              formAction={nextPage}
+              onClick={nextPage}
               variant="ghost"
               size="sm"
-              type="submit"
               disabled={(page) >= Math.ceil(count / limit)}
             >
               Next
               <ChevronRight className="ml-2 h-4 w-4" />
             </Button>
           </div>
-        </form>
+        </div>
         <ConfirmDialog
           title="Delete Confirmation"
           description="This action cannot be undone. This will permanently delete

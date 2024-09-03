@@ -28,7 +28,7 @@ const AddProductForm: FC<AddProductProps> = ({onOpenChange, refresh}) => {
     const form = useForm<ProductProps>({
         resolver: zodResolver(formSchema),
         mode: "all",
-        defaultValues: productState.selected  || {}
+        defaultValues: productState.selected  || {description: ""}
       })
 
     const onSubmit: SubmitHandler<ProductProps> = async (data) => {
