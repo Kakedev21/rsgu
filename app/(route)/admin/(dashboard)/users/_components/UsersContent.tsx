@@ -50,6 +50,7 @@ const UsersContentPage = () => {
        loading={userHook.loading}
        handleSearch={handleSearch}
        refresh={handleRefresh}
+       page={pageOffset}
       />
       <AddUser
         open={userState.openFormDialog}

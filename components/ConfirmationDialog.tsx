@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, ReactNode } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "./ui/dialog";
 import { Button } from "./ui/button";
 
@@ -6,7 +6,7 @@ import { Button } from "./ui/button";
 interface ConfirmDialogProps {
     title?: string;
     open?: boolean;
-    description?: string;
+    description?: string | ReactNode;
     onOpenChange?: (value: boolean) => void;
     confirmLabel?: string;
     handleClickConfirm?: () => void;

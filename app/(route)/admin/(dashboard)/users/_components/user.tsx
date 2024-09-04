@@ -12,7 +12,6 @@ import { MoreHorizontal } from 'lucide-react';
 import { TableCell, TableRow } from '@/components/ui/table';
 import { UserProps } from '@/types/User';
 import { useUserState } from '@/hooks/useUser';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 
 export function User({ user }: { user: UserProps }) {
@@ -29,7 +28,7 @@ export function User({ user }: { user: UserProps }) {
 
   const handleUpdatePassword = () => {
     userState.setSelected(user);
-    userState.setOpenFormDialog(true);
+    userState.setUpdatePassword(true);
   }
   return (
     <TableRow>

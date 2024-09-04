@@ -14,11 +14,12 @@ import { ChevronLeft, ChevronRight, LoaderCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {  User } from './user';
 import SearchInput from '@/components/SearchInput';
-import { FC, useEffect } from 'react';
+import { FC, useEffect, useState } from 'react';
 import useDebounce from '@/hooks/useDebounce';
 import ConfirmDialog from '@/components/ConfirmationDialog';
 import { UserProps } from '@/types/User';
 import useUser, { useUserState } from '@/hooks/useUser';
+import { generatePassword } from '@/lib/utils';
 
 interface UserTableProps {
   users?: UserProps[];
@@ -36,6 +37,7 @@ const UsersTable: FC<UserTableProps> = ({users, count = 0, limit = 10, page = 1,
   const searchParams = useSearchParams();
   const userHook = useUser({init: false});
   const router = useRouter();
+  const [newPass, setNewPass] = useState<string | null>(null);
   const itemsCount = (users?.length || 0) + limit;
   const prevPage = () => {
     const queryParams ={...Object.fromEntries(searchParams.entries()), page: (page - 1)+""};
@@ -148,6 +150,42 @@ const UsersTable: FC<UserTableProps> = ({users, count = 0, limit = 10, page = 1,
             userState.setSelected(null);
             userState.setOpenDeleteDialog(false);
           }}
+        />
+        <ConfirmDialog
+          title="Update Password Confirmation"
+          description={<div>Are you sure you want to update <span className='font-bold'>{userState.selected?.name}</span> password?</div>}
+          open={userState.updatePassword}
+          onOpenChange={userState.setUpdatePassword}
+          confirmLabel="Update"
+          cancelLabel="Cancel"
+          handleClickConfirm={async () => {
+            const password = generatePassword();
+            await userHook.update({
+              ...userState.selected,
+              password: password,
+            } as UserProps, userState.selected?._id as string);
+            setNewPass(password);
+            userState.setUpdatePassword(false);
+            userState.setSelected(null);
+            userHook.getAll(Number(page), Number(limit));
+            if (refresh) {
+              refresh();
+            }
+          }}
+          handleClickCancel={() => {
+            userState.setSelected(null);
+            userState.setUpdatePassword(false);
+          }}
+        />
+        <ConfirmDialog
+          title="Update Password"
+          description={<div>New Password: <span className='font-bold'>{newPass}</span></div>}
+          open={!!newPass}
+          onOpenChange={() => setNewPass(null)}
+          confirmLabel="Ok"
+          cancelLabel="Close"
+          handleClickConfirm={() =>  setNewPass(null)}
+          handleClickCancel={() => setNewPass(null)}
         />
     </div>
   );
