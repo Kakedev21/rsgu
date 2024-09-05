@@ -1,17 +1,15 @@
 
 
-import User from './user';
-
-import Providers from './providers';
 
 import DesktopNav from '@/components/navigation/DesktopNav';
 import MobileNav from '@/components/navigation/MobileNav';
 import BreadCrumbNav from '@/components/navigation/BreadCrumb';
 import AxiosInterceptor from '@/components/axiosInterceptor';
 import { Toaster } from '@/components/ui/toaster';
-import UserProfile from '@/components/userProfile/Profile';
+import Providers from '@/app/(route)/admin/(dashboard)/providers';
+import User from '@/app/(route)/admin/(dashboard)/user';
 
-export default function DashboardLayout({
+export default function CashierLayout({
   children
 }: {
   children: React.ReactNode;
@@ -26,7 +24,6 @@ export default function DashboardLayout({
             <MobileNav />
             <BreadCrumbNav />
             <User />
-            <UserProfile/>
           </header>
           <main className="grid flex-1 items-start gap-2 p-5 sm:px-6 sm:py-0 md:gap-4 bg-muted/40">
             {children}

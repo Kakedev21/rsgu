@@ -14,9 +14,10 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { signOut, useSession } from 'next-auth/react';
 import { LogOut, UserCog } from 'lucide-react';
 import { redirect } from 'next/navigation';
+import { useUserState } from '@/hooks/useUser';
 
 const User = () => {
-
+  const userState = useUserState();
   const session = useSession();
   const handleSignOut = () => {
       signOut();
@@ -30,15 +31,17 @@ const User = () => {
           size="icon"
           className="overflow-hidden rounded-full"
         >
-          <Avatar>
-            <AvatarFallback>{session.data?.user?.name?.split(" ").map((n)=>n[0]).join("")}</AvatarFallback>
+          <Avatar className='outline outline-slate-50'>
+            <AvatarFallback className='text-xs'>{session.data?.user?.name?.split(" ").map((n)=>n[0]).join("")}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="flex items-center gap-2">
+        <DropdownMenuItem className="flex items-center gap-2" onClick={() => {
+          userState.setOpenProfile(true)
+        }}>
           <UserCog size={16}/>
           <p>Profile</p>
         </DropdownMenuItem>
