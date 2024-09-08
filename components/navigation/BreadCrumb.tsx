@@ -26,13 +26,6 @@ const BreadCrumbNav = () => {
   }, [breadCrumbState?.routes, pathname]);
     return (
         <div className='flex gap-3 flex-1'>
-          <Image
-            src="/rgo_logo_1.png"
-            width={32}
-            height={32}
-            alt="logo"
-            className="block"
-          />
           <Breadcrumb className="hidden md:flex ">
             <BreadcrumbList>
             {

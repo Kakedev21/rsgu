@@ -15,6 +15,8 @@ import { UserProps } from "@/types/User";
 
 import { KeySquare } from "lucide-react";
 import { generatePassword } from "@/lib/utils";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useSession } from "next-auth/react";
 interface AddUserProps {
     onOpenChange: (value: boolean) => void;
     refresh?: () => void;
@@ -22,6 +24,7 @@ interface AddUserProps {
 
 const AddUserForm: FC<AddUserProps> = ({onOpenChange, refresh}) => {
     const userHook = useUser({init: false});
+    const session = useSession();
     const userState = useUserState();
     const { toast } = useToast();
     const form = useForm<UserProps>({
@@ -138,6 +141,32 @@ const AddUserForm: FC<AddUserProps> = ({onOpenChange, refresh}) => {
                         </FormControl> : <Skeleton className="h-10 w-[full]"/>}
                         </FormItem>
                     )}
+                />}
+                {["admin", "root"].includes(session.data?.user?.role as string) && <FormField
+                    control={form.control}
+                    name="role"
+                    render={({field}) => {
+                        return <FormItem>
+                        <FormLabel>
+                            Role <span className="text-red-500">*</span>
+                        </FormLabel>
+                        {!userHook.loading ? <FormControl>
+                            <Select {...field}
+                                onValueChange={(value) => field.onChange({target: {value}})}
+                            >
+                                <SelectTrigger className="w-[180px]">
+                                    <SelectValue placeholder="Role" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="admin">Admin</SelectItem>
+                                    <SelectItem value="cashier">Cashier</SelectItem>
+                                </SelectContent>
+                            </Select>
+                            
+                        </FormControl> : <Skeleton className="h-10 w-[full]"/>}
+                        </FormItem>
+
+                    }}
                 />}
                 <div>
                     <div className="flex gap-2 justify-end mt-10">
