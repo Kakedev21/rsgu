@@ -24,9 +24,9 @@ export default function CashierLayout({
                 <header className="sticky top-0 z-30 flex h-14 items-center gap-4 py-4 border-b bg-red-500 px-4 sm:static sm:h-auto sm:border-0 sm:px-6 shadow-lg rounded-b">
                     <div className='flex-1'>
                         <Image
-                            src="/rgo_logo_1.png"
-                            width={32}
-                            height={32}
+                            src="/rgo_logo.png"
+                            width={60}
+                            height={60}
                             alt="logo"
                             className="block"
                         />
