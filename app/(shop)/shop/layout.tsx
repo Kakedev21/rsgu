@@ -9,6 +9,7 @@ import { User2 } from "lucide-react";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/config/authOptions";
 import CartItem from "./_components/CartItem";
+import Link from "next/link";
 
 const ShopLayout = async ({children} :  {
     children: React.ReactNode;
@@ -21,13 +22,15 @@ const ShopLayout = async ({children} :  {
             <div className="flex flex-col sm:gap-4">
               <header className="sticky top-0 z-30 flex h-14 items-center gap-4 py-3 border-b bg-red-500 px-4 sm:static sm:h-auto sm:border-0 sm:px-6 shadow-lg rounded-b">
                 <div className="flex-1 flex items-center gap-x-5">
-                  <Image
-                    src="/rgo_logo.png"
-                    width={48}
-                    height={48}
-                    alt="logo"
-                    className="block"
-                  />
+                  <Link href="/shop">
+                    <Image
+                      src="/rgo_logo.png"
+                      width={48}
+                      height={48}
+                      alt="logo"
+                      className="block"
+                    />
+                  </Link>
                   <div className="space-y-0">
                     <p className="text-lg text-slate-100 font-semibold p-0 m-0 flex flex-col">
                       Bantangas State University

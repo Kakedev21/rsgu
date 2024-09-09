@@ -5,10 +5,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import { signIn, SignInResponse } from "next-auth/react";
-import { redirect, useRouter } from "next/navigation";
+import { redirect, useRouter, useSearchParams } from "next/navigation";
 import { useRef, useState } from "react";
 import CryptoJS from "crypto-js"
 const LoginForm = () => {
+    const searchParams = useSearchParams();
     const usernameRef = useRef<HTMLInputElement>(null);
     const passwordRef = useRef<HTMLInputElement>(null);
     const [loading, setLoading] = useState(false);
@@ -36,10 +37,14 @@ const LoginForm = () => {
               
             })
           }
-          const parseUrl = new URL(result.url as string);
-          const callbackUrl = parseUrl.searchParams.get('callbackUrl');
-          const decodedCallbackUrl = new URL(decodeURIComponent(callbackUrl as string) || "");
-          router.replace(decodedCallbackUrl.pathname || "/admin")
+          if (searchParams.get("callbackUrl")) {
+            router.replace(searchParams.get("callbackUrl") as string)
+          } else {
+            const parseUrl = new URL(result.url as string);
+            const callbackUrl = parseUrl.searchParams.get('callbackUrl');
+            const decodedCallbackUrl = new URL(decodeURIComponent(callbackUrl as string) || "");
+            router.replace(decodedCallbackUrl.pathname || "/admin")
+          }
     }
   return (
     <form onSubmit={handleLogin} className="my-5 mx-5  sm:flex sm:justify-center bg-white  rounded-t-3xl sm:rounded-3xl  w-full sm:w-1/3 items-center sm:shadow-2xl">

@@ -42,7 +42,7 @@ const ProductList = ({searchValue}: {searchValue: string}) => {
     return <div className="space-y-10">
         <div className="grid grid-cols-4 gap-5">
             {
-                productHook.products?.products.map(product => (<ProductItem {...product}/>))
+                productHook.products?.products.map(product => (<ProductItem {...product} key={product?._id}/>))
             }
         </div>
         <div className="flex gap-5 justify-center">

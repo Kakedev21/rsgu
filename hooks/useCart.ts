@@ -29,7 +29,7 @@ export const useCartState = create<UseCartStateProps>(set => ({
 }))
 
 const useCart = ({page = 1, limit = 10, init = false, q = ""}: {page?: number, limit?: number, init?:boolean, q?: string}) => {
-    const [cart, setCart] = useState<{cart: CartProps[], page: number, limit: number, count: number} | null>(null)
+    const [cart, setCart] = useState<{carts: CartProps[], page: number, limit: number, count: number} | null>(null)
     const [loading, setLoading] = useState<boolean>(false);
     const getAllCart = async (page: number, limit: number, q?: string | null) => {
         setLoading(true);
