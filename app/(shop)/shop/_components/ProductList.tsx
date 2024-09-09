@@ -7,6 +7,7 @@ import ProductItem from "./ProductItem";
 import { Button } from "@/components/ui/button";
 import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
+import { RefreshCcw } from "lucide-react";
 
 const ProductList = ({searchValue}: {searchValue: string}) => {
    
@@ -38,11 +39,28 @@ const ProductList = ({searchValue}: {searchValue: string}) => {
         </div>
     }
     
-    console.log(searchValue);
+   
     return <div className="space-y-10">
         <div className="grid grid-cols-4 gap-5">
             {
                 productHook.products?.products.map(product => (<ProductItem {...product} key={product?._id}/>))
+            }
+            {
+                !productHook.products?.products.length && <div className="mx-auto col-span-4 my-5">
+                    <p>No Products to display</p>
+                    <div className="flex gap-3 items-center">
+                        <p>Click here to</p>
+                        <Button variant="ghost" 
+                            className="flex gap-3 items-center"
+                            onClick={async () => {
+                                await productHook.getAll(pageOffset, 10)
+                            }}
+                        >
+                            <RefreshCcw size={18}/>
+                            Refresh
+                        </Button>
+                    </div>
+                </div>
             }
         </div>
         <div className="flex gap-5 justify-center">
