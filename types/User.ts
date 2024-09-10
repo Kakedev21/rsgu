@@ -10,6 +10,7 @@ export interface UserProps {
     password?: string | undefined;
     username: string;
     department?: string | undefined;
+    srCode?: string;
   }
 
 
@@ -20,6 +21,7 @@ export  const formSchema = z.object({
     username: z.string().min(3),
     department: z.string(),
     role: z.string(),
+    srCode: z.string(),
     password: z
     .string()
     .min(8, { message: 'Password must be at least 8 characters long' })

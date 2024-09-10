@@ -1,16 +1,16 @@
 
 import Image from "next/image";
-import LoginForm from "./_components/LoginForm";
 import { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/config/authOptions";
+import RegisterForm from "./_components/RegisterForm";
 export const metadata: Metadata = {
-    title: "Authentication",
+    title: "Registration",
     description: "Authentication forms built using the components.",
   };
   
-const LoginPage = async () => {
+const RegisterPage = async () => {
     const session = await getServerSession(authOptions);
     if (["admin", "root"].includes(session?.user?.role as string)) {
         return redirect("/admin")
@@ -30,10 +30,10 @@ const LoginPage = async () => {
                     alt="Authentication"
                     className="block w-32 h-32 sm:w-[210px] sm:h-[200px] text-center"
                 />
-                <LoginForm/>
+                <RegisterForm/>
             </div>
         </div>
     )
 }
 
-export default LoginPage;
+export default RegisterPage;

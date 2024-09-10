@@ -41,9 +41,11 @@ const ShopLayout = async ({children} :  {
                 </div>
                 <div className="flex gap-5 items-center">
                   <CartItem/>
-                  {session?.user ? <User /> : <div className="border-b border-transparent group hover:border-white transition-all duration-300 p-2">
+                  {session?.user ? <User /> : <Link href="/auth/login" className="border-b border-transparent group hover:border-white transition-all duration-300 p-2">
+                    
                     <User2 className="text-slate-50 cursor-pointer"/>
-                  </div>}
+                    
+                  </Link>}
                   <UserProfile/>
                 </div>
               </header>

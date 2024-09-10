@@ -8,6 +8,8 @@ import { signIn, SignInResponse } from "next-auth/react";
 import { redirect, useRouter, useSearchParams } from "next/navigation";
 import { useRef, useState } from "react";
 import CryptoJS from "crypto-js"
+import { Store } from "lucide-react";
+import Link from "next/link";
 const LoginForm = () => {
     const searchParams = useSearchParams();
     const usernameRef = useRef<HTMLInputElement>(null);
@@ -37,18 +39,29 @@ const LoginForm = () => {
               
             })
           }
+          console.log("result", result)
           if (searchParams.get("callbackUrl")) {
             router.replace(searchParams.get("callbackUrl") as string)
           } else {
             const parseUrl = new URL(result.url as string);
             const callbackUrl = parseUrl.searchParams.get('callbackUrl');
-            const decodedCallbackUrl = new URL(decodeURIComponent(callbackUrl as string) || "");
-            router.replace(decodedCallbackUrl.pathname || "/admin")
+            const decodedCallbackUrl = callbackUrl ? new URL(decodeURIComponent(callbackUrl as string) || "") : {pathname: "/"};
+            if (decodedCallbackUrl.pathname === "/") {
+              window.location.reload()
+            } else {
+              router.replace(decodedCallbackUrl?.pathname || "/admin")
+            }
           }
     }
   return (
     <form onSubmit={handleLogin} className="my-5 mx-5  sm:flex sm:justify-center bg-white  rounded-t-3xl sm:rounded-3xl  w-full sm:w-1/3 items-center sm:shadow-2xl">
       <div className="my-10 space-y-5">
+        <Link href="/shop" className="w-full">
+          <p className="text-slate-600 font-semibold flex items-center gap-2">
+          <Store size={18}/>
+          Shop
+          </p>
+        </Link>
         <div className="w-full flex justify-center">
           <p className="text-slate-600 font-semibold text-2xl">Welcome back!</p>
         </div>
@@ -64,6 +77,10 @@ const LoginForm = () => {
           <Button className="w-full" variant="destructive" type="submit"  disabled={loading}>
             Login
           </Button>
+          <div className=" mt-3 flex gap-1 justify-center">
+            <p className="text-xs">Create New Account</p>
+            <Link href="/auth/register" className="text-xs text-blue-500">Register</Link>
+          </div>
         </div>
       </div>
     </form>

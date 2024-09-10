@@ -11,7 +11,7 @@ const CartItem: FC<CartProps> = ({name, description, price}) => {
             <p className="font-semibold text-slate-700">{name}</p>
             <p className="font-semibold text-xs text-slate-500">{description}</p>
         </div>
-        <div className="font-semibold">{numeral(price).format('0,0.00')}</div>
+        <div className="font-semibold">₱{numeral(price).format('0,0.00')}</div>
     </div>
 }
 

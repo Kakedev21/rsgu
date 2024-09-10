@@ -64,11 +64,11 @@ const ProductList = ({searchValue}: {searchValue: string}) => {
             }
         </div>
         <div className="flex gap-5 justify-center">
-            <Button variant="outline" disabled={(productHook.products?.page as number) <= 1}>
+            <Button variant="outline" disabled={!productHook.products?.page || (productHook.products?.page as number) <= 1}>
                 Prev
             </Button>
             <Button variant="outline"
-                disabled={pageOffset >= Math.ceil((productHook.products?.count as number) / (productHook.products?.limit as number))}
+                disabled={!productHook.products?.count || pageOffset >= Math.ceil((productHook.products?.count as number) / (productHook.products?.limit as number))}
             >
                 Next
             </Button>

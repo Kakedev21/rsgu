@@ -25,6 +25,9 @@ const UserSchema = new Schema({
     department: {
         type: String,
         required: true
+    },
+    srCode: {
+        type: String,
     }
 
 }, {timestamps: true});

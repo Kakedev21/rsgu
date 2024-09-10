@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
 
     try {
         const body = await req.json() as UserProps;
-        if (!RequestHeaderValidator.authenticate(req) && body.role !== "faculty") {
+        if (!RequestHeaderValidator.authenticate(req) && body.role !== "user") {
             return NextResponse.json({status: 401})
         }
        

@@ -53,7 +53,7 @@ const CartLists = () => {
         <div className="border border-slate-500 rounded p-5 w-1/4 space-y-8 flex flex-col">
             <div className="flex justify-between flex-1">
                 <p className="text-xl font-semibold text-slate-600">Total</p>
-                <p className="text-xl font-semibold text-slate-600">{numeral(total).format('0,0.00')}</p>
+                <p className="text-xl font-semibold text-slate-600">₱{numeral(total).format('0,0.00')}</p>
             </div>
             <div className="flex justify-end items-end">
                 <Button className="flex gap-3 items-center" 
