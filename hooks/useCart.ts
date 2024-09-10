@@ -43,6 +43,7 @@ const useCart = ({page = 1, limit = 10, init = false, q = ""}: {page?: number, l
         setLoading(false);
         if (result.data.cart) {
             setCart(result.data.cart)
+            return result.data.cart;
         }
     }
 
@@ -60,7 +61,7 @@ const useCart = ({page = 1, limit = 10, init = false, q = ""}: {page?: number, l
         return result.data;
     }
 
-    const deleteCategory = async (cart_id: string) => {
+    const deleteCart = async (cart_id: string) => {
         setLoading(true)
         const result = await axios.delete(`/api/bff/cart/${cart_id}`);
         setLoading(false)
@@ -84,7 +85,7 @@ const useCart = ({page = 1, limit = 10, init = false, q = ""}: {page?: number, l
         loading,
         create,
         update,
-        deleteCategory
+        deleteCart
     }
 }
  

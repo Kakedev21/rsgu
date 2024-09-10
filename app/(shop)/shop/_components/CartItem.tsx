@@ -15,27 +15,33 @@ const CartItem = () => {
     const localStorageCart = JSON.parse(window.localStorage.getItem("cartItem") || "{}") as CartProps[];
     const cartCount = useMemo(() => {
         cartState.setUpdateCart(false);
-        if (cartHook.cart?.carts?.length) {
+        if (cartHook.cart?.carts?.length && !cartHook.loading) {
+            
             return cartHook.cart.count || 0;
         }
        return localStorageCart.length;
     }, [cartHook.cart, cartState.updateCart]);
+   
     useEffect(() => {
-        if (session.data?.user && !cartHook.loading && localStorageCart.length) {
+        if (session.data?.user?.session_id && !cartHook.loading && localStorageCart.length) {
+            
             (async () => {
+                console.log("session.data?.user?.id", session.data?.user?.id)
                 const parseLocalStoragePayload = localStorageCart?.map(item => ({
                     productId: item?.productId,
                     name: item?.name,
                     description: item?.description,
                     price: item?.price,
-                    userId: session.data?.user?.id,
+                    userId: session.data?.user?.session_id,
                     qty: item.qty || 1
                 }))
-                await cartHook.create(parseLocalStoragePayload);
-                window.localStorage.clear();
+                const result = await cartHook.create(parseLocalStoragePayload);
+                if (!result.data?.error) {
+                    window.localStorage.clear();
+                }
             })()
         }
-    }, [session.data?.user]);
+    }, [session.data?.user?.session_id]);
     return <div className="border-b border-transparent group hover:border-white transition-all duration-300 p-3 relative">
         <ShoppingCart className="text-slate-50 cursor-pointer" onClick={() => {
             if (cartCount) {

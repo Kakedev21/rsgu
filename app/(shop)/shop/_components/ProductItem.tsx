@@ -16,18 +16,20 @@ const ProductItem:FC<ProductProps>  = (props) => {
     const cartHook = useCart({init:false});
     const session = useSession();
     const handleAddToCartClick = async () => {
+        console.log("session.data?.user?.id", session.data?.user)
         const payload = [
             {
                 name: name as string,
                 price: price as number,
                 description: description as string,
                 productId: _id as string,
-                userId: session.data?.user?.id as string,
+                userId: session.data?.user?.session_id as string,
                 qty: 1
             }
         ]
         if (session.data?.user) {
-            await cartHook.create(payload)
+            await cartHook.create(payload);
+            window.location.reload();
         } else {
             const localStorageCart = JSON.parse(window.localStorage.getItem("cartItem") || "{}");
             let updatedPayload = payload;
