@@ -14,10 +14,9 @@ const CartItem = () => {
     const cartHook = useCart({init: !!session.data, q: session.data?.user?.id});
     const localStorageCart = JSON.parse(window.localStorage.getItem("cartItem") || "{}") as CartProps[];
     const cartCount = useMemo(() => {
-        cartState.setUpdateCart(false);
         if (cartHook.cart?.carts?.length && !cartHook.loading) {
             
-            return cartHook.cart.count || 0;
+            return cartHook.cart?.count || 0;
         }
        return localStorageCart.length;
     }, [cartHook.cart, cartState.updateCart]);

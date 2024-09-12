@@ -11,7 +11,7 @@ import DeleteConfirmationMessage from "./DeleteConfirmationMessage";
 
 
 
-const CartItem: FC<CartProps> = ({name, description, price, _id}) => {
+const Cart: FC<CartProps> = ({name, description, price, _id}) => {
     const cartHook = useCart({init: false});
     const session = useSession();
     const handleDeleteCart = async () => {
@@ -38,7 +38,7 @@ const CartItem: FC<CartProps> = ({name, description, price, _id}) => {
                 onConfirm={handleDeleteCart}
             >
                 <Button variant="ghost" size="sm">
-                    <Trash2 className="text-red-500" size={16}/>
+                    <Trash2 className="text-red-500" size={14}/>
                 </Button>
             </DeleteConfirmationMessage>
         </div>
@@ -46,4 +46,4 @@ const CartItem: FC<CartProps> = ({name, description, price, _id}) => {
 }
 
 
-export default CartItem;
+export default Cart;

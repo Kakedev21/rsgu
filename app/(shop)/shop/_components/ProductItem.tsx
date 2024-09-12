@@ -6,6 +6,7 @@ import { ProductProps } from "@/types/Product";
 import { isEmpty } from "lodash";
 import { ShoppingCart } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import numeral from "numeral";
 import { FC } from "react";
 
@@ -15,6 +16,7 @@ const ProductItem:FC<ProductProps>  = (props) => {
     const cartState = useCartState();
     const cartHook = useCart({init:false});
     const session = useSession();
+    const router = useRouter();
     const handleAddToCartClick = async () => {
         console.log("session.data?.user?.id", session.data?.user)
         const payload = [
@@ -41,8 +43,23 @@ const ProductItem:FC<ProductProps>  = (props) => {
         }
     }
 
-    const handleBuyNow = () => {
-
+    const handleBuyNow = async () => {
+        const payload = [
+            {
+                name: name as string,
+                price: price as number,
+                description: description as string,
+                productId: _id as string,
+                userId: session.data?.user?.session_id as string,
+                qty: 1
+            }
+        ]
+        if (session.data?.user) {
+            await cartHook.create(payload);
+            router.push("/shop/cart")
+        } else {
+            window.location.href = `/auth/login?callbackUrl=${window.location.origin}/shop/cart`
+        }
     }
     return <div className="space-y-2 border border-slate-50 shadow rounded-md p-3 hover:shadow-lg transition-all duration-300">
         <div className=" min-h-20">
@@ -55,11 +72,14 @@ const ProductItem:FC<ProductProps>  = (props) => {
         <div className="flex justify-end gap-3">
             <Button variant="outline"
                 onClick={handleAddToCartClick}
+                size="sm"
             >
-                <ShoppingCart />
+                <ShoppingCart size={16}/>
             </Button>
             <Button
                 onClick={handleBuyNow}
+                size="sm"
+                className="text-xs sm:text-base"
             >
                 Buy now
             </Button>

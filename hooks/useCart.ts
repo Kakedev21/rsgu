@@ -67,6 +67,12 @@ const useCart = ({page = 1, limit = 10, init = false, q = ""}: {page?: number, l
         setLoading(false)
         return result.data;
     }
+    const clearCart = async (user_id: string ) => {
+        setLoading(true)
+        const result = await axios.delete(`/api/bff/cart/user/${user_id}`);
+        setLoading(false)
+        return result.data;
+    }
    
     useEffect(() => {
        
@@ -85,7 +91,8 @@ const useCart = ({page = 1, limit = 10, init = false, q = ""}: {page?: number, l
         loading,
         create,
         update,
-        deleteCart
+        deleteCart,
+        clearCart
     }
 }
  

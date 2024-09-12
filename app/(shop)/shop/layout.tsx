@@ -32,20 +32,23 @@ const ShopLayout = async ({children} :  {
                     />
                   </Link>
                   <div className="space-y-0">
-                    <p className="text-lg text-slate-100 font-semibold p-0 m-0 flex flex-col">
+                    <p className="text-xs sm:text-lg text-slate-100 font-semibold py-3 sm:p-0 m-0 flex flex-col">
                       Bantangas State University
-                      <span className="text-xs text-slate-100">Leading Innovations, Transforming Lives</span>
+                      <span className="text-[8px] sm:text-xs text-slate-100">Leading Innovations, Transforming Lives</span>
                     </p>
                   
                   </div>
                 </div>
                 <div className="flex gap-5 items-center">
+                  
                   <CartItem/>
+                  
                   {session?.user ? <User /> : <Link href="/auth/login" className="border-b border-transparent group hover:border-white transition-all duration-300 p-2">
                     
                     <User2 className="text-slate-50 cursor-pointer"/>
                     
                   </Link>}
+                 
                   <UserProfile/>
                 </div>
               </header>

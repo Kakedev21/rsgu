@@ -51,6 +51,11 @@ const CartController = {
         const cart = await Cart.deleteOne(({_id: cart_id}));
         return cart;
     },
+    clearCart: async (user_id: string) => {
+        await connectMongoDB();
+        const cart = await Cart.deleteMany(({userId: user_id}));
+        return cart;
+    },
     
 }
 

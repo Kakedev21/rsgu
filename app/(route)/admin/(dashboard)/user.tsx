@@ -12,7 +12,7 @@ import {
 import Link from 'next/link';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { signOut, useSession } from 'next-auth/react';
-import { LogOut, UserCog } from 'lucide-react';
+import { ClipboardList, LogOut, UserCog } from 'lucide-react';
 import { redirect } from 'next/navigation';
 import { useUserState } from '@/hooks/useUser';
 
@@ -39,6 +39,10 @@ const User = () => {
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
+        <DropdownMenuItem className="flex items-center gap-2">
+          <ClipboardList size={16}/>
+          <p>Orders</p>
+        </DropdownMenuItem>
         <DropdownMenuItem className="flex items-center gap-2" onClick={() => {
           userState.setOpenProfile(true)
         }}>

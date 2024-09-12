@@ -40,8 +40,8 @@ const ProductList = ({searchValue}: {searchValue: string}) => {
     }
     
    
-    return <div className="space-y-10">
-        <div className="grid grid-cols-4 gap-5">
+    return <div className="space-y-10 overflow-y-scroll">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-5 overflow-y-scroll">
             {
                 productHook.products?.products.map(product => (<ProductItem {...product} key={product?._id}/>))
             }
