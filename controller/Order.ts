@@ -9,7 +9,7 @@ const OrderController = {
        
         const  filter = {
             ...(q ? {
-                userId: q
+                _id: q
             } : {})
         };
     
@@ -51,6 +51,41 @@ const OrderController = {
         const order = await Order.deleteOne(({_id: order_id}));
         return order;
     },
+    userOrders: async ({user_id, q, page, limit}: {user_id: string,q?: string, page: number, limit: number}) => {
+       
+        await connectMongoDB();
+        const regex = new RegExp(q as string, 'i');
+        const  filter = {
+            ...(q ? {
+                $or: [
+                    {
+                        userId: user_id
+                    },
+                    {
+                        _id: {$regex: regex}
+                    }
+                ]
+            } : {})
+        };
+    
+        const [orders, count] = await Promise.all([
+            await Order.find(
+                {
+                    ...filter
+                }
+            )
+            .populate('productId')
+            .skip((page - 1) * limit)
+            .limit(limit),
+            await Order.countDocuments({...filter}).exec()
+          ])
+        return {
+            orders,
+            page,
+            limit,
+            count
+        };
+    }
     
 }
 

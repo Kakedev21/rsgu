@@ -2,7 +2,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { create } from "zustand";
-import { OrderProps } from "@/types/Order";
+import { OrderFormValues, OrderProps } from "@/types/Order";
 
 export interface UseOrderStateProps {
     selected: OrderProps | null,
@@ -25,12 +25,13 @@ export const useOrderState = create<UseOrderStateProps>(set => ({
   
 }))
 
-const useOrder = ({page = 1, limit = 10, init = false, q = ""}: {page?: number, limit?: number, init?:boolean, q?: string}) => {
+const useOrder = ({page = 1, limit = 10, init = false, q = "", user_id = ""}: {page?: number, limit?: number, init?:boolean, q?: string, user_id?: string}) => {
     const [orders, setOrders] = useState<{orders: OrderProps[], page: number, limit: number, count: number} | null>(null)
     const [loading, setLoading] = useState<boolean>(false);
-    const getAllOrder = async (page: number, limit: number, q?: string | null) => {
+    const getAllOrder = async ({page, limit, q, user_id}:{page: number, limit: number, q?: string | null, user_id?: string}) => {
         setLoading(true);
-        const result = await axios.get(`/api/bff/order`, {
+        const apiUrl = user_id ? `/api/bff/order/user/${user_id}` : `/api/bff/order`;
+        const result = await axios.get(apiUrl, {
             params: {
                 page,
                 limit,
@@ -38,20 +39,20 @@ const useOrder = ({page = 1, limit = 10, init = false, q = ""}: {page?: number, 
             }
         });
         setLoading(false);
-        if (result.data.orders) {
-            setOrders(result.data.orders)
-            return result.data.orders;
+        if (result.data.order) {
+            setOrders(result.data.order)
+            return result.data.order;
         }
     }
 
-    const create = async (payload: OrderProps[]) => {
+    const create = async (payload: OrderFormValues[]) => {
         setLoading(true);
         const result = await axios.post('/api/bff/order', payload);
         setLoading(false);
         return result.data;
     }
 
-    const update = async (payload: OrderProps, order_id: string) => {
+    const update = async (payload: OrderFormValues[], order_id: string) => {
         setLoading(true);
         const result = await axios.put(`/api/bff/order/${order_id}`, payload);
         setLoading(false);
@@ -69,10 +70,10 @@ const useOrder = ({page = 1, limit = 10, init = false, q = ""}: {page?: number, 
        
         if (!orders && !loading && init) {
             setTimeout(() => {
-                getAllOrder(page, limit)
+                getAllOrder({page, limit, user_id})
             }, 300)
         }
-    }, [init])
+    }, [init, user_id])
 
 
 

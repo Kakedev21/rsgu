@@ -39,9 +39,11 @@ const User = () => {
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="flex items-center gap-2">
-          <ClipboardList size={16}/>
-          <p>Orders</p>
+        <DropdownMenuItem >
+          <Link href="/shop/orders" className="flex items-center gap-2">
+            <ClipboardList size={16}/>
+            <p>Orders</p>
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuItem className="flex items-center gap-2" onClick={() => {
           userState.setOpenProfile(true)

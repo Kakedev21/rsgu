@@ -22,7 +22,7 @@ const ProductList = ({searchValue}: {searchValue: string}) => {
         }
     }, [searchValue])
     if (productHook.loading) {
-        return <div className="grid grid-cols-4 gap-5">
+        return <div className="grid grid-cols-2 sm:grid-cols-4 gap-5">
             {
                 times(4).map(count => {
                     return <div key={count} className="space-y-2">

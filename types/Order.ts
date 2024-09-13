@@ -1,3 +1,4 @@
+import { ProductProps } from '@/types/Product';
 import * as z from 'zod';
 
 export  const OrderFormSchema = z.object({
@@ -11,7 +12,7 @@ export type OrderFormValues = z.infer<typeof OrderFormSchema>
 
 export interface OrderProps {
     _id?: string;
-    productId: string[];
+    productId: ProductProps[];
     status: string;
     totalAmount: number;
     userId: string;

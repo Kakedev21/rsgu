@@ -55,13 +55,15 @@ const LoginForm = () => {
     }
   return (
     <form onSubmit={handleLogin} className="my-5 mx-5  sm:flex sm:justify-center bg-white  rounded-t-3xl sm:rounded-3xl  w-full sm:w-1/3 items-center sm:shadow-2xl">
-      <div className="my-10 space-y-5">
-        <Link href="/shop" className="w-full">
-          <p className="text-slate-600 font-semibold flex items-center gap-2">
-          <Store size={18}/>
-          Shop
-          </p>
-        </Link>
+      <div className="mb-10 space-y-5">
+        <div className="px-5 mt-5">
+          <Link href="/shop" className="w-full">
+            <p className="text-slate-600 font-semibold flex items-center gap-2">
+              <Store size={18}/>
+              Shop
+            </p>
+          </Link>
+        </div>
         <div className="w-full flex justify-center">
           <p className="text-slate-600 font-semibold text-2xl">Welcome back!</p>
         </div>
