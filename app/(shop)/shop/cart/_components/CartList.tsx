@@ -77,7 +77,8 @@ const CartLists = () => {
     }
    const loading = useMemo(() => {
     return cartHook.loading || orderHook.loading;
-   }, [cartHook.loading, orderHook.loading])
+   }, [cartHook.loading, orderHook.loading]);
+   
     return <div className="flex-col gap-5 space-y-5 sm:flex sm:space-y-0">
         <div className="border border-slate-500 rounded sm:flex-1">
             {
