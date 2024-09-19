@@ -49,6 +49,7 @@ const UsersTable: FC<UserTableProps> = ({users, count = 0, limit = 10, page = 1,
   const nextPage = () => {
     const queryParams ={...Object.fromEntries(searchParams.entries()), page: (page + 1)+""};
     const newQueryString = new URLSearchParams(queryParams).toString();
+    
     router.push(`${pathname}?${newQueryString}`, { scroll: true})
   }
 
@@ -104,11 +105,11 @@ const UsersTable: FC<UserTableProps> = ({users, count = 0, limit = 10, page = 1,
           <strong>
             {Math.min(page === 1 ? (users?.length || limit) : itemsCount * (page - 1), count)}
           </strong>{' '}
-          of <strong>{count}</strong> products
+          of <strong>{count}</strong> users
         </div>
-        <div className="flex">
+        <div className="mt-3 flex">
           <Button
-            formAction={prevPage}
+            onClick={prevPage}
             variant="ghost"
             size="sm"
             type="submit"
@@ -118,7 +119,7 @@ const UsersTable: FC<UserTableProps> = ({users, count = 0, limit = 10, page = 1,
             Prev
           </Button>
           <Button
-            formAction={nextPage}
+            onClick={nextPage}
             variant="ghost"
             size="sm"
             type="submit"
