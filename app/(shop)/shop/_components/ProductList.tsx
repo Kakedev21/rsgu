@@ -41,7 +41,7 @@ const ProductList = ({searchValue}: {searchValue: string}) => {
     
    
     return <div className="space-y-10 overflow-y-scroll">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-5 overflow-y-scroll">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-5 overflow-y-scroll py-5">
             {
                 productHook.products?.products.map(product => (<ProductItem {...product} key={product?._id}/>))
             }
@@ -49,7 +49,7 @@ const ProductList = ({searchValue}: {searchValue: string}) => {
                 !productHook.products?.products.length && <div className="mx-auto col-span-4 my-5">
                     <p>No Products to display</p>
                     <div className="flex gap-3 items-center">
-                        <p>Click here to</p>
+                        
                         <Button variant="ghost" 
                             className="flex gap-3 items-center"
                             onClick={async () => {
