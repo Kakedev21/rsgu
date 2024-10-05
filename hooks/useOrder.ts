@@ -27,7 +27,10 @@ export const useOrderState = create<UseOrderStateProps>(set => ({
 
 const useOrder = ({page = 1, limit = 10, init = false, q = "", user_id = ""}: {page?: number, limit?: number, init?:boolean, q?: string, user_id?: string}) => {
     const [orders, setOrders] = useState<{orders: OrderProps[], page: number, limit: number, count: number} | null>(null)
+    const [order, setOrder] = useState<OrderProps[] | null>();
+    const [transactions, setTransactions] = useState<any[] | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
+
     const getAllOrder = async ({page, limit, q, user_id}:{page: number, limit: number, q?: string | null, user_id?: string}) => {
         setLoading(true);
         const apiUrl = user_id ? `/api/bff/order/user/${user_id}` : `/api/bff/order`;
@@ -45,7 +48,7 @@ const useOrder = ({page = 1, limit = 10, init = false, q = "", user_id = ""}: {p
         }
     }
 
-    const create = async (payload: OrderFormValues[]) => {
+    const create = async (payload: OrderFormValues[] | {status: string}) => {
         setLoading(true);
         const result = await axios.post('/api/bff/order', payload);
         setLoading(false);
@@ -65,6 +68,29 @@ const useOrder = ({page = 1, limit = 10, init = false, q = "", user_id = ""}: {p
         setLoading(false)
         return result.data;
     }
+
+    const orderDetail = async (order_id: string) => {
+        setLoading(true)
+        const result = await axios.get(`/api/bff/order/cashier/${order_id}`);
+        setLoading(false)
+        setOrder(result.data?.order)
+        return result.data;
+    }
+
+    const confirmOrder = async (payload: {status: string, cashier: string}, order_id: string) => {
+        setLoading(true);
+        const result = await axios.put(`/api/bff/order/${order_id}`, payload);
+        setLoading(false);
+        return result.data;
+    }
+
+    const getTransactions = async (cashier_id: string) => {
+        setLoading(true);
+        const result = await axios.get(`/api/bff/order/cashier/transactions/${cashier_id}`);
+        setLoading(false);
+        setTransactions(result.data?.order)
+        return result.data?.order;
+    }
    
     useEffect(() => {
        
@@ -83,7 +109,13 @@ const useOrder = ({page = 1, limit = 10, init = false, q = "", user_id = ""}: {p
         loading,
         create,
         update,
-        deleteOrder
+        deleteOrder,
+        orderDetail,
+        order,
+        confirmOrder,
+        setOrder,
+        getTransactions,
+        transactions
     }
 }
  

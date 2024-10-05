@@ -85,6 +85,88 @@ const OrderController = {
             limit,
             count
         };
+    },
+    cashier: {
+        getOrder: async (order_id: string) => {
+            await connectMongoDB();
+            const order = await Order.aggregate([
+                {
+                  $addFields: {
+                    idString: { $toString: "$_id" } // Convert ObjectId to string
+                  }
+                },
+                {
+                  $match: {
+                    idString: { $regex: order_id, $options: 'i' } // Use regex to match the substring
+                  }
+                },
+                {
+                    $lookup: {
+                      from: 'products', // Name of the products collection
+                      localField: 'productId', // Field in the orders collection (array)
+                      foreignField: '_id', // Field in the products collection
+                      as: 'products' // Name of the new array field to add
+                    }
+                  },
+                  {
+                    // Optional: Unwind if you want each product to have a separate document
+                    $unwind: {
+                      path: '$products',
+                      preserveNullAndEmptyArrays: true // Keeps orders without products
+                    }
+                  },
+                  {
+                    $project: {
+                      _id: 1,
+                      userId: 1,
+                      totalAmount: 1,
+                      status: 1,
+                      createdAt: 1,
+                      updatedAt: 1,
+                      products: {
+                        _id: '$products._id',
+                        name: '$products.name',
+                        price: '$products.price',
+                        description: '$products.description',
+                        image: '$products.image'
+                      }
+                    }
+                  }
+              ]);
+            console.log(order);
+            return order as unknown as OrderProps;
+        },
+        transactions: async (cashier_id: string) => {
+          await connectMongoDB();
+          const results = await Order.aggregate([
+            {
+              $match: {
+                cashier: cashier_id // Match orders by cashier ID
+              }
+            },
+            {
+              $lookup: {
+                from: 'products', // Name of the products collection
+                localField: 'productId', // Field in the orders collection
+                foreignField: '_id', // Field in the products collection
+                as: 'products' // Output array field
+              }
+            },
+            {
+              $group: {
+                _id: { $dateToString: { format: "%Y-%m-%d", date: "$updatedAt" } }, // Group by updatedAt date
+                orders: { $push: "$$ROOT" }, // Collect all orders in an array
+                totalAmount: { $sum: "$totalAmount" }, // Optional: Sum of total amounts
+                count: { $sum: 1 } // Optional: Count of orders per date
+              }
+            },
+            {
+              $sort: { "_id": -1 } // Sort by date descending
+            }
+          ]);
+           
+          return results;
+        }
     }
     
 }

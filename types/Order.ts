@@ -17,5 +17,6 @@ export interface OrderProps {
     totalAmount: number;
     userId: string;
     createdAt?: string;
+    products?: ProductProps;
     
 }

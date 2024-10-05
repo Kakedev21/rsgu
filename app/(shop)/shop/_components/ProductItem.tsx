@@ -63,7 +63,7 @@ const ProductItem:FC<ProductProps>  = (props) => {
     }
     return <div className="space-y-2 border border-slate-50 shadow rounded-md p-3 hover:shadow-lg transition-all duration-300">
         <div className=" min-h-20">
-            <img src={image || "/no-image.png"} className="h-[60px] w-full rounded"/>
+            <img src={image || "/no-image.png"} className="h-[60px] sm:h-[150px] w-full rounded"/>
             <div className="h-16">
                 <p className="font-semibold text-lg text-slate-700">{name}</p>
                 <p className="text-sm text-slate-600">{description}</p>

@@ -26,9 +26,7 @@ export async function GET(req: NextRequest, { params }: { params: { order_id: st
 
 export async function PUT(req: NextRequest, { params }: { params: { order_id: string } }) {
     try {
-        if (!RequestHeaderValidator.authenticate(req)) {
-            return NextResponse.json({status: 401})
-        }
+       
         const payload = await req.json() as OrderProps;
         const order = await OrderController.update(params.order_id, payload);
         return NextResponse.json({

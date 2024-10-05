@@ -1,19 +1,29 @@
 import { Button } from "@/components/ui/button";
 
-const PaymentCTA = () => {
+import { FC } from "react";
+import ConfirmPayment from "./ConfirmPayment";
+
+interface PaymentCTAProps {
+    orderNo: string | null;
+    status: string | null;
+    orderHook: any
+}
+const PaymentCTA: FC<PaymentCTAProps> = ({orderNo = null, status, orderHook}) => {
 
 
     return <div className="flex gap-5 items-center">
-        <Button
-            disabled
-        >
-            Paid
-        </Button>
-        <Button
-            disabled
-        >
-            Send
-        </Button>
+        <ConfirmPayment
+            orderHook={orderHook}
+            orderNo={orderNo}
+            trigger={<Button
+                disabled={orderNo === null || status === "Paid" || orderHook.loading}
+                className="w-full"
+            >
+                Paid
+            </Button>}
+        />
+        
+       
     </div>
 }
 

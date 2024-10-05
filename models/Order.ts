@@ -17,6 +17,9 @@ const OrderSchema = new Schema({
     status: {
         type: String,
         required: true
+    },
+    cashier: {
+        type: { type: Schema.Types.ObjectId, ref: 'users',  required: false }
     }
 
 }, {timestamps: true});
