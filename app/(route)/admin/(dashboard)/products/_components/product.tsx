@@ -30,6 +30,9 @@ export function Product({ product }: { product: ProductProps }) {
   return (
     <TableRow>
       <TableCell className="font-medium">{product.productId}</TableCell>
+      <TableCell className="font-medium">
+          <img src={product.image as string || "/no-image.png"} className='w-[300px] h-[150px] rounded'/>
+      </TableCell>
       <TableCell className="font-medium">{product.name}</TableCell>
       <TableCell className="font-medium">{product.description}</TableCell>
       <TableCell className="font-medium">{numeral(product.price).format("0,0.00")}</TableCell>

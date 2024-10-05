@@ -25,3 +25,26 @@ export const generatePassword = () => {
   return password;
 
 }
+
+
+export const base64ToFile = (base64String: any, filename: string) => {
+  // Split the Base64 string into parts
+  const [header, data] = base64String.split(',');
+  const mime = header?.match(/:(.*?);/)[1]; // Extract MIME type
+
+  // Decode the Base64 string
+  const byteCharacters = atob(data);
+  const byteNumbers = new Array(byteCharacters.length);
+
+  for (let i = 0; i < byteCharacters.length; i++) {
+    byteNumbers[i] = byteCharacters.charCodeAt(i);
+  }
+
+  // Create a Uint8Array from the byte numbers
+  const byteArray = new Uint8Array(byteNumbers);
+
+  // Create a Blob from the byte array
+  const blob = new Blob([byteArray], { type: mime });
+  return blob;
+}
+

@@ -82,6 +82,7 @@ const ProductsTable: FC<ProductTableProps> = ({products, count = 0, limit = 10, 
         <TableHeader>
           <TableRow>
             <TableHead>Product ID</TableHead>
+            <TableHead>Image</TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Description</TableHead>
             <TableHead>Price</TableHead>

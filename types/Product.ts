@@ -21,6 +21,7 @@ export interface ProductProps {
     price: number;
     quantity?: number;
     createdAt?: string;
+    image?: string;
     
   }
 
