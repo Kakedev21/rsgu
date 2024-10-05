@@ -2,13 +2,11 @@
 
 import SearchInput from "@/components/SearchInput";
 import ItemDetail from "./ItemDetail";
-import ReceiptPreview from "./ReceiptPreview";
 import TotalPayment from "./TotalPayment";
 import PaymentCTA from "./PaymentCTA";
 import useDebounce from "@/hooks/useDebounce";
 import { useEffect } from "react";
 import useOrder from "@/hooks/useOrder";
-import { OrderProps } from "@/types/Order";
 
 const Cashier = () => {
     const debounce = useDebounce();

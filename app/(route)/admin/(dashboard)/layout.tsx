@@ -12,7 +12,14 @@ import { Toaster } from '@/components/ui/toaster';
 import UserProfile from '@/components/userProfile/Profile';
 import Image from 'next/image';
 import AdminAuthProvider from '@/components/AdminAuthProvider';
-
+import { Send } from 'lucide-react';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import ReleaseOrder from './orders/_components/ReleaseOrder';
 export default function DashboardLayout({
   children
 }: {
@@ -35,7 +42,22 @@ export default function DashboardLayout({
                 className="block"
               />
               <BreadCrumbNav />
-              <User />
+              <div className='flex items-center gap-8'>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <ReleaseOrder
+                        trigger={<Send className='text-slate-50'/>}
+                      />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Release Order</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+               
+                <User />
+              </div>
               <UserProfile/>
             </header>
             <main className="grid flex-1 items-start gap-2 p-5 sm:px-6 sm:py-0 md:gap-4 bg-muted/40">

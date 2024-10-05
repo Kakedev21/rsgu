@@ -31,20 +31,21 @@ const useOrder = ({page = 1, limit = 10, init = false, q = "", user_id = ""}: {p
     const [transactions, setTransactions] = useState<any[] | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
 
-    const getAllOrder = async ({page, limit, q, user_id}:{page: number, limit: number, q?: string | null, user_id?: string}) => {
+    const getAllOrder = async ({page, limit, q, user_id, status}:{page: number, limit: number, q?: string | null, user_id?: string, status?: string}) => {
         setLoading(true);
         const apiUrl = user_id ? `/api/bff/order/user/${user_id}` : `/api/bff/order`;
         const result = await axios.get(apiUrl, {
             params: {
                 page,
                 limit,
+                status,
                 ...( q ? { q: q } : {})
             }
         });
         setLoading(false);
-        if (result.data.order) {
-            setOrders(result.data.order)
-            return result.data.order;
+        if (result.data.orders) {
+            setOrders(result.data.orders)
+            return result.data.orders;
         }
     }
 
@@ -77,7 +78,7 @@ const useOrder = ({page = 1, limit = 10, init = false, q = "", user_id = ""}: {p
         return result.data;
     }
 
-    const confirmOrder = async (payload: {status: string, cashier: string}, order_id: string) => {
+    const confirmOrder = async (payload: {status: string, cashier?: string, admin?: string}, order_id: string) => {
         setLoading(true);
         const result = await axios.put(`/api/bff/order/${order_id}`, payload);
         setLoading(false);

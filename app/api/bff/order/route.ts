@@ -33,8 +33,8 @@ export async function GET(req: NextRequest) {
         const page = Number(searchParams.get("page"));
         const limit = Number(searchParams.get("limit"));
         const search = searchParams.get("q") as string;
-     
-        const orders = await OrderController.orders(req, {page, limit, q: search});
+        const status = searchParams.get("status") as string
+        const orders = await OrderController.orders(req, {page, limit, q: search, status});
         return NextResponse.json({
             orders
         });

@@ -1,8 +1,13 @@
+
+import OrdersLists from "./_components/Orders";
+
 const OrdersPage = () => {
 
     return (
         <div>
-            Orders page
+           
+            <OrdersLists/>
+           
         </div>
     )
 }

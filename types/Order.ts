@@ -1,5 +1,6 @@
 import { ProductProps } from '@/types/Product';
 import * as z from 'zod';
+import { UserProps } from './User';
 
 export  const OrderFormSchema = z.object({
     productId: z.array(z.string().min(1)),
@@ -17,6 +18,8 @@ export interface OrderProps {
     totalAmount: number;
     userId: string;
     createdAt?: string;
+    updatedAt?: string;
     products?: ProductProps;
+    user?: UserProps;
     
 }

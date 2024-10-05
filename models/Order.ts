@@ -20,6 +20,9 @@ const OrderSchema = new Schema({
     },
     cashier: {
         type: { type: Schema.Types.ObjectId, ref: 'users',  required: false }
+    },
+    admin: {
+        type: { type: Schema.Types.ObjectId, ref: 'users',  required: false }
     }
 
 }, {timestamps: true});

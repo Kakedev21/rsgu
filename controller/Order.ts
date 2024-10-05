@@ -4,13 +4,16 @@ import { connectMongoDB } from '@/lib/mongodb';
 import Order from '@/models/Order';
 import { OrderProps } from '@/types/Order';
 const OrderController = {
-    orders: async (req: NextRequest, {page, limit, q}: {page: number, limit: number, q?: string}) => {
+    orders: async (req: NextRequest, {page, limit, q, status}: {page: number, limit: number, q?: string, status?: string}) => {
         await connectMongoDB();
        
         const  filter = {
             ...(q ? {
                 _id: q
-            } : {})
+            } : {}),
+            ...(status ? {
+              status
+            }: {})
         };
     
         const [orders, count] = await Promise.all([
@@ -89,50 +92,72 @@ const OrderController = {
     cashier: {
         getOrder: async (order_id: string) => {
             await connectMongoDB();
-            const order = await Order.aggregate([
-                {
-                  $addFields: {
-                    idString: { $toString: "$_id" } // Convert ObjectId to string
-                  }
-                },
-                {
-                  $match: {
-                    idString: { $regex: order_id, $options: 'i' } // Use regex to match the substring
-                  }
-                },
-                {
-                    $lookup: {
-                      from: 'products', // Name of the products collection
-                      localField: 'productId', // Field in the orders collection (array)
-                      foreignField: '_id', // Field in the products collection
-                      as: 'products' // Name of the new array field to add
-                    }
+            const order =await Order.aggregate([
+              {
+                $addFields: {
+                  idString: { $toString: "$_id" } // Convert ObjectId to string
+                }
+              },
+              {
+                $match: {
+                  idString: { $regex: order_id, $options: 'i' } // Use regex to match the substring
+                }
+              },
+              {
+                $lookup: {
+                  from: 'products', // Name of the products collection
+                  localField: 'productId', // Field in the orders collection (array)
+                  foreignField: '_id', // Field in the products collection
+                  as: 'products' // Name of the new array field to add
+                }
+              },
+              {
+                // Optional: Unwind if you want each product to have a separate document
+                $unwind: {
+                  path: '$products',
+                  preserveNullAndEmptyArrays: true // Keeps orders without products
+                }
+              },
+              {
+                $lookup: {
+                  from: 'users', // Name of the users collection
+                  localField: 'userId', // Field in the orders collection
+                  foreignField: '_id', // Field in the users collection
+                  as: 'user' // Name of the new field to add for user details
+                }
+              },
+              {
+                // Optional: Unwind if you want each user to have a separate document
+                $unwind: {
+                  path: '$user',
+                  preserveNullAndEmptyArrays: true // Keeps orders without user details
+                }
+              },
+              {
+                $project: {
+                  _id: 1,
+                  userId: 1,
+                  totalAmount: 1,
+                  status: 1,
+                  createdAt: 1,
+                  updatedAt: 1,
+                  products: {
+                    _id: '$products._id',
+                    name: '$products.name',
+                    price: '$products.price',
+                    description: '$products.description',
+                    image: '$products.image'
                   },
-                  {
-                    // Optional: Unwind if you want each product to have a separate document
-                    $unwind: {
-                      path: '$products',
-                      preserveNullAndEmptyArrays: true // Keeps orders without products
-                    }
-                  },
-                  {
-                    $project: {
-                      _id: 1,
-                      userId: 1,
-                      totalAmount: 1,
-                      status: 1,
-                      createdAt: 1,
-                      updatedAt: 1,
-                      products: {
-                        _id: '$products._id',
-                        name: '$products.name',
-                        price: '$products.price',
-                        description: '$products.description',
-                        image: '$products.image'
-                      }
-                    }
+                  user: {
+                    _id: '$user._id',
+                    name: '$user.name', // Adjust based on your user schema
+                    email: '$user.email', // Adjust based on your user schema
+                    // Add any other user fields you want to include
                   }
-              ]);
+                }
+              }
+            ]);
+            
             console.log(order);
             return order as unknown as OrderProps;
         },
