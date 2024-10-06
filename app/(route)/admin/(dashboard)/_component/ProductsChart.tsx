@@ -1,12 +1,13 @@
 "use client"
 
 import useOrder from "@/hooks/useOrder";
+import useProduct from "@/hooks/useProduct";
 import { LoaderCircle } from "lucide-react";
 import moment from "moment";
 import { FC, useEffect, useMemo, useState } from "react";
 import Chart from "react-apexcharts";
 
-interface OrderChartProps {
+interface ProductsChartProps {
     status: string;
     type: string;
     countType?: string;
@@ -14,35 +15,29 @@ interface OrderChartProps {
     year?: string;
     chartHeight?: string
 }
-const OrdersChart: FC<OrderChartProps> = ({status, type = "bar", countType, month, year, chartHeight}) => {
-    const orderHook = useOrder({init:false});
+const ProductsChart: FC<ProductsChartProps> = ({status, type = "bar", countType, month, year, chartHeight}) => {
+    const productHook = useProduct({init:false});
     const [totalCount, setTotalCount] = useState<any>();
     const getCategories = () => {
-        if (countType === "daily") {
-            return totalCount ? totalCount.map((count: any) => moment(count.date).format("DD")).flat() : []
-        }
-        return totalCount ? totalCount?.map((count: any) => Object.keys(count)).flat() : []
+       
+        const  catergories = totalCount?.map((count: any) => `${count?.name} ${count?.description}`) || []
+        console.log("catergories", catergories);
+        return catergories;
     }
     const getYaxis = () => {
-        if (countType === "daily") {
-            return totalCount ? Math.max(...totalCount.map((count: any) => count?.totalCount).flat()) + 5 : 100
-        }
-
-        return totalCount ? Math.max(...totalCount?.map((count: any) => Object.values(count)).flat()) : 100
+       
+        return totalCount ? Math.max(...totalCount?.map((count: any) => count?.quantity)) : 100
     } 
     const getData = () => {
-        if (countType === "daily") {
-            return totalCount ? totalCount.map((count: any) => count?.totalCount).flat() : []
-        }
-
-        return totalCount ? totalCount?.map((count: any) => Object.values(count)).flat() : []
+       
+        return totalCount ? totalCount?.map((count: any) => count?.quantity): []
     }
     const config = useMemo(() => {
         
         return {
             optionsMixedChart: {
               chart: {
-                id: `basic-chart-${status}`,
+                id: "basic-bar-products",
                 toolbar: {
                   show: false
                 }
@@ -75,7 +70,7 @@ const OrdersChart: FC<OrderChartProps> = ({status, type = "bar", countType, mont
             },
             seriesMixedChart: [
               {
-                name: status,
+                name: "Inventory",
                 type: type,
                 data: getData()
               },
@@ -209,16 +204,16 @@ const OrdersChart: FC<OrderChartProps> = ({status, type = "bar", countType, mont
         };
     }, [totalCount])
     useEffect(() => {
-        if (!totalCount && !orderHook.loading) {
+        if (!totalCount && !productHook.loading) {
             (async () => {
-             const result = countType === "daily" ? await orderHook.getTotalCountPerDayForMonth(month as string, year as string) : await  orderHook.getTotalCountPerMonth(status);
-             console.log("result", result);
-             setTotalCount(result)
+             const result = await productHook.getAllProductsWithQty()
+             console.log("result productHook", result);
+             setTotalCount(result?.products)
             })()
         }
     }, []);
-    console.log("getCategories()", getCategories())
-    if (orderHook.loading && !totalCount) {
+    console.log("getCategories()", getCategories(), totalCount)
+    if (productHook.loading && !totalCount) {
         return <div className='w-full flex justify-center p-5 items-center gap-2'>
         <LoaderCircle className=' animate-spin text-slate-600' />
         <p className='text-slate-600 animate-pulse'>Loading...</p>
@@ -229,7 +224,7 @@ const OrdersChart: FC<OrderChartProps> = ({status, type = "bar", countType, mont
              <Chart
                 options={config.optionsMixedChart}
                 series={config.seriesMixedChart}
-                type={"bar"}
+                type="line"
                 width="100%"
                 height={chartHeight}
             />
@@ -237,4 +232,4 @@ const OrdersChart: FC<OrderChartProps> = ({status, type = "bar", countType, mont
     );
 }
  
-export default OrdersChart;
+export default ProductsChart;

@@ -61,7 +61,12 @@ const useProduct = ({page = 1, limit = 10, init = false}: {page?: number, limit?
         setLoading(false)
         return result.data;
     }
-   
+    const getAllProductsWithQty = async () => {
+        setLoading(true)
+        const result = await axios.get(`/api/bff/products/inventory/qtycount`);
+        setLoading(false)
+        return result.data;
+    }
     useEffect(() => {
        
         if (!products && !loading && init) {
@@ -79,7 +84,8 @@ const useProduct = ({page = 1, limit = 10, init = false}: {page?: number, limit?
         loading,
         create,
         update,
-        deleteProduct
+        deleteProduct,
+        getAllProductsWithQty
     }
 }
  

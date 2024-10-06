@@ -81,7 +81,7 @@ const useOrder = ({page = 1, limit = 10, init = false, q = "", user_id = ""}: {p
 
     const confirmOrder = async (payload: {status: string, cashier?: string, admin?: string}, order_id: string) => {
         setLoading(true);
-        const result = await axios.put(`/api/bff/order/${order_id}`, payload);
+        const result = await axios.put(`/api/bff/order/confirm/${order_id}`, payload);
         setLoading(false);
         return result.data;
     }

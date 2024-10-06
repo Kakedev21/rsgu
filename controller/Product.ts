@@ -61,6 +61,26 @@ const ProductController = {
         const product = await Product.deleteOne(({_id: product_id}));
         return product;
     },
+    getAllProductsWithQty: async () => {
+        try {
+            await connectMongoDB();
+            const results = await Product.aggregate([
+              {
+                $project: {
+                  _id: 1,
+                  name: 1,
+                  description: 1,
+                  quantity: 1 // Include the fields you want
+                }
+              }
+            ]);
+        
+            console.log('All Products with Quantity:', results);
+            return results;
+          } catch (error) {
+            console.error('Error getting products with quantity:', error);
+          }
+    }
     
 }
 

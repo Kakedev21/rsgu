@@ -6,6 +6,7 @@ import OrdersCount from "./OrdersCount";
 
 import OrdersChart from "./OrdersChart";
 import moment from "moment";
+import ProductsChart from "./ProductsChart";
 const Dashboard = () => {
     
     
@@ -55,15 +56,26 @@ const Dashboard = () => {
             </div>
             
           </div>
-          <div className="space-y-5 w-full gap-5 my-5">
-            <p className="font-semibold">Orders for {moment().format('MMMM YYYY')}</p>
+          <div className="flex w-full gap-5 my-5">
             <div className="w-full">
-              <OrdersChart status="Order" type="line"
-                countType="daily"
-                month={moment().format("M")}
-                year={moment().format("YYYY")}
-                chartHeight="300"
-              />
+              <p className="font-semibold">Orders for {moment().format('MMMM YYYY')}</p>
+              <div className="w-full">
+                <OrdersChart status="Order" type="line"
+                  countType="daily"
+                  month={moment().format("M")}
+                  year={moment().format("YYYY")}
+                  chartHeight="300"
+                />
+              </div>
+            </div>
+            <div className="w-full">
+              <p className="font-semibold">Products Inventory</p>
+              <div className="w-full">
+                <ProductsChart  
+                  type="line"
+                  chartHeight="300"
+                />
+              </div>
             </div>
           </div>
           <div className="flex w-full gap-5 my-5">

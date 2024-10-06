@@ -5,6 +5,7 @@ import { NextRequest } from 'next/server';
 import { connectMongoDB } from '@/lib/mongodb';
 import Order from '@/models/Order';
 import { OrderProps } from '@/types/Order';
+import Product from '@/models/Product';
 
 const OrderController = {
     orders: async (req: NextRequest, {page, limit, q, status}: {page: number, limit: number, q?: string, status?: string}) => {
@@ -117,6 +118,44 @@ const OrderController = {
     update: async (order_id: string, data: OrderProps) => {
         await connectMongoDB();
         const order = await Order.findOneAndUpdate({_id: order_id}, {...data}, { new: true, upsert: true, runValidators: true});
+        return order;
+    },
+    updateStatus: async (order_id: string, data: OrderProps) => {
+        await connectMongoDB();
+        const decrementProductQtys = async (productIds: any[]) => {
+          try {
+            // Find all products that match the productIds and have quantity greater than 0
+            const products = await Product.find({
+              _id: { $in: productIds },
+              quantity: { $gt: 0 }
+            });
+        
+            if (products.length === 0) {
+              console.log('No products found or all quantities are 0');
+              return;
+            }
+        
+            // Create bulk operations for decrementing quantity
+            const bulkOps = products.map(product => ({
+              updateOne: {
+                filter: { _id: product._id },
+                update: { $inc: { quantity: -1 } }
+              }
+            }));
+        
+            // Execute the bulk operations
+            const result = await Product.bulkWrite(bulkOps);
+        
+            console.log('Quantities updated successfully:', result);
+            return result;
+          } catch (error) {
+            console.error('Error updating product quantities:', error);
+            return;
+          }
+        };
+        const order = await Order.findOneAndUpdate({_id: order_id}, {...data}, { new: true, upsert: true, runValidators: true});
+        console.log("order", order?.["productId"])
+        await decrementProductQtys(order?.["productId"]);
         return order;
     },
     delete: async (order_id: string) => {
@@ -358,7 +397,7 @@ const OrderController = {
               }
             ]);
             
-            console.log(order);
+           
             return order as unknown as OrderProps;
         },
         transactions: async (cashier_id: string) => {
