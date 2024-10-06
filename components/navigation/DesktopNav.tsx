@@ -37,17 +37,18 @@ export const routeLists = [
         id: "orders"
     },
     {
-        label: "Calendar",
-        icon: <CalendarRange className="h-5 w-5 hover:text-red-500 transition-all duration-300"/>,
-        href: "/admin/calendar",
-        id: "calendar"
-    },
-    {
       label: "Inventory",
       icon: <Boxes className="h-5 w-5 hover:text-red-500 transition-all duration-300"/>,
       href: "/admin/inventory",
       id: "inventory"
     },
+    {
+        label: "Calendar",
+        icon: <CalendarRange className="h-5 w-5 hover:text-red-500 transition-all duration-300"/>,
+        href: "/admin/calendar",
+        id: "calendar"
+    },
+    
     {
         label: "Records",
         icon: <FilePieChart className="h-5 w-5 hover:text-red-500 transition-all duration-300"/>,

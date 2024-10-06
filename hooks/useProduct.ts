@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { create } from "zustand";
 import { ProductProps } from "@/types/Product";
 
-interface UseProductStateProps {
+export interface UseProductStateProps {
     selected: ProductProps | null,
     openDeleteDialog: boolean;
     openFormDialog: boolean;

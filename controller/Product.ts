@@ -70,6 +70,7 @@ const ProductController = {
                   _id: 1,
                   name: 1,
                   description: 1,
+                  productId: 1,
                   quantity: 1 // Include the fields you want
                 }
               }

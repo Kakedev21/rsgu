@@ -20,7 +20,7 @@ const ProductsChart: FC<ProductsChartProps> = ({status, type = "bar", countType,
     const [totalCount, setTotalCount] = useState<any>();
     const getCategories = () => {
        
-        const  catergories = totalCount?.map((count: any) => `${count?.name} ${count?.description}`) || []
+        const  catergories = totalCount?.map((count: any) => `${count?.productId}-${count?.name}`) || []
         console.log("catergories", catergories);
         return catergories;
     }
