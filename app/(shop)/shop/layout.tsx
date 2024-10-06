@@ -5,7 +5,7 @@ import Image from "next/image";
 import UserProfile from "@/components/userProfile/Profile";
 import User from "@/app/(route)/admin/(dashboard)/user";
 import { Toaster } from "@/components/ui/toaster";
-import { User2 } from "lucide-react";
+import { HandCoins, User2 } from "lucide-react";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/config/authOptions";
 import CartItem from "./_components/CartItem";
@@ -40,7 +40,11 @@ const ShopLayout = async ({children} :  {
                   </div>
                 </div>
                 <div className="flex gap-5 items-center">
-                  
+                  {
+                    session?.user.role === "cashier" && <Link href="/cashier" className="border-b border-transparent group hover:border-white transition-all duration-300 p-2">
+                      <HandCoins className="text-slate-50 cursor-pointer"/>
+                    </Link>
+                  }
                   <CartItem/>
                   
                   {session?.user ? <User /> : <Link href="/auth/login" className="border-b border-transparent group hover:border-white transition-all duration-300 p-2">

@@ -2,14 +2,13 @@
 
 
 import { TableCell, TableRow } from '@/components/ui/table';
-
 import moment from 'moment';
 import numeral from "numeral";
 import { OrderProps } from '@/types/Order';
 
 
-export function PendingOrdersRow({ order }: { order: OrderProps }) {
-  
+export function PaidOrdersRow({ order }: { order: OrderProps }) {
+ 
 
 
   return (
@@ -22,7 +21,9 @@ export function PendingOrdersRow({ order }: { order: OrderProps }) {
         {moment(order?.createdAt).format("llll")}
       </TableCell>
       <TableCell className="font-medium">{moment(order?.updatedAt).format("llll")}</TableCell>
-     
+      <TableCell className="font-medium">
+        <p>{order?.cashier?.name}</p>
+      </TableCell>
       {/* <TableCell>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

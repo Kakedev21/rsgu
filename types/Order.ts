@@ -21,5 +21,6 @@ export interface OrderProps {
     updatedAt?: string;
     products?: ProductProps;
     user?: UserProps;
-    
+    cashier?: UserProps;
+    admin?:UserProps
 }

@@ -28,6 +28,7 @@ export const useOrderState = create<UseOrderStateProps>(set => ({
 const useOrder = ({page = 1, limit = 10, init = false, q = "", user_id = ""}: {page?: number, limit?: number, init?:boolean, q?: string, user_id?: string}) => {
     const [orders, setOrders] = useState<{orders: OrderProps[], page: number, limit: number, count: number} | null>(null)
     const [order, setOrder] = useState<OrderProps[] | null>();
+    const [orderStatusCount, setOrderSStatusCount] = useState<any | null>(null);
     const [transactions, setTransactions] = useState<any[] | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
 
@@ -43,9 +44,9 @@ const useOrder = ({page = 1, limit = 10, init = false, q = "", user_id = ""}: {p
             }
         });
         setLoading(false);
-        if (result.data.orders) {
-            setOrders(result.data.orders)
-            return result.data.orders;
+        if (result.data.order || result.data.orders) {
+            setOrders(result.data.order || result.data.orders)
+            return result.data.order || result.data.orders;
         }
     }
 
@@ -92,6 +93,27 @@ const useOrder = ({page = 1, limit = 10, init = false, q = "", user_id = ""}: {p
         setTransactions(result.data?.order)
         return result.data?.order;
     }
+
+    const getOrderStatus = async (status: string) => {
+        setLoading(true);
+        const result = await axios.get(`/api/bff/order/count/${status}`);
+        setLoading(false);
+        setOrderSStatusCount(result.data?.orders)
+        return result.data?.orders;
+    }
+
+    const getTotalCountPerMonth = async (status: string) => {
+        setLoading(true);
+        const result = await axios.get(`/api/bff/order/count?status=${status}`);
+        setLoading(false);
+        return result.data?.orders;
+    }
+    const getTotalCountPerDayForMonth = async (month: string, year: string) => {
+        setLoading(true);
+        const result = await axios.get(`/api/bff/order/count?month=${month}&year=${year}&countType=daily`);
+        setLoading(false);
+        return result.data?.orders;
+    }
    
     useEffect(() => {
        
@@ -116,7 +138,11 @@ const useOrder = ({page = 1, limit = 10, init = false, q = "", user_id = ""}: {p
         confirmOrder,
         setOrder,
         getTransactions,
-        transactions
+        transactions,
+        getOrderStatus,
+        orderStatusCount,
+        getTotalCountPerMonth,
+        getTotalCountPerDayForMonth
     }
 }
  

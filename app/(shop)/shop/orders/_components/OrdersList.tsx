@@ -24,7 +24,7 @@ const OrdersList: FC<OrderListProps> = ({user_id}) => {
     useEffect(() => {
         orderHook.getAllOrder({page: 1, limit: 20, user_id, q: debounceHook.debounceValue})
     }, [debounceHook.debounceValue])
-    
+    console.log("orderHook.orders?.orders", orderHook.orders)
     return <div className="space-y-5">
         <div className=" bg-white flex justify-center items-center mx-auto sm:w-1/2 w-full">
             <SearchInput placeholder="Search Order Number..."
