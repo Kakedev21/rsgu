@@ -83,7 +83,7 @@ const Dashboard = () => {
               <OrdersChart status="Pending"/>
             </div>
             <div className="w-full">
-              <OrdersChart status="Pending"/>
+              <OrdersChart status="Paid"/>
             </div>
             <div className="w-full">
               <OrdersChart status="Completed"/>
