@@ -8,7 +8,7 @@ import { signIn, SignInResponse } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useRef, useState } from "react";
 import CryptoJS from "crypto-js"
-import { Store } from "lucide-react";
+import { Eye, EyeOff, Store } from "lucide-react";
 import Link from "next/link";
 import useUser from "@/hooks/useUser";
 const RegisterForm = () => {
@@ -19,6 +19,8 @@ const RegisterForm = () => {
     const srCodeRef = useRef<HTMLInputElement>(null);
     const passwordRef = useRef<HTMLInputElement>(null);
     const confirmPasswordRef = useRef<HTMLInputElement>(null);
+    const [passwordType, setPasswordType] = useState<string>("password");
+    const [confirmPasswordType, setConfirmPasswordType] = useState<string>("password");
     const [loading, setLoading] = useState(false);
     const { toast } = useToast();
     const router = useRouter();
@@ -93,11 +95,21 @@ const RegisterForm = () => {
         </div>
         <div className="w-full px-5">
           <Label className="text-slate-500">Password</Label>
-          <Input className="w-full  sm:w-[400px]" type="password" ref={passwordRef}  disabled={loading}/>
+         
+          <div className="relative flex items-center border border-slate-200 rounded pr-3">
+            <Input className="w-full  border-none" type={passwordType} ref={passwordRef}  disabled={loading}/>
+            {passwordType === "text" && <div onClick={() => setPasswordType("password")}><Eye className="text-slate-500" size={18}/></div>}
+            {passwordType === "password" && <div onClick={() => setPasswordType("text")}><EyeOff className="text-slate-500" size={18}/></div>}
+          </div>
         </div>
         <div className="w-full px-5">
           <Label className="text-slate-500">Confirm Password</Label>
-          <Input className="w-full  sm:w-[400px]" type="password" ref={confirmPasswordRef}  disabled={loading}/>
+          <div className="relative flex items-center border border-slate-200 rounded pr-3">
+            <Input className="w-full  border-none" type={confirmPasswordType} ref={confirmPasswordRef}  disabled={loading}/>
+            {confirmPasswordType === "text" && <div onClick={() => setConfirmPasswordType("password")}><Eye className="text-slate-500" size={18}/></div>}
+            {confirmPasswordType === "password" && <div onClick={() => setConfirmPasswordType("text")}><EyeOff className="text-slate-500" size={18}/></div>}
+          </div>
+          
         </div>
         <div className="w-full flex-col gap-3 px-5">
           <Button className="w-full" variant="destructive" type="submit"  disabled={loading}>

@@ -15,7 +15,7 @@ const LoginForm = () => {
     const usernameRef = useRef<HTMLInputElement>(null);
     const passwordRef = useRef<HTMLInputElement>(null);
     const [loading, setLoading] = useState(false);
-    const [passwordType, setPasswordType] = useState<string>("text");
+    const [passwordType, setPasswordType] = useState<string>("password");
     const { toast } = useToast();
     const router = useRouter();
 
