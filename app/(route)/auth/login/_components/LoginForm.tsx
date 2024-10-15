@@ -8,13 +8,14 @@ import { signIn, SignInResponse } from "next-auth/react";
 import { redirect, useRouter, useSearchParams } from "next/navigation";
 import { useRef, useState } from "react";
 import CryptoJS from "crypto-js"
-import { Store } from "lucide-react";
+import { Eye, EyeOff, Store } from "lucide-react";
 import Link from "next/link";
 const LoginForm = () => {
     const searchParams = useSearchParams();
     const usernameRef = useRef<HTMLInputElement>(null);
     const passwordRef = useRef<HTMLInputElement>(null);
     const [loading, setLoading] = useState(false);
+    const [passwordType, setPasswordType] = useState<string>("text");
     const { toast } = useToast();
     const router = useRouter();
 
@@ -69,11 +70,15 @@ const LoginForm = () => {
         </div>
         <div className="w-full px-5">
           <Label className="text-slate-500">Username</Label>
-          <Input className="w-full  sm:w-[400px]" ref={usernameRef} disabled={loading}/>
+          <Input className="w-full " ref={usernameRef} disabled={loading}/>
         </div>
         <div className="w-full px-5">
           <Label className="text-slate-500">Password</Label>
-          <Input className="w-full  sm:w-[400px]" type="password" ref={passwordRef}  disabled={loading}/>
+          <div className="relative flex items-center border border-slate-200 rounded pr-3">
+            <Input className="w-full  sm:w-[400px] border-none" type={passwordType} ref={passwordRef}  disabled={loading}/>
+            {passwordType === "text" && <div onClick={() => setPasswordType("password")}><Eye className="text-slate-500" size={18}/></div>}
+            {passwordType === "password" && <div onClick={() => setPasswordType("text")}><EyeOff className="text-slate-500" size={18}/></div>}
+          </div>
         </div>
         <div className="w-full flex-col gap-3 px-5">
           <Button className="w-full" variant="destructive" type="submit"  disabled={loading}>
