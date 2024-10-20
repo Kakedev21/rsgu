@@ -11,6 +11,8 @@ export interface UserProps {
     username: string;
     department?: string | undefined;
     srCode?: string;
+    contactNumber?: string;
+    course?: string;
   }
 
 

@@ -28,6 +28,12 @@ const UserSchema = new Schema({
     },
     srCode: {
         type: String,
+    },
+    course: {
+        type: String,
+    },
+    contactNumber: {
+        type: String
     }
 
 }, {timestamps: true});

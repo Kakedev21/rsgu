@@ -69,7 +69,7 @@ const LoginForm = () => {
           <p className="text-slate-600 font-semibold text-2xl">Welcome back!</p>
         </div>
         <div className="w-full px-5">
-          <Label className="text-slate-500">Username</Label>
+          <Label className="text-slate-500">Username/Email</Label>
           <Input className="w-full " ref={usernameRef} disabled={loading}/>
         </div>
         <div className="w-full px-5">
@@ -79,6 +79,7 @@ const LoginForm = () => {
             {passwordType === "text" && <div onClick={() => setPasswordType("password")}><Eye className="text-slate-500" size={18}/></div>}
             {passwordType === "password" && <div onClick={() => setPasswordType("text")}><EyeOff className="text-slate-500" size={18}/></div>}
           </div>
+          <p className="text-right text-xs pt-3 text-blue-500 cursor-pointer">Forgot Password</p>
         </div>
         <div className="w-full flex-col gap-3 px-5">
           <Button className="w-full" variant="destructive" type="submit"  disabled={loading}>

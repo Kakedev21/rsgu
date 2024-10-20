@@ -11,6 +11,7 @@ import CryptoJS from "crypto-js"
 import { Eye, EyeOff, Store } from "lucide-react";
 import Link from "next/link";
 import useUser from "@/hooks/useUser";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 const RegisterForm = () => {
     const userHook = useUser({init: false});
     const searchParams = useSearchParams();
@@ -19,8 +20,12 @@ const RegisterForm = () => {
     const srCodeRef = useRef<HTMLInputElement>(null);
     const passwordRef = useRef<HTMLInputElement>(null);
     const confirmPasswordRef = useRef<HTMLInputElement>(null);
+    const courseRef = useRef<HTMLInputElement>(null);
+    const contactNumberRef = useRef<HTMLInputElement>(null);
+    
     const [passwordType, setPasswordType] = useState<string>("password");
     const [confirmPasswordType, setConfirmPasswordType] = useState<string>("password");
+    const [department, setDepartment] = useState<string>()
     const [loading, setLoading] = useState(false);
     const { toast } = useToast();
     const router = useRouter();
@@ -32,9 +37,26 @@ const RegisterForm = () => {
         name: nameRef?.current?.value,
         username: emailRef.current?.value as string,
         email: emailRef.current?.value,
-        department: "shop user",
+        department: department as string,
         role: "user",
-        password: passwordRef.current?.value
+        password: passwordRef.current?.value,
+        course: courseRef.current?.value,
+        contactNumber: contactNumberRef.current?.value,
+        srCode: srCodeRef.current?.value
+      }
+      if (!/^[a-zA-Z0-9._%+-]+@g\.batstate-u\.edu\.ph$/.test(payload.email as string)) {
+        setLoading(false);
+        return toast({
+          title: "Email should only contain @g.batstate-u.edu.ph",
+          variant: "destructive"
+        })
+      }
+      if (!/^(?:\+63|0)?9\d{9}$/.test(payload.contactNumber as string)) {
+        setLoading(false);
+        return toast({
+          title: "Invalid contact number",
+          variant: "destructive"
+        })
       }
       if (payload.password !== confirmPasswordRef.current?.value || (payload.password?.length || 0) < 8 ) {
         setLoading(false);
@@ -62,8 +84,9 @@ const RegisterForm = () => {
         router.push("/auth/login");
       } else {
         toast({
-          title: "Registration Failed",
-          description: response?.error?.message
+          title: response.error?.code === 11000 ? "Email already exist" : "Registration Failed",
+          description: response?.error?.message,
+          variant: "destructive"
         })
       }
     }
@@ -86,18 +109,44 @@ const RegisterForm = () => {
           <Input className="w-full  sm:w-[400px]" ref={nameRef} disabled={loading} placeholder="Full name"/>
         </div>
         <div className="w-full px-5">
+          <Label className="text-slate-500">Course</Label>
+          <Input className="w-full  sm:w-[400px]" ref={courseRef} disabled={loading} placeholder="Course"/>
+        </div>
+        <div className="w-full px-5">
+          <Label className="text-slate-500">Deparment</Label>
+          <Select onValueChange={(value) => setDepartment(value)}>
+            <SelectTrigger className="w-full sm:w-[400px]">
+              <SelectValue placeholder="Depatrment" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="CET">CET</SelectItem>
+              <SelectItem value="CICS">CICS</SelectItem>
+              <SelectItem value="CAS">CAS</SelectItem>
+              <SelectItem value="CABEIHM">CABEIHM</SelectItem>
+              <SelectItem value="CTE">CTE</SelectItem>
+              <SelectItem value="CCJE">CCJE</SelectItem>
+            </SelectContent>
+          </Select>
+
+        </div>
+        <div className="w-full px-5">
           <Label className="text-slate-500">SR Code</Label>
           <Input className="w-full  sm:w-[400px]" ref={srCodeRef} disabled={loading}/>
         </div>
         <div className="w-full px-5">
           <Label className="text-slate-500">Email</Label>
-          <Input className="w-full  sm:w-[400px]" ref={emailRef} disabled={loading}/>
+          <Input className="w-full  sm:w-[400px]" ref={emailRef} disabled={loading} placeholder="john_doe@g.batstate-u.edu.ph"/>
         </div>
+        <div className="w-full px-5">
+          <Label className="text-slate-500">Contact Number</Label>
+          <Input className="w-full  sm:w-[400px]" ref={contactNumberRef} disabled={loading} placeholder="09123456789"/>
+        </div>
+        
         <div className="w-full px-5">
           <Label className="text-slate-500">Password</Label>
          
           <div className="relative flex items-center border border-slate-200 rounded pr-3">
-            <Input className="w-full  border-none" type={passwordType} ref={passwordRef}  disabled={loading}/>
+            <Input className="w-full  border-none" type={passwordType} ref={passwordRef}  disabled={loading} placeholder="********"/>
             {passwordType === "text" && <div onClick={() => setPasswordType("password")}><Eye className="text-slate-500" size={18}/></div>}
             {passwordType === "password" && <div onClick={() => setPasswordType("text")}><EyeOff className="text-slate-500" size={18}/></div>}
           </div>
@@ -105,7 +154,7 @@ const RegisterForm = () => {
         <div className="w-full px-5">
           <Label className="text-slate-500">Confirm Password</Label>
           <div className="relative flex items-center border border-slate-200 rounded pr-3">
-            <Input className="w-full  border-none" type={confirmPasswordType} ref={confirmPasswordRef}  disabled={loading}/>
+            <Input className="w-full  border-none" type={confirmPasswordType} ref={confirmPasswordRef}  disabled={loading} placeholder="********"/>
             {confirmPasswordType === "text" && <div onClick={() => setConfirmPasswordType("password")}><Eye className="text-slate-500" size={18}/></div>}
             {confirmPasswordType === "password" && <div onClick={() => setConfirmPasswordType("text")}><EyeOff className="text-slate-500" size={18}/></div>}
           </div>

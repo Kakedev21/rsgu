@@ -66,6 +66,7 @@ const UserController = {
             password: password
         };
         await connectMongoDB();
+        console.log("payload", payload)
         const user = await User.create(payload) as UserProps;
         return user;
 
