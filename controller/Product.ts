@@ -57,6 +57,7 @@ const ProductController = {
     },
     update: async (product_id: string, data: ProductProps) => {
         await connectMongoDB();
+        console.log("data", data)
         const product = await Product.findOneAndUpdate({_id: product_id}, {...data}, { new: true, upsert: true, runValidators: true});
         return product;
     },

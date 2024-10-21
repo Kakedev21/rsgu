@@ -77,6 +77,7 @@ const InventoryTable: FC<InventoryTableTableProps> = ({products, count = 0, limi
           <TableRow>
             <TableHead>ID</TableHead>
             <TableHead>Product ID</TableHead>
+            <TableHead>Product Name & Description</TableHead>
             <TableHead>Quantity</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Updated At</TableHead>

@@ -23,6 +23,7 @@ export interface ProductProps {
     createdAt?: string;
     updatedAt?: string;
     image?: string;
+    status?: string;
     
   }
 

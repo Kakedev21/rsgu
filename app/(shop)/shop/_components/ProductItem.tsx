@@ -9,10 +9,11 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import numeral from "numeral";
 import { FC } from "react";
+import { twMerge } from "tailwind-merge";
 
 
 const ProductItem:FC<ProductProps>  = (props) => {
-    const {name, description, price, _id, image, quantity} = props;
+    const {name, description, price, _id, image, quantity, status} = props;
     const cartState = useCartState();
     const cartHook = useCart({init:false});
     const session = useSession();
@@ -70,11 +71,13 @@ const ProductItem:FC<ProductProps>  = (props) => {
             </div>
             <span className="font-semibold text-slate-600">₱{numeral(price).format('0,0.00')}</span>
             <span className="text-xs text-slate-600 block">Stocks: {quantity}</span>
+            <span className={twMerge("text-xs text-red-500", (status || "Available") === "Available" && "text-green-500")}>{status || "Available"}</span>
         </div>
         <div className="flex justify-end gap-3">
             <Button variant="outline"
                 onClick={handleAddToCartClick}
                 size="sm"
+                disabled={(status || "Available") === "Not Available"}
             >
                 <ShoppingCart size={16}/>
             </Button>
@@ -82,6 +85,7 @@ const ProductItem:FC<ProductProps>  = (props) => {
                 onClick={handleBuyNow}
                 size="sm"
                 className="text-xs sm:text-base"
+                disabled={(status || "Available") === "Not Available"}
             >
                 Buy now
             </Button>
