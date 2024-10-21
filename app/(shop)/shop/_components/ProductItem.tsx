@@ -12,7 +12,7 @@ import { FC } from "react";
 
 
 const ProductItem:FC<ProductProps>  = (props) => {
-    const {name, description, price, _id, image} = props;
+    const {name, description, price, _id, image, quantity} = props;
     const cartState = useCartState();
     const cartHook = useCart({init:false});
     const session = useSession();
@@ -69,6 +69,7 @@ const ProductItem:FC<ProductProps>  = (props) => {
                 <p className="text-sm text-slate-600">{description}</p>
             </div>
             <span className="font-semibold text-slate-600">₱{numeral(price).format('0,0.00')}</span>
+            <span className="text-xs text-slate-600 block">Stocks: {quantity}</span>
         </div>
         <div className="flex justify-end gap-3">
             <Button variant="outline"

@@ -47,7 +47,7 @@ const ProductList = ({searchValue}: {searchValue: string}) => {
         productHook.getAll(pageOffset, 100, null, category_id);
         setCategory(category_id);
     }
-    console.log("categoryHook",categoryHook.categories);
+
    
     return <div className="space-y-5 overflow-y-scroll">
         <div className="w-full overflow-x-scroll py-5">
