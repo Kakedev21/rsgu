@@ -2,9 +2,10 @@ import { ProductProps } from '../types/Product';
 import { NextRequest } from 'next/server';
 import { connectMongoDB } from '@/lib/mongodb';
 import Product from '@/models/Product';
+import mongoose from 'mongoose';
 
 const ProductController = {
-    products: async (req: NextRequest, {page, limit, q}: {page: number, limit: number, q?: string}) => {
+    products: async (req: NextRequest, {page, limit, q, category}: {page: number, limit: number, q?: string, category?: string}) => {
         await connectMongoDB();
         const regex = new RegExp(q as string, 'i');
         const  filter = {
@@ -20,6 +21,9 @@ const ProductController = {
                         description: {$regex: regex}
                     },
                 ]
+            } : {}),
+            ...(category ? {
+                category: new mongoose.Types.ObjectId(category)
             } : {})
         };
     

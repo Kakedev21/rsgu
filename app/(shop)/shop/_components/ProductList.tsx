@@ -8,12 +8,15 @@ import { Button } from "@/components/ui/button";
 import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { RefreshCcw } from "lucide-react";
+import useCategory from "@/hooks/useCategory";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const ProductList = ({searchValue}: {searchValue: string}) => {
    
     const searchParams = useSearchParams();
     const productHook = useProduct({init: false});
     const pageOffset =  Number(searchParams.get("page")) || 1;
+    const categoryHook = useCategory({init: true, limit: 100});
     useEffect(() => {
         if (!productHook.loading) {
            (async () => {
@@ -38,10 +41,22 @@ const ProductList = ({searchValue}: {searchValue: string}) => {
             }
         </div>
     }
-    
+    const handleFilter = (category_id: string) => {
+        productHook.getAll(pageOffset, 100, null, category_id)
+    }
+    console.log("categoryHook",categoryHook.categories);
    
-    return <div className="space-y-10 overflow-y-scroll">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-5 overflow-y-scroll py-5">
+    return <div className="space-y-5 overflow-y-scroll">
+        <div className="w-full overflow-x-scroll py-5">
+            <div className="flex gap-3 items-center w-max">
+                {
+                    categoryHook.categories?.categories?.map((category) => {
+                        return <Button variant="outline" key={category._id} className="rounded-full" onClick={() => handleFilter(category._id as string)} disabled={productHook.loading}>{category.name}</Button>
+                    })
+                }
+            </div>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-5 overflow-y-scroll pb-5">
             {
                 productHook.products?.products.map(product => (<ProductItem {...product} key={product?._id}/>))
             }

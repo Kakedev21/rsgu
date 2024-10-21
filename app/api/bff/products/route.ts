@@ -31,8 +31,9 @@ export async function GET(req: NextRequest) {
         const page = Number(searchParams.get("page"));
         const limit = Number(searchParams.get("limit"));
         const search = searchParams.get("q") as string;
+        const category = searchParams.get("category") as string
      
-        const products = await ProductController.products(req, {page, limit, q: search});
+        const products = await ProductController.products(req, {page, limit, q: search, category});
         return NextResponse.json({
             products
         });

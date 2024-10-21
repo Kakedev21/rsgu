@@ -26,13 +26,14 @@ export const useProductState = create<UseProductStateProps>(set => ({
 const useProduct = ({page = 1, limit = 10, init = false}: {page?: number, limit?: number, init?:boolean}) => {
     const [products, setProducts] = useState<{products: ProductProps[], page: number, limit: number, count: number} | null>(null)
     const [loading, setLoading] = useState<boolean>(false);
-    const getAll = async (page: number, limit: number, q?: string | null) => {
+    const getAll = async (page: number, limit: number, q?: string | null, category?: string | null) => {
         setLoading(true);
         const result = await axios.get(`/api/bff/products`, {
             params: {
                 page,
                 limit,
-                ...( q ? { q: q } : {})
+                ...( q ? { q: q } : {}),
+                ...(category ? { category } : {})
             }
         });
         setLoading(false);
