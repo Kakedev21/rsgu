@@ -6,10 +6,11 @@ import { times } from "lodash";
 import ProductItem from "./ProductItem";
 import { Button } from "@/components/ui/button";
 import { useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { RefreshCcw } from "lucide-react";
 import useCategory from "@/hooks/useCategory";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { twMerge } from "tailwind-merge";
 
 const ProductList = ({searchValue}: {searchValue: string}) => {
    
@@ -17,6 +18,7 @@ const ProductList = ({searchValue}: {searchValue: string}) => {
     const productHook = useProduct({init: false});
     const pageOffset =  Number(searchParams.get("page")) || 1;
     const categoryHook = useCategory({init: true, limit: 100});
+    const [category, setCategory] = useState<string>("");
     useEffect(() => {
         if (!productHook.loading) {
            (async () => {
@@ -42,7 +44,8 @@ const ProductList = ({searchValue}: {searchValue: string}) => {
         </div>
     }
     const handleFilter = (category_id: string) => {
-        productHook.getAll(pageOffset, 100, null, category_id)
+        productHook.getAll(pageOffset, 100, null, category_id);
+        setCategory(category_id);
     }
     console.log("categoryHook",categoryHook.categories);
    
@@ -50,8 +53,9 @@ const ProductList = ({searchValue}: {searchValue: string}) => {
         <div className="w-full overflow-x-scroll py-5">
             <div className="flex gap-3 items-center w-max">
                 {
-                    categoryHook.categories?.categories?.map((category) => {
-                        return <Button variant="outline" key={category._id} className="rounded-full" onClick={() => handleFilter(category._id as string)} disabled={productHook.loading}>{category.name}</Button>
+                    categoryHook.categories?.categories?.map((cat) => {
+                        const _id = cat?._id as string
+                        return <Button variant="outline" key={cat._id} className={twMerge("rounded-full hover:border-red-500", category === _id && "border border-red-500")} onClick={() => handleFilter(cat._id as string)} disabled={productHook.loading}>{cat.name}</Button>
                     })
                 }
             </div>
