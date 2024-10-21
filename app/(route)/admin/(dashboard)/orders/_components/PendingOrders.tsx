@@ -14,10 +14,10 @@ const PendingOrders = () => {
     const pageOffset =  Number(searchParams.get("page")) || 1;
     const handleSearch = (page: number = pageOffset, search: string | null) => {
         
-        orderHook.getAllOrder({page, limit: 5, q: search, status: "Pending"});
+        orderHook.getAllOrder({page, limit: 10, q: search, status: "Pending"});
     }
     const handleRefresh = () => {
-        orderHook.getAllOrder({page: pageOffset, limit:5, status: "Pending"});
+        orderHook.getAllOrder({page: pageOffset, limit:10, status: "Pending"});
     }
     
     return <div>

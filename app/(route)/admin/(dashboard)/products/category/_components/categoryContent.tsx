@@ -18,11 +18,11 @@ const ProductsCategoryContent = () => {
   const pageOffset =  Number(searchParams.get("page")) || 1
   const handleSearch = (page: number = pageOffset, search: string | null) => {
     console.log("trigger");
-    categoryHook.getAllCategory(page, 5, search);
+    categoryHook.getAllCategory(page, 10, search);
   }
 
   const handleRefresh = () => {
-    categoryHook.getAllCategory(pageOffset, 5);
+    categoryHook.getAllCategory(pageOffset, 10);
   }
   return (
     <div className="mt-5 space-y-5">

@@ -10,10 +10,10 @@ const PaidOrders = () => {
     const pageOffset =  Number(searchParams.get("page")) || 1;
     const handleSearch = (page: number = pageOffset, search: string | null) => {
         
-        orderHook.getAllOrder({page, limit: 5, q: search, status: "Paid"});
+        orderHook.getAllOrder({page, limit: 10, q: search, status: "Paid"});
     }
     const handleRefresh = () => {
-        orderHook.getAllOrder({page: pageOffset, limit:5, status: "Paid"});
+        orderHook.getAllOrder({page: pageOffset, limit:10, status: "Paid"});
     }
     
     return <div>

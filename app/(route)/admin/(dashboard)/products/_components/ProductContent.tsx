@@ -18,10 +18,10 @@ const ProductsContentPage = () => {
   const pageOffset =  Number(searchParams.get("page")) || 1;
   const handleSearch = (page: number = pageOffset, search: string | null) => {
     console.log("triffer", page, pageOffset)
-    productHook.getAll(page, 5, search);
+    productHook.getAll(page, 10, search);
   }
   const handleRefresh = () => {
-    productHook.getAll(pageOffset, 5);
+    productHook.getAll(pageOffset, 10);
   }
 
   return (

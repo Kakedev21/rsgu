@@ -18,10 +18,10 @@ const UsersContentPage = () => {
   const searchParams = useSearchParams();
   const pageOffset =  Number(searchParams.get("page")) || 1;
   const handleSearch = (page: number = pageOffset, search: string | null) => {
-    userHook.getAll(page, 5, search);
+    userHook.getAll(page, 10, search);
   }
   const handleRefresh = () => {
-    userHook.getAll(pageOffset, 5);
+    userHook.getAll(pageOffset, 10);
   }
 
   return (
