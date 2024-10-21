@@ -55,7 +55,7 @@ const ProductList = ({searchValue}: {searchValue: string}) => {
                 {
                     categoryHook.categories?.categories?.map((cat) => {
                         const _id = cat?._id as string
-                        return <Button variant="outline" key={cat._id} className={twMerge("rounded-full hover:border-red-500", category === _id && "border border-red-500")} onClick={() => handleFilter(cat._id as string)} disabled={productHook.loading}>{cat.name}</Button>
+                        return <Button variant={category === _id ? "default" : "outline"} key={cat._id} className={"rounded-full"} onClick={() => handleFilter(cat._id as string)} disabled={productHook.loading}>{cat.name}</Button>
                     })
                 }
             </div>
