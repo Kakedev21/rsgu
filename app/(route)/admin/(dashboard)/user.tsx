@@ -29,9 +29,9 @@ const User = () => {
         <Button
           variant="outline"
           size="icon"
-          className="overflow-hidden rounded-full"
+          className="overflow-hidden rounded-full outline outline-green-500"
         >
-          <Avatar className='outline outline-slate-50'>
+          <Avatar className="outline outline-green-500">
             <AvatarFallback className='text-xs'>{session.data?.user?.name?.split(" ").map((n)=>n[0]).join("")}</AvatarFallback>
           </Avatar>
         </Button>

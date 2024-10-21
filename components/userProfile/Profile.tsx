@@ -25,13 +25,13 @@ const UserProfile = () => {
             <DialogContent>
                 <DialogHeader>
                 <DialogTitle className="w-full flex items-center gap-2 border-b pb-3">
-                    <Avatar className="outline outline-red-500">
+                    <Avatar className="outline outline-green-500">
                         <AvatarFallback className="text-xs">{session.data?.user?.name?.split(" ").map((n)=>n[0]).join("")}</AvatarFallback>
                     </Avatar>
                     {session.data?.user.name}
                 </DialogTitle>
-                <DialogDescription>
-                   <div>
+                </DialogHeader>
+                <div>
                     <Tabs defaultValue="account" className="w-full">
                         <TabsList>
                             <TabsTrigger value="account">Account</TabsTrigger>
@@ -44,9 +44,7 @@ const UserProfile = () => {
                             <UserPassword/>
                         </TabsContent>
                     </Tabs>
-                   </div>
-                </DialogDescription>
-                </DialogHeader>
+                </div>
             </DialogContent>
         </Dialog>
     );
