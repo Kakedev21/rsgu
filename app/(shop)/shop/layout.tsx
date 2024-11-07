@@ -33,7 +33,7 @@ const ShopLayout = async ({ children }: {
             </Link>
             <div className="space-y-0">
               <p className="text-xs sm:text-lg text-slate-100 font-semibold py-3 sm:p-0 m-0 flex flex-col">
-                Bantangas State University
+                Batangas State University
                 <span className="text-[8px] sm:text-xs text-slate-100">Leading Innovations, Transforming Lives</span>
               </p>
 
