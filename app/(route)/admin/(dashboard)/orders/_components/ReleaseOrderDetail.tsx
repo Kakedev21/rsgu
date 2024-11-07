@@ -8,21 +8,20 @@ import ConfirmReleaseOrder from "./ConfirmReleaseOrder";
 import { useSession } from "next-auth/react";
 import { useToast } from "@/components/ui/use-toast";
 
-
 interface ReleaseOrderDetailProps {
     orderNo: string;
 }
-const ReleaseOrderDetail:FC<ReleaseOrderDetailProps> = ({orderNo}) => {
-    const orderHook = useOrder({init: false});
+const ReleaseOrderDetail: FC<ReleaseOrderDetailProps> = ({ orderNo }) => {
+    const orderHook = useOrder({ init: false });
     const session = useSession();
     const { toast } = useToast();
     const handleConfirm = async () => {
-        await orderHook.confirmOrder({status: "Completed", admin: session?.data?.user?.session_id as string}, orderHook?.order?.[0]?._id as string);
+        await orderHook.confirmOrder({ status: "Completed", admin: session?.data?.user?.session_id as string }, orderHook?.order?.[0]?._id as string);
         await orderHook.orderDetail(orderNo as string)
         toast({
             title: "Order Completed"
         })
-        
+
     }
     useEffect(() => {
         if (orderNo) {
@@ -30,18 +29,18 @@ const ReleaseOrderDetail:FC<ReleaseOrderDetailProps> = ({orderNo}) => {
         } else {
             orderHook.setOrder(null)
         }
-        
+
     }, [orderNo])
 
     if (orderHook.loading) {
-        return  <Skeleton className="w-full h-10"/>
+        return <Skeleton className="w-full h-10" />
     }
     if (!orderHook.order) {
         return <div className="flex justify-center">
-           <p className="text-slate-600">No Order Found</p> 
+            <p className="text-slate-600">No Order Found</p>
         </div>
     }
-     console.log("order", orderHook.order)
+    console.log("order", orderHook.order)
     return (
         <div className="space-y-4">
             <div className="">
@@ -81,10 +80,10 @@ const ReleaseOrderDetail:FC<ReleaseOrderDetailProps> = ({orderNo}) => {
                     >Release Order</Button>}
                     orderNo={orderHook?.order?.[0]._id as string}
                 />
-                
+
             </div>
         </div>
     );
 }
- 
+
 export default ReleaseOrderDetail;

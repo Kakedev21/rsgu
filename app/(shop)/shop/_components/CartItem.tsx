@@ -11,19 +11,19 @@ const CartItem = () => {
     const router = useRouter();
     const session = useSession();
     const cartState = useCartState();
-    const cartHook = useCart({init: !!session.data, q: session.data?.user?.id});
+    const cartHook = useCart({ init: !!session.data, q: session.data?.user?.id });
     const localStorageCart = JSON.parse(window.localStorage.getItem("cartItem") || "{}") as CartProps[];
     const cartCount = useMemo(() => {
         if (cartHook.cart?.carts?.length && !cartHook.loading) {
-            
+
             return cartHook.cart?.count || 0;
         }
-       return localStorageCart.length;
+        return localStorageCart.length;
     }, [cartHook.cart, cartState.updateCart]);
-   
+
     useEffect(() => {
         if (session.data?.user?.session_id && !cartHook.loading && localStorageCart.length) {
-            
+
             (async () => {
                 console.log("session.data?.user?.id", session.data?.user?.id)
                 const parseLocalStoragePayload = localStorageCart?.map(item => ({
@@ -46,11 +46,11 @@ const CartItem = () => {
             if (cartCount) {
                 router.push("/shop/cart")
             }
-        }}/>
-    {!!cartCount && <div className="absolute rounded-full bg-slate-50 text-slate-600 w-5 h-5 top-[5px] right-[4px] text-xs flex justify-center items-center font-semibold">
-        {cartCount}
-    </div>}
-  </div>
+        }} />
+        {!!cartCount && <div className="absolute rounded-full bg-slate-50 text-slate-600 w-5 h-5 top-[5px] right-[4px] text-xs flex justify-center items-center font-semibold">
+            {cartCount}
+        </div>}
+    </div>
 }
 
 

@@ -9,13 +9,13 @@ interface ItemDetailProps {
     isPending: boolean;
 }
 
-const ItemDetail:FC<ItemDetailProps> = ({order, isPending}) => {
+const ItemDetail: FC<ItemDetailProps> = ({ order, isPending }) => {
     if (isPending) {
         return <div className="space-y-3">
             {
-                times(3).map(count => (<Skeleton className="w-full h-10" key={count}/>))
+                times(3).map(count => (<Skeleton className="w-full h-10" key={count} />))
             }
-            
+
         </div>
     }
     return (
@@ -33,7 +33,7 @@ const ItemDetail:FC<ItemDetailProps> = ({order, isPending}) => {
                     order?.map((item: OrderProps) => (
                         <div key={item?._id} className="border border-slate-200 rounded p-2 flex justify-between items-center">
                             <div className="flex items-center gap-x-2">
-                                <img src={item?.products?.image || "/no-image.png"} className="h-[60px] w-[80px]"/>
+                                <img src={item?.products?.image || "/no-image.png"} className="h-[60px] w-[80px]" />
                                 <div>
                                     <p>{item?.products?.name}</p>
                                     <p className="text-xs">{item?.products?.description}</p>
