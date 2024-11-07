@@ -151,9 +151,11 @@ const RecordsPage = () => {
                     <TableBody>
                         {reportHook.reports?.map((record) => (
                             <TableRow key={record._id} className="border border-gray-300">
-                                <TableCell className="text-center border border-gray-300">{record.productId?.name}</TableCell>
                                 <TableCell className="text-center border border-gray-300">
-                                    {record.beginningInventory?.unitCost !== 0 ? record.beginningInventory?.unitCost : ''}
+                                    {typeof record.productId === 'string' ? record.productId : record.productId?.name ?? 'N/A'}
+                                </TableCell>
+                                <TableCell className="text-center border border-gray-300">
+                                    {record.beginningInventory?.unitCost ? record.beginningInventory.unitCost : ''}
                                 </TableCell>
                                 <TableCell className="text-center border border-gray-300">
                                     {record.beginningInventory?.unitPrice !== 0 ? record.beginningInventory?.unitPrice : ''}
