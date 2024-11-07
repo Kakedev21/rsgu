@@ -29,6 +29,10 @@ const ProductSchema = new Schema(
       type: Number,
       required: true
     },
+    cost: {
+      type: Number,
+      required: true
+    },
     status: {
       type: String
     }

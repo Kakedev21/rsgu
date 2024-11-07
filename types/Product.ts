@@ -20,6 +20,7 @@ export interface ProductProps {
   description?: string | undefined;
   price: number;
   quantity?: number;
+  cost?: number;
   createdAt?: string;
   updatedAt?: string;
   image?: string;
@@ -32,7 +33,8 @@ export const formSchema = z.object({
   description: z.string(),
   name: z.string().min(1),
   price: z.number().nonnegative(),
-  quantity: z.number().nonnegative()
+  quantity: z.number().nonnegative(),
+  cost: z.number().nonnegative()
 });
 
 export type ProductFormValues = z.infer<typeof formSchema>;

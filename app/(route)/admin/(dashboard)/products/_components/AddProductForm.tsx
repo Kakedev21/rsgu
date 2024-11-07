@@ -23,20 +23,20 @@ interface AddProductProps {
     refresh?: () => void;
 }
 
-const AddProductForm: FC<AddProductProps> = ({onOpenChange, refresh}) => {
-    const catergoryHook = useCategory({init: true});
-    const productHook = useProduct({init: false});
+const AddProductForm: FC<AddProductProps> = ({ onOpenChange, refresh }) => {
+    const catergoryHook = useCategory({ init: true });
+    const productHook = useProduct({ init: false });
     const productState = useProductState();
     const [productImage, setProductImage] = useState<string | null>(productState.selected?.image as string);
     const { toast } = useToast();
     const form = useForm<ProductProps>({
         resolver: zodResolver(formSchema),
         mode: "all",
-        defaultValues: productState.selected  || {description: ""}
-      })
-     
+        defaultValues: productState.selected || { description: "" }
+    })
+
     const onSubmit: SubmitHandler<ProductProps> = async (data) => {
-        let response = productState.selected ? await  productHook.update({...data, image: productImage as string}, productState.selected?.["_id"] as string) : await productHook.create({...data, image: productImage as string});
+        let response = productState.selected ? await productHook.update({ ...data, image: productImage as string }, productState.selected?.["_id"] as string) : await productHook.create({ ...data, image: productImage as string });
         if (response?.error) {
             return toast({
                 title: "Something went wrong",
@@ -54,17 +54,17 @@ const AddProductForm: FC<AddProductProps> = ({onOpenChange, refresh}) => {
     }
     const handleFileChange = (event: any) => {
         const file = event?.target.files[0];
-    
+
         if (file) {
-          const reader = new FileReader();
-    
-          reader.onloadend = () => {
-            setProductImage(reader.result as string);
-          };
-    
-          reader.readAsDataURL(file);
+            const reader = new FileReader();
+
+            reader.onloadend = () => {
+                setProductImage(reader.result as string);
+            };
+
+            reader.readAsDataURL(file);
         }
-      };                                
+    };
 
     console.log("formState", form.formState, productImage)
     return (
@@ -72,7 +72,7 @@ const AddProductForm: FC<AddProductProps> = ({onOpenChange, refresh}) => {
             <ScrollArea className="h-[500px] px-5">
 
                 <form className="space-y-4 mt-5" onSubmit={form.handleSubmit(onSubmit)} >
-                    
+
                     <FormField
                         control={form.control}
                         name="category"
@@ -87,14 +87,14 @@ const AddProductForm: FC<AddProductProps> = ({onOpenChange, refresh}) => {
                                             <SelectValue placeholder="Select" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                        {
-                                            orderBy(catergoryHook.categories?.categories, ["name"], ["asc"])?.map(category => (
-                                                <SelectItem value={category._id as string}>{category.name}</SelectItem>
-                                            ))
-                                        }
+                                            {
+                                                orderBy(catergoryHook.categories?.categories, ["name"], ["asc"])?.map(category => (
+                                                    <SelectItem value={category._id as string}>{category.name}</SelectItem>
+                                                ))
+                                            }
                                         </SelectContent>
                                     </Select>
-                                </FormControl> : <Skeleton className="h-10 w-[full]"/>}
+                                </FormControl> : <Skeleton className="h-10 w-[full]" />}
                             </FormItem>
                         )}
                     />
@@ -107,8 +107,8 @@ const AddProductForm: FC<AddProductProps> = ({onOpenChange, refresh}) => {
                                     Product ID <span className="text-red-500">*</span>
                                 </FormLabel>
                                 {!productHook.loading ? <FormControl>
-                                    <Input {...field}/>
-                                </FormControl> : <Skeleton className="h-10 w-[full]"/>}
+                                    <Input {...field} />
+                                </FormControl> : <Skeleton className="h-10 w-[full]" />}
                             </FormItem>
                         )}
                     />
@@ -121,8 +121,8 @@ const AddProductForm: FC<AddProductProps> = ({onOpenChange, refresh}) => {
                                     Name <span className="text-red-500">*</span>
                                 </FormLabel>
                                 {!productHook.loading ? <FormControl>
-                                    <Input {...field}/>
-                                </FormControl> : <Skeleton className="h-10 w-[full]"/>}
+                                    <Input {...field} />
+                                </FormControl> : <Skeleton className="h-10 w-[full]" />}
                             </FormItem>
                         )}
                     />
@@ -135,12 +135,26 @@ const AddProductForm: FC<AddProductProps> = ({onOpenChange, refresh}) => {
                                     Description
                                 </FormLabel>
                                 {!productHook.loading ? <FormControl>
-                                    <Input {...field}/>
-                                </FormControl> : <Skeleton className="h-10 w-[full]"/>}
+                                    <Input {...field} />
+                                </FormControl> : <Skeleton className="h-10 w-[full]" />}
                             </FormItem>
                         )}
                     />
                     <div className="flex gap-4 w-full">
+                        <FormField
+                            control={form.control}
+                            name="cost"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>
+                                        Cost <span className="text-red-500">*</span>
+                                    </FormLabel>
+                                    {!productHook.loading ? <FormControl>
+                                        <Input {...field} onChange={(event) => field.onChange(+event.target.value)} />
+                                    </FormControl> : <Skeleton className="h-10 w-[full]" />}
+                                </FormItem>
+                            )}
+                        />
                         <FormField
                             control={form.control}
                             name="price"
@@ -150,8 +164,8 @@ const AddProductForm: FC<AddProductProps> = ({onOpenChange, refresh}) => {
                                         Price <span className="text-red-500">*</span>
                                     </FormLabel>
                                     {!productHook.loading ? <FormControl>
-                                        <Input {...field} onChange={(event) => field.onChange(+event.target.value)}/>
-                                    </FormControl> : <Skeleton className="h-10 w-[full]"/>}
+                                        <Input {...field} onChange={(event) => field.onChange(+event.target.value)} />
+                                    </FormControl> : <Skeleton className="h-10 w-[full]" />}
                                 </FormItem>
                             )}
                         />
@@ -164,11 +178,12 @@ const AddProductForm: FC<AddProductProps> = ({onOpenChange, refresh}) => {
                                         Quantity <span className="text-red-500">*</span>
                                     </FormLabel>
                                     {!productHook.loading ? <FormControl>
-                                        <Input {...field} onChange={(event) => field.onChange(+event.target.value)}/>
-                                    </FormControl> : <Skeleton className="h-10 w-[full]"/>}
+                                        <Input {...field} onChange={(event) => field.onChange(+event.target.value)} />
+                                    </FormControl> : <Skeleton className="h-10 w-[full]" />}
                                 </FormItem>
                             )}
                         />
+
                     </div>
                     <div className="space-y-3">
                         <FormField
@@ -180,17 +195,17 @@ const AddProductForm: FC<AddProductProps> = ({onOpenChange, refresh}) => {
                                         Product Image
                                     </FormLabel>
                                     {!productHook.loading ? <FormControl>
-                                        <Input type="file" onChange={handleFileChange}/>
-                                    </FormControl> : <Skeleton className="h-10 w-[full]"/>}
+                                        <Input type="file" onChange={handleFileChange} />
+                                    </FormControl> : <Skeleton className="h-10 w-[full]" />}
                                 </FormItem>
                             )}
                         />
-                        {productImage && <img src={productImage as string} alt="Product Image" className="max-w-[400px] max-h-[300px]"/>}
+                        {productImage && <img src={productImage as string} alt="Product Image" className="max-w-[400px] max-h-[300px]" />}
                     </div>
                     <div>
                         <div className="flex gap-2 justify-end mt-10">
 
-                            <Button 
+                            <Button
                                 type="button"
                                 variant="ghost"
                                 onClick={() => onOpenChange(false)}
