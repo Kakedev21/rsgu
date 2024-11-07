@@ -85,14 +85,12 @@ const Slip: React.FC<SlipProps> = ({ orderData }) => {
         </thead>
         <tbody>
           {order?.products ? (
-            order.products.map((product) => (
-              <tr key={product._id}>
-                <td className="border p-2">{product.name || 'N/A'}</td>
-                <td className="border p-2">{product.quantity || 1}</td>
-                <td className="border p-2">₱{product.price.toFixed(2)}</td>
-                <td className="border p-2">₱{((product.price || 0) * (product.quantity || 1)).toFixed(2)}</td>
-              </tr>
-            ))
+            <tr>
+              <td className="border p-2">{order.products.name || 'N/A'}</td>
+              <td className="border p-2">{order.products.quantity || 1}</td>
+              <td className="border p-2">₱{order.products.price.toFixed(2)}</td>
+              <td className="border p-2">₱{((order.products.price || 0) * (order.products.quantity || 1)).toFixed(2)}</td>
+            </tr>
           ) : (
             <tr>
               <td className="border p-2" colSpan={5}>No items available</td>
