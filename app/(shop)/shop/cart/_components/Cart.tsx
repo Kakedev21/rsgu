@@ -26,15 +26,6 @@ const Cart: FC<CartProps> = ({ name, description, price, _id, qty, }) => {
 
     }
 
-    const handleClearCart = async () => {
-        if (!session.data?.user?.session_id) {
-            window.localStorage.setItem("cartItem", JSON.stringify([]));
-        } else {
-            await cartHook.clearCart(session.data?.user?.session_id);
-            window.location.reload();
-        }
-    }
-
     const handleAddCart = async () => {
         if (!session.data?.user?.session_id) {
             const cartItem = JSON.parse(window.localStorage.getItem("cartItem") || "[]");
@@ -96,7 +87,7 @@ const Cart: FC<CartProps> = ({ name, description, price, _id, qty, }) => {
                 {qty}
                 <Button onClick={() => handleQuantity('add')} variant="ghost" size="sm">+</Button>
                 <DeleteConfirmationMessage
-                    onConfirm={handleClearCart}
+                    onConfirm={handleDeleteCart}
                 >
                     <Button variant="ghost" size="sm">
                         <Trash2 className="text-red-500" size={14} />
