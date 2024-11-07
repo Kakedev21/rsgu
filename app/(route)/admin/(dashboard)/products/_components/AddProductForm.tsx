@@ -13,6 +13,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import useCategory from "@/hooks/useCategory";
 import { orderBy } from "lodash";
 import useProduct, { useProductState } from "@/hooks/useProduct";
+import useReport from "@/hooks/useReport";
+
 import { useToast } from "@/components/ui/use-toast";
 import constant from "@/utils/constant";
 
@@ -26,6 +28,7 @@ interface AddProductProps {
 const AddProductForm: FC<AddProductProps> = ({ onOpenChange, refresh }) => {
     const catergoryHook = useCategory({ init: true });
     const productHook = useProduct({ init: false });
+    const reportHook = useReport({ init: false })
     const productState = useProductState();
     const [productImage, setProductImage] = useState<string | null>(productState.selected?.image as string);
     const { toast } = useToast();
@@ -37,6 +40,23 @@ const AddProductForm: FC<AddProductProps> = ({ onOpenChange, refresh }) => {
 
     const onSubmit: SubmitHandler<ProductProps> = async (data) => {
         let response = productState.selected ? await productHook.update({ ...data, image: productImage as string }, productState.selected?.["_id"] as string) : await productHook.create({ ...data, image: productImage as string });
+
+        const productResponse = response;
+        if (productResponse.product) {
+            const reportPayload = {
+                productId: productResponse.product._id,
+                beginningInventory: {
+                    quantity: productResponse.product.quantity,
+                    unitCost: productResponse.product.cost,
+                    totalCost: productResponse.product.quantity * productResponse.product.cost
+                }
+            }
+            console.log("report", reportPayload)
+            const responses = await reportHook.create(reportPayload)
+            console.log("R", responses)
+        }
+
+        console.log("T", response)
         if (response?.error) {
             return toast({
                 title: "Something went wrong",

@@ -9,13 +9,17 @@ interface SlipProps {
       name: string;
       email: string;
     };
-    products: any
+    products: Array<{
+      _id: string;
+      name: string;
+      price: number;
+      quantity?: number;
+    }>;
     totalAmount: number;
   }>;
 }
 
 const Slip: React.FC<SlipProps> = ({ orderData }) => {
-
   console.log('0', orderData)
 
   if (!orderData || orderData.length === 0) {
@@ -29,8 +33,15 @@ const Slip: React.FC<SlipProps> = ({ orderData }) => {
   // Get first order since it's an array
   const order = orderData[0];
 
-  console.log(';0', order.products)
-
+  // Combine all products from all orders into a single array
+  const allProducts = orderData.reduce((acc, order) => {
+    return [...acc, ...(Array.isArray(order.products) ? order.products : [order.products])];
+  }, [] as Array<{
+    _id: string;
+    name: string;
+    price: number;
+    quantity?: number;
+  }>);
   // Format date
   const formatDate = (dateString: string) => {
     try {
@@ -59,10 +70,6 @@ const Slip: React.FC<SlipProps> = ({ orderData }) => {
             </span></p>
             <p>DATE: {formatDate(order.createdAt)}</p>
           </div>
-          <div className="flex justify-between border-b border pb-2 mb-2">
-            <p>SR CODE: {order.userId || 'N/A'}</p>
-            <p>OFFICIAL RECEIPT NO.: N/A</p>
-          </div>
           <div className="border-b border pb-2 mb-2">
             <p>NAME OF CUSTOMER: {order.user?.name || 'N/A'}</p>
           </div>
@@ -84,13 +91,15 @@ const Slip: React.FC<SlipProps> = ({ orderData }) => {
           </tr>
         </thead>
         <tbody>
-          {order?.products ? (
-            <tr>
-              <td className="border p-2">{order.products.name || 'N/A'}</td>
-              <td className="border p-2">{order.products.quantity || 1}</td>
-              <td className="border p-2">₱{order.products.price.toFixed(2)}</td>
-              <td className="border p-2">₱{((order.products.price || 0) * (order.products.quantity || 1)).toFixed(2)}</td>
-            </tr>
+          {allProducts.length > 0 ? (
+            allProducts.map((product) => (
+              <tr key={product._id}>
+                <td className="border p-2">{product.name || 'N/A'}</td>
+                <td className="border p-2">{product.quantity || 1}</td>
+                <td className="border p-2">₱{product.price?.toFixed(2) || '0.00'}</td>
+                <td className="border p-2">₱{((product.quantity || 1) * (product.price || 0)).toFixed(2)}</td>
+              </tr>
+            ))
           ) : (
             <tr>
               <td className="border p-2" colSpan={5}>No items available</td>

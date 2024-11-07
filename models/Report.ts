@@ -51,16 +51,13 @@ const ReportSchema = new Schema(
     },
     endingInventory: {
       quantity: {
-        type: Number,
-        required: true
+        type: Number
       },
       unitCost: {
-        type: Number,
-        required: true
+        type: Number
       },
       totalCost: {
-        type: Number,
-        required: true
+        type: Number
       }
     },
     date: {
