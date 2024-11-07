@@ -50,7 +50,8 @@ const CartLists = () => {
             productId: cartList?.map(cart => cart?.productId),
             productAndQty: cartList?.map(cart => ({
                 productId: cart.productId,
-                quantity: cart.qty || 1
+                quantity: cart.qty || 1,
+                price: cart.price
             })),
             userId: session.data?.user?.session_id as string,
             status: "Pending",
