@@ -54,7 +54,7 @@ const RecordsPage = () => {
 
         // Add data rows
         const rows = reportHook.reports?.map(record => [
-            typeof record.productId === 'string' ? record.productId : record.productId?.name || '',
+            typeof record.productId === 'string' ? record.productId : (record.productId as { name?: string }).name || '',
             record.beginningInventory?.unitCost || 0,
             record.beginningInventory?.unitPrice || 0,
             record.beginningInventory?.quantity || 0,
