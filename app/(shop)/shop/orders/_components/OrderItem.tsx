@@ -87,12 +87,15 @@ const OrderItem: FC<OrderProps> = ({ _id, status, totalAmount, productId, create
                 printWindow.document.write('<table class="product-table">');
                 printWindow.document.write('<thead><tr><th>NAME</th><th>AMOUNT</th></tr></thead><tbody>');
 
-                products?.forEach(product => {
-                    printWindow.document.write(`<tr>
-                        <td>${product.name}</td>
-                        <td>₱${numeral(product.price).format('0,0.00')}</td>
-                    </tr>`);
-                });
+                // Start of Selection
+                if (Array.isArray(products)) {
+                    products.forEach((product: any) => {
+                        printWindow.document.write(`<tr>
+                                <td>${product.name}</td>
+                                <td>₱${numeral(product.price).format('0,0.00')}</td>
+                            </tr>`);
+                    });
+                }
 
                 printWindow.document.write('</tbody></table>');
                 printWindow.document.write('<div class="receipt-footer">TOTAL AMOUNT: ₱' + numeral(totalAmount).format('0,0.00') + '</div>');
