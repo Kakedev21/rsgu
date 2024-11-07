@@ -16,7 +16,7 @@ const ReportSchema = new Schema(
         type: Number,
         required: true
       },
-      totalCost: {
+      unitPrice: {
         type: Number,
         required: true
       }
@@ -30,7 +30,7 @@ const ReportSchema = new Schema(
         type: Number,
         default: 0
       },
-      totalCost: {
+      unitPrice: {
         type: Number,
         default: 0
       }
@@ -44,7 +44,7 @@ const ReportSchema = new Schema(
         type: Number,
         default: 0
       },
-      totalCost: {
+      unitPrice: {
         type: Number,
         default: 0
       }
@@ -56,7 +56,7 @@ const ReportSchema = new Schema(
       unitCost: {
         type: Number
       },
-      totalCost: {
+      unitPrice: {
         type: Number
       }
     },

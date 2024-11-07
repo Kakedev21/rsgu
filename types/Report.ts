@@ -6,22 +6,17 @@ export interface ReportProps {
   beginningInventory: {
     quantity: number;
     unitCost: number;
-    totalCost: number;
-  };
-  received?: {
-    quantity: number;
-    unitCost: number;
-    totalCost: number;
+    unitPrice: number;
   };
   sales?: {
     quantity: number;
     unitCost: number;
-    totalCost: number;
+    unitPrice: number;
   };
   endingInventory?: {
     quantity: number;
     unitCost: number;
-    totalCost: number;
+    unitPrice: number;
   };
   createdAt?: Date;
   updatedAt?: Date;
@@ -32,22 +27,17 @@ export const reportFormSchema = z.object({
   beginningInventory: z.object({
     quantity: z.number().min(0),
     unitCost: z.number().min(0),
-    totalCost: z.number().min(0)
-  }),
-  received: z.object({
-    quantity: z.number().min(0),
-    unitCost: z.number().min(0),
-    totalCost: z.number().min(0)
+    unitPrice: z.number().min(0)
   }),
   sales: z.object({
     quantity: z.number().min(0),
     unitCost: z.number().min(0),
-    totalCost: z.number().min(0)
+    unitPrice: z.number().min(0)
   }),
   endingInventory: z.object({
     quantity: z.number().min(0),
     unitCost: z.number().min(0),
-    totalCost: z.number().min(0)
+    unitPrice: z.number().min(0)
   }),
   date: z.date().optional()
 });

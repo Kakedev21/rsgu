@@ -28,7 +28,7 @@ interface AddProductProps {
 const AddProductForm: FC<AddProductProps> = ({ onOpenChange, refresh }) => {
     const catergoryHook = useCategory({ init: true });
     const productHook = useProduct({ init: false });
-    const reportHook = useReport({ init: false })
+    const reportHook = useReport()
     const productState = useProductState();
     const [productImage, setProductImage] = useState<string | null>(productState.selected?.image as string);
     const { toast } = useToast();
@@ -48,7 +48,15 @@ const AddProductForm: FC<AddProductProps> = ({ onOpenChange, refresh }) => {
                 beginningInventory: {
                     quantity: productResponse.product.quantity,
                     unitCost: productResponse.product.cost,
-                    totalCost: productResponse.product.quantity * productResponse.product.cost
+                    unitPrice: productResponse.product.price
+                },
+                sales: {
+                    unitCost: productResponse.product.cost,
+                    unitPrice: productResponse.product.price
+                },
+                endingInventory: {
+                    unitCost: productResponse.product.cost,
+                    unitPrice: productResponse.product.price
                 }
             }
             console.log("report", reportPayload)

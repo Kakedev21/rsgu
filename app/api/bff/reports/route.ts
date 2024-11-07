@@ -10,16 +10,14 @@ export async function GET(req: NextRequest) {
 
     const searchParams = req.nextUrl.searchParams;
     const type = searchParams.get('type');
+    const date = searchParams.get('date');
 
     let report;
     if (type === 'day') {
-      report = await ReportController.getReportByDay(req);
-    } else if (type === 'month') {
-      report = await ReportController.getReportByMonth(req);
-    } else {
-      report = await ReportController.getReport(req);
+      report = await ReportController.getReportByDay(
+        date ? new Date(date) : new Date()
+      );
     }
-
     return NextResponse.json({
       report
     });
@@ -39,23 +37,6 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     console.log('body', body);
     const report = await ReportController.createReport(body);
-    return NextResponse.json({
-      report
-    });
-  } catch (e) {
-    console.log('e', e);
-    return NextResponse.json({
-      error: e
-    });
-  }
-}
-
-export async function PUT(req: NextRequest) {
-  try {
-    if (!RequestHeaderValidator.authenticate(req)) {
-      return NextResponse.json({ status: 401 });
-    }
-    const report = await ReportController.updateReport(req);
     return NextResponse.json({
       report
     });

@@ -1,4 +1,3 @@
-
 import { OrderProps } from "@/types/Order";
 import { FC } from "react";
 import { twMerge } from "tailwind-merge";
@@ -9,7 +8,7 @@ import Barcode from "react-barcode";
 import { ScanLine, Printer } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
-const OrderItem: FC<OrderProps> = ({ _id, status, totalAmount, productId, createdAt }) => {
+const OrderItem: FC<OrderProps> = ({ _id, status, totalAmount, productId, createdAt, products }) => {
 
     const statusColor: any = {
         Completed: 'text-green-500',
@@ -28,10 +27,6 @@ const OrderItem: FC<OrderProps> = ({ _id, status, totalAmount, productId, create
                             font-family: Arial, sans-serif;
                             margin: 0;
                             padding: 20px;
-                            display: flex;
-                            justify-content: center;
-                            align-items: center;
-                            height: 100vh;
                             background-color: #f4f4f4;
                         }
                         .receipt-container {
@@ -41,6 +36,7 @@ const OrderItem: FC<OrderProps> = ({ _id, status, totalAmount, productId, create
                             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
                             width: 100%;
                             max-width: 600px;
+                            margin: auto;
                         }
                         .receipt-header {
                             text-align: center;
@@ -64,15 +60,42 @@ const OrderItem: FC<OrderProps> = ({ _id, status, totalAmount, productId, create
                             font-size: 12px;
                             color: #aaa;
                         }
+                        .product-table {
+                            width: 100%;
+                            border-collapse: collapse;
+                            margin-top: 20px;
+                        }
+                        .product-table th, .product-table td {
+                            border: 1px solid #ddd;
+                            padding: 8px;
+                            text-align: left;
+                        }
+                        .product-table th {
+                            background-color: #f2f2f2;
+                        }
                     </style>
                 `);
                 printWindow.document.write('</head><body>');
                 printWindow.document.write('<div class="receipt-container">');
-                printWindow.document.write('<div class="receipt-header"><h1>Order Receipt</h1></div>');
+                printWindow.document.write('<div class="receipt-header"><h1>ORDER SLIP NO.: RGO2024-' + _id?.slice(-8) + '</h1></div>');
                 printWindow.document.write('<div class="receipt-details">');
-                printWindow.document.write('<div style="display: flex; justify-content: center; align-items: center;">' + printContent.innerHTML + '</div>');
+                printWindow.document.write('<p>NAME OF CUSTOMER: John Arnold</p>');
+                printWindow.document.write('<p>CONTACT NUMBER: N/A</p>');
+                printWindow.document.write('<p>EMAIL: example@example.com</p>');
+                printWindow.document.write('<p>DATE: ' + moment(createdAt).format("l") + '</p>');
                 printWindow.document.write('</div>');
-                printWindow.document.write('<div class="receipt-footer">Thank you for your purchase!</div>');
+                printWindow.document.write('<table class="product-table">');
+                printWindow.document.write('<thead><tr><th>NAME</th><th>AMOUNT</th></tr></thead><tbody>');
+
+                products?.forEach(product => {
+                    printWindow.document.write(`<tr>
+                        <td>${product.name}</td>
+                        <td>₱${numeral(product.price).format('0,0.00')}</td>
+                    </tr>`);
+                });
+
+                printWindow.document.write('</tbody></table>');
+                printWindow.document.write('<div class="receipt-footer">TOTAL AMOUNT: ₱' + numeral(totalAmount).format('0,0.00') + '</div>');
                 printWindow.document.write('</div>');
                 printWindow.document.write('</body></html>');
                 printWindow.document.close();

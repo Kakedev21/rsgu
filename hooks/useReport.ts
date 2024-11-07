@@ -24,36 +24,23 @@ export const useReportState = create<UseReportStateProps>((set) => ({
     set((state) => ({ ...state, selected: report }))
 }));
 
-const useReport = ({
-  page = 1,
-  limit = 10,
-  init = false
-}: {
-  page?: number;
-  limit?: number;
-  init?: boolean;
-}) => {
-  const [reports, setReports] = useState<{
-    reports: ReportProps[];
-    page: number;
-    limit: number;
-    count: number;
-  } | null>(null);
+const useReport = () => {
+  const [reports, setReports] = useState<ReportProps[] | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const getAll = async (page: number, limit: number, q?: string | null) => {
+  const getReportByDay = async (date?: Date | null) => {
     setLoading(true);
     const result = await axios.get(`/api/bff/reports`, {
       params: {
-        page,
-        limit,
-        ...(q ? { q: q } : {})
+        type: 'day',
+        date: date?.toISOString() || new Date().toISOString()
       }
     });
     setLoading(false);
-    if (result.data.reports) {
-      setReports(result.data.reports);
+    if (result.data.report) {
+      setReports(result.data.report);
     }
+    return result.data.report;
   };
 
   const create = async (payload: ReportProps) => {
@@ -63,7 +50,7 @@ const useReport = ({
     return result.data;
   };
 
-  const update = async (payload: ReportProps, report_id: string) => {
+  const update = async (payload: any, report_id: string) => {
     setLoading(true);
     const result = await axios.put(`/api/bff/reports/${report_id}`, payload);
     setLoading(false);
@@ -77,37 +64,13 @@ const useReport = ({
     return result.data;
   };
 
-  const getReportByDay = async () => {
-    setLoading(true);
-    const result = await axios.get(`/api/bff/reports/day`);
-    setLoading(false);
-    return result.data;
-  };
-
-  const getReportByMonth = async () => {
-    setLoading(true);
-    const result = await axios.get(`/api/bff/reports/month`);
-    setLoading(false);
-    return result.data;
-  };
-
-  useEffect(() => {
-    if (!reports && !loading && init) {
-      setTimeout(() => {
-        getAll(page, limit);
-      }, 300);
-    }
-  }, [init]);
-
   return {
     reports,
-    getAll,
     loading,
     create,
     update,
     deleteReport,
-    getReportByDay,
-    getReportByMonth
+    getReportByDay
   };
 };
 

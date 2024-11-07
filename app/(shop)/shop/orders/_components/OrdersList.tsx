@@ -14,21 +14,22 @@ interface OrderListProps {
     user_id: string;
 }
 
-const OrdersList: FC<OrderListProps> = ({user_id}) => {
+const OrdersList: FC<OrderListProps> = ({ user_id }) => {
     const debounceHook = useDebounce();
-    const orderHook = useOrder({init: false, user_id});
-   
+    const orderHook = useOrder({ init: false, user_id });
+
+
     const orders = useMemo(() => {
         return orderHook.orders?.orders || [];
     }, [orderHook.orders?.orders]);
     useEffect(() => {
-        orderHook.getAllOrder({page: 1, limit: 20, user_id, q: debounceHook.debounceValue})
+        orderHook.getAllOrder({ page: 1, limit: 20, user_id, q: debounceHook.debounceValue })
     }, [debounceHook.debounceValue])
     console.log("orderHook.orders?.orders", orderHook.orders)
     return <div className="space-y-5">
         <div className=" bg-white flex justify-center items-center mx-auto sm:w-1/2 w-full">
             <SearchInput placeholder="Search Order Number..."
-                onChange={({target}) => debounceHook.setValue(target.value)}
+                onChange={({ target }) => debounceHook.setValue(target.value)}
             />
         </div>
 
@@ -37,9 +38,9 @@ const OrdersList: FC<OrderListProps> = ({user_id}) => {
                 {
                     times(4).map(count => (
                         <div key={count} className="space-y-2">
-                            <Skeleton className="h-20 w-full"/>
-                            <Skeleton className="h-5 w-1/3"/>
-                            <Skeleton className="h-10 w-1/2"/>
+                            <Skeleton className="h-20 w-full" />
+                            <Skeleton className="h-5 w-1/3" />
+                            <Skeleton className="h-10 w-1/2" />
                         </div>
                     ))
                 }
@@ -47,7 +48,7 @@ const OrdersList: FC<OrderListProps> = ({user_id}) => {
         }
         {
             !orderHook.loading && orders?.map((order: OrderProps) => (
-                <OrderItem {...order} key={order?._id}/>
+                <OrderItem {...order} key={order?._id} />
             ))
         }
         {

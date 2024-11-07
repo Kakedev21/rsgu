@@ -7,16 +7,21 @@ import { FC, useEffect } from "react";
 import ConfirmReleaseOrder from "./ConfirmReleaseOrder";
 import { useSession } from "next-auth/react";
 import { useToast } from "@/components/ui/use-toast";
+import useReport from "@/hooks/useReport";
 
 interface ReleaseOrderDetailProps {
     orderNo: string;
 }
 const ReleaseOrderDetail: FC<ReleaseOrderDetailProps> = ({ orderNo }) => {
     const orderHook = useOrder({ init: false });
+    const reportHook = useReport()
     const session = useSession();
     const { toast } = useToast();
+
     const handleConfirm = async () => {
+
         await orderHook.confirmOrder({ status: "Completed", admin: session?.data?.user?.session_id as string }, orderHook?.order?.[0]?._id as string);
+
         await orderHook.orderDetail(orderNo as string)
         toast({
             title: "Order Completed"

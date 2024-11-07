@@ -1,43 +1,20 @@
 import { connectMongoDB } from '@/lib/mongodb';
-import { NextRequest } from 'next/server';
 import Report from '@/models/Report';
 
 const ReportController = {
-  getReport: async (req: NextRequest) => {
+  getReportByDay: async (date: Date) => {
     await connectMongoDB();
-    const report = await Report.find();
-    return report;
-  },
-  getReportByDay: async (req: NextRequest) => {
-    await connectMongoDB();
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const queryDate = date ? new Date(date) : new Date();
+    queryDate.setHours(0, 0, 0, 0);
+
+    const nextDay = new Date(queryDate);
+    nextDay.setDate(nextDay.getDate() + 1);
 
     const report = await Report.find({
       date: {
-        $gte: today,
-        $lt: tomorrow
-      }
-    }).populate('productId');
-
-    return report;
-  },
-  getReportByMonth: async (req: NextRequest) => {
-    await connectMongoDB();
-    const today = new Date();
-    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-    const lastDayOfMonth = new Date(
-      today.getFullYear(),
-      today.getMonth() + 1,
-      0
-    );
-
-    const report = await Report.find({
-      date: {
-        $gte: firstDayOfMonth,
-        $lte: lastDayOfMonth
+        $gte: queryDate,
+        $lt: nextDay
       }
     }).populate('productId');
 
@@ -45,21 +22,19 @@ const ReportController = {
   },
   createReport: async (data: any) => {
     await connectMongoDB();
-    console.log('reqfrom', data);
     const report = await Report.create(data);
     return report;
   },
 
-  updateReport: async (req: NextRequest) => {
+  updateReport: async (data: any) => {
     await connectMongoDB();
-    const body = await req.json();
-    const report = await Report.findByIdAndUpdate(body._id, body);
+    const report = await Report.findByIdAndUpdate(data._id, { $set: data });
     return report;
   },
-  deleteReport: async (req: NextRequest) => {
+
+  deleteReport: async (data: any) => {
     await connectMongoDB();
-    const body = await req.json();
-    const report = await Report.findByIdAndDelete(body._id);
+    const report = await Report.findByIdAndDelete(data._id);
     return report;
   }
 };
