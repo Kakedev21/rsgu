@@ -43,7 +43,7 @@ const useReport = () => {
     return result.data.report;
   };
 
-  const create = async (payload: ReportProps) => {
+  const create = async (payload: any) => {
     setLoading(true);
     const result = await axios.post('/api/bff/reports', payload);
     setLoading(false);
