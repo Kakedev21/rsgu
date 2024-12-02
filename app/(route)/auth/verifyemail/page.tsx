@@ -1,14 +1,12 @@
 "use client"
 
-import React from 'react'
+import React, { Suspense } from 'react'
 import { useEffect, useState } from 'react';
 import useUser from '@/hooks/useUser';
-
 import { useSearchParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 
-
-const page = () => {
+function VerifyEmail() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
@@ -35,6 +33,7 @@ const page = () => {
   useEffect(() => {
     if (token) handleConfirmEmail(token as string)
   }, [token])
+
   return (
     <div className="w-full h-screen bg-white relative">
       <div className=" h-1/2 bg-red-500 rounded-b-3xl" />
@@ -56,4 +55,12 @@ const page = () => {
   )
 }
 
-export default page
+const Page = () => {
+  return (
+    <Suspense>
+      <VerifyEmail />
+    </Suspense>
+  )
+}
+
+export default Page
