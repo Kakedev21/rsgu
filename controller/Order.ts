@@ -158,10 +158,22 @@ const OrderController = {
       count
     };
   },
+
   create: async (data: OrderProps[]) => {
     await connectMongoDB();
     const order = (await Order.insertMany(data)) as OrderProps[];
     return order;
+  },
+  getPendingOrders: async () => {
+    await connectMongoDB();
+    const orders = await Order.find({ status: 'Pending' }).exec();
+    return orders;
+  },
+
+  getCompletedOrders: async () => {
+    await connectMongoDB();
+    const orders = await Order.find({ status: 'Completed' }).exec();
+    return orders;
   },
   get: async (order_id: string) => {
     await connectMongoDB();
@@ -408,6 +420,7 @@ const OrderController = {
       console.error('Error getting total count for month:', error);
     }
   },
+
   cashier: {
     getOrder: async (order_id: string) => {
       await connectMongoDB();

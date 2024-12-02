@@ -21,20 +21,6 @@ const ReportSchema = new Schema(
         required: true
       }
     },
-    received: {
-      quantity: {
-        type: Number,
-        default: 0
-      },
-      unitCost: {
-        type: Number,
-        default: 0
-      },
-      unitPrice: {
-        type: Number,
-        default: 0
-      }
-    },
     sales: {
       quantity: {
         type: Number,
@@ -59,10 +45,6 @@ const ReportSchema = new Schema(
       unitPrice: {
         type: Number
       }
-    },
-    date: {
-      type: Date,
-      default: Date.now
     }
   },
   { timestamps: true }

@@ -8,6 +8,7 @@ import useDebounce from "@/hooks/useDebounce";
 import { useEffect } from "react";
 import useOrder from "@/hooks/useOrder";
 import Slip from "./Slip";
+import OrderList from "./OrderList";
 
 const Cashier = () => {
     const debounce = useDebounce();
@@ -17,7 +18,7 @@ const Cashier = () => {
             orderHook.orderDetail(debounce.debounceValue as string)
         }
     }, [debounce.debounceValue]);
-    console.log("order", orderHook.order)
+    console.log("order", orderHook.order,)
     return (
         <div className="w-full bg-white p-5 rounded-lg shadow-md space-y-5">
             <div className="flex justify-between items-center gap-5">
@@ -44,6 +45,7 @@ const Cashier = () => {
                 <PaymentCTA orderNo={orderHook.order?.[0]._id as string} status={orderHook.order?.[0]?.status as string} orderHook={orderHook} />
             </div>
 
+            <OrderList />
         </div>
     )
 }

@@ -35,6 +35,18 @@ const ProductSchema = new Schema(
     },
     status: {
       type: String
+    },
+    size: {
+      type: String
+    },
+    textile: {
+      type: String
+    },
+    yards: {
+      type: Number
+    },
+    limit: {
+      type: Number
     }
   },
   { timestamps: true }

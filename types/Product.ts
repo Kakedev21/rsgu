@@ -25,6 +25,7 @@ export interface ProductProps {
   updatedAt?: string;
   image?: string;
   status?: string;
+  limit?: number;
 }
 
 export const formSchema = z.object({
@@ -34,7 +35,8 @@ export const formSchema = z.object({
   name: z.string().min(1),
   price: z.number().nonnegative(),
   quantity: z.number().nonnegative(),
-  cost: z.number().nonnegative()
+  cost: z.number().nonnegative(),
+  limit: z.number().nonnegative()
 });
 
 export type ProductFormValues = z.infer<typeof formSchema>;

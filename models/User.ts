@@ -32,9 +32,15 @@ const UserSchema = new Schema(
     course: {
       type: String
     },
+    verified: {
+      type: Boolean,
+      default: false
+    },
     contactNumber: {
       type: String
     },
+    verificationToken: { type: String },
+    isVerified: { type: Boolean, default: false },
     resetPasswordToken: String,
     resetPasswordExpires: Date
   },

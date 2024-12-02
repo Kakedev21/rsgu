@@ -8,6 +8,7 @@ import User from '@/models/User';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/config/authOptions';
 import { EmailTemplate } from '@/components/email-template';
+import { EmailVerificationTemplate } from '@/components/email-template';
 import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -139,24 +140,8 @@ const UserController = {
 
     await user.save();
 
-    try {
-      const { data, error } = await resend.emails.send({
-        from: 'Acme <onboarding@resend.dev>',
-        to: [email],
-        subject: `Reset Password request ${user.name}`,
-        react: EmailTemplate({
-          passwordLink: `${process.env.NEXTAUTH_URL}/auth/forgotpassword?token=${token}`
-        })
-      });
-
-      if (error) {
-        return { message: 'Failed to send password reset link.', status: 500 };
-      }
-
-      return Response.json(data);
-    } catch (error) {
-      return { message: 'Failed to send password reset link.', status: 500 };
-    }
+    const passwordLink = `${process.env.NEXTAUTH_URL}/auth/forgotpassword?token=${token}`;
+    return { passwordLink };
   },
 
   resetPassword: async (
@@ -190,6 +175,46 @@ const UserController = {
     await user.save();
 
     return { message: 'Password reset successful.', status: 200 };
+  },
+
+  emailVerification: async (email: string) => {
+    await connectMongoDB();
+    const user = await User.findOne({ email }).exec();
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    if (user.isVerified) {
+      return { message: 'Email is already verified.', status: 200 };
+    }
+
+    const token = crypto.randomBytes(20).toString('hex');
+
+    user.verificationToken = token;
+
+    await user.save();
+
+    const emailVerification = `${process.env.NEXTAUTH_URL}/auth/verifyemail?token=${token}`;
+    return { emailVerification };
+  },
+
+  verifyEmail: async (token: string) => {
+    await connectMongoDB();
+    const user = await User.findOne({
+      verificationToken: token
+    }).exec();
+
+    if (!user) {
+      throw new Error('Verification token is invalid or has expired.');
+    }
+
+    user.isVerified = true;
+    user.verificationToken = undefined;
+
+    await user.save();
+
+    return { message: 'Email verified successfully.', status: 200 };
   }
 };
 

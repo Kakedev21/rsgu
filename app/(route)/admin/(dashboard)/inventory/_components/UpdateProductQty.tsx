@@ -11,72 +11,88 @@ import { FC, useRef, useState } from "react";
 import { boolean } from "zod";
 
 interface UpdateProductQtyProps {
-    open: boolean;
-    onOpenChange: (val: boolean) => void;
-    productState: UseProductStateProps;
-    productHook: any;
-    handleRefresh: any;
+  open: boolean;
+  onOpenChange: (val: boolean) => void;
+  productState: UseProductStateProps;
+  productHook: any;
+  handleRefresh: any;
 }
 
-const UpdateProductQty: FC<UpdateProductQtyProps> = ({open, onOpenChange, productState, productHook, handleRefresh}) => {
-    const qtyRef = useRef<any>();
-    const { toast } = useToast();
-    const [isChecked, setIsChecked] = useState<boolean>((productState?.selected?.status === "Available"))
-    const handleUpdateQty = async () => {
-        await productHook?.update({
-            quantity: Number(qtyRef?.current?.value),
-            status: isChecked ? "Available" : "Not Available"
-        }, productState.selected?._id);
-        handleRefresh();
-        productState.setSelected(null);
-        productState.setOpenFormDialog(false);
-        toast({
-            title: "Quantity updated"
-        })
+const UpdateProductQty: FC<UpdateProductQtyProps> = ({ open, onOpenChange, productState, productHook, handleRefresh }) => {
+  const qtyRef = useRef<any>();
+  const { toast } = useToast();
+  const [isIncrement, setIsIncrement] = useState(true);
 
-    }
+  const handleUpdateQty = async () => {
+    const currentQty = productState.selected?.quantity || 0;
+    const changeAmount = Number(qtyRef?.current?.value) || 0;
+    const newQuantity = isIncrement ? currentQty + changeAmount : currentQty - changeAmount;
 
-    console.log("(productState?.selected?.quantity || 0) < 5 ", isChecked )
-    return (
-        <Dialog
-        open={open}
-        onOpenChange={(val) => {
-            if (!val) {
-                productState.setSelected(null)
-            }
-            onOpenChange(val);
-        }}
-        >
-        <DialogContent>
-            <DialogHeader>
-            <DialogTitle>{productState?.selected?.productId} {productState.selected?.name} {productState.selected?.description}</DialogTitle>
-            <DialogDescription>
-                Update Quantity
-            </DialogDescription>
-            <div className="pt-5 space-y-5">
-                <div>
-                    <Label>Quantity</Label>
-                    <Input type="number" defaultValue={productState.selected?.quantity} ref={qtyRef}  disabled={productHook.loading}/>
-                </div>
-                <div className="flex items-center space-x-2">
-                    <Switch id="status" defaultChecked={isChecked} onCheckedChange={(checked) => setIsChecked(checked)}/>
-                    <Label htmlFor="status">Available</Label>
-                </div>
+    await productHook?.update({
+      quantity: newQuantity,
+    }, productState.selected?._id);
+    handleRefresh();
+    productState.setSelected(null);
+    productState.setOpenFormDialog(false);
+    toast({
+      title: "Quantity updated"
+    })
+  }
+
+  return (
+    <Dialog
+      open={open}
+      onOpenChange={(val) => {
+        if (!val) {
+          productState.setSelected(null)
+        }
+        onOpenChange(val);
+      }}
+    >
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{productState?.selected?.productId} {productState.selected?.name} {productState.selected?.description}</DialogTitle>
+          <DialogDescription>
+            Update Quantity
+          </DialogDescription>
+          <div className="pt-5 space-y-5">
+            <div className="flex items-center justify-between">
+              <Label>Operation</Label>
+              <div className="flex items-center gap-2">
+                <Label>{isIncrement ? "Add" : "Remove"}</Label>
+                <Switch
+                  checked={isIncrement}
+                  onCheckedChange={setIsIncrement}
+                  disabled={productHook.loading}
+                />
+              </div>
             </div>
-            </DialogHeader>
-            <DialogFooter>
-                <Button variant="ghost" 
-                    disabled={productHook.loading}
-                    onClick={() => {
-                    productState.setSelected(null);
-                    productState.setOpenFormDialog(false);
-                }}>Cancel</Button>
-                <Button onClick={handleUpdateQty}  disabled={productHook.loading}>Update</Button>
-            </DialogFooter>
-        </DialogContent>
-        </Dialog>
-
-    );
+            <div>
+              <Label>Change Amount</Label>
+              <Input
+                type="number"
+                placeholder="Enter quantity to change"
+                ref={qtyRef}
+                disabled={productHook.loading}
+              />
+              <p className="text-sm text-muted-foreground mt-1">
+                Current quantity: {productState.selected?.quantity || 0}
+              </p>
+            </div>
+          </div>
+        </DialogHeader>
+        <DialogFooter>
+          <Button variant="ghost"
+            disabled={productHook.loading}
+            onClick={() => {
+              productState.setSelected(null);
+              productState.setOpenFormDialog(false);
+            }}>Cancel</Button>
+          <Button onClick={handleUpdateQty} disabled={productHook.loading}>Update</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
 }
- 
+
 export default UpdateProductQty;

@@ -33,6 +33,8 @@ const Slip: React.FC<SlipProps> = ({ orderData }) => {
   // Get first order since it's an array
   const order = orderData[0];
 
+  console.log("0", orderData)
+
   // Combine all products from all orders into a single array
   const allProducts = orderData.reduce((acc, order) => {
     return [...acc, ...(Array.isArray(order.products) ? order.products : [order.products])];

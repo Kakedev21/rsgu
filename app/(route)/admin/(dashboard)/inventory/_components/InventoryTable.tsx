@@ -31,24 +31,24 @@ interface InventoryTableTableProps {
   refresh?: () => void;
   productState: UseProductStateProps
 }
-const InventoryTable: FC<InventoryTableTableProps> = ({products, count = 0, limit = 10, page = 1, loading = true, handleSearch, refresh, productState}) => {
+const InventoryTable: FC<InventoryTableTableProps> = ({ products, count = 0, limit = 10, page = 1, loading = true, handleSearch, refresh, productState }) => {
   const debounce = useDebounce();
-  
+
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
   const itemsCount = (products?.length || 0) + limit;
   const prevPage = () => {
-    const queryParams ={...Object.fromEntries(searchParams.entries()), page: (page - 1)+""};
+    const queryParams = { ...Object.fromEntries(searchParams.entries()), page: (page - 1) + "" };
     const newQueryString = new URLSearchParams(queryParams).toString();
-    router.push(`${pathname}?${newQueryString}`, { scroll: true})
-    
+    router.push(`${pathname}?${newQueryString}`, { scroll: true })
+
   }
 
   const nextPage = () => {
-    const queryParams ={...Object.fromEntries(searchParams.entries()), page: (page + 1)+""};
+    const queryParams = { ...Object.fromEntries(searchParams.entries()), page: (page + 1) + "" };
     const newQueryString = new URLSearchParams(queryParams).toString();
-    router.push(`${pathname}?${newQueryString}`, { scroll: true})
+    router.push(`${pathname}?${newQueryString}`, { scroll: true })
   }
 
   useEffect(() => {
@@ -67,12 +67,12 @@ const InventoryTable: FC<InventoryTableTableProps> = ({products, count = 0, limi
         </div>
       </div>
       {
-          loading && <div className='w-full flex justify-center p-5 items-center gap-2'>
-            <LoaderCircle className=' animate-spin text-slate-600' />
-            <p className='text-slate-600 animate-pulse'>Loading...</p>
-          </div>
-        }
-     {!loading && <Table>
+        loading && <div className='w-full flex justify-center p-5 items-center gap-2'>
+          <LoaderCircle className=' animate-spin text-slate-600' />
+          <p className='text-slate-600 animate-pulse'>Loading...</p>
+        </div>
+      }
+      {!loading && <Table>
         <TableHeader>
           <TableRow>
             <TableHead>ID</TableHead>
@@ -88,7 +88,7 @@ const InventoryTable: FC<InventoryTableTableProps> = ({products, count = 0, limi
         </TableHeader>
         <TableBody>
           {orderBy((products || []), ["quantity"], ["asc"])?.map((product) => (
-            <InventoryRow key={product?.["_id"]} product={product} productState={productState}/>
+            <InventoryRow refresh key={product?.["_id"]} product={product} productState={productState} />
           ))}
         </TableBody>
       </Table>}

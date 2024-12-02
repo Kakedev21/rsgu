@@ -99,6 +99,20 @@ const useUser = ({
     return result.data;
   };
 
+  const confirmEmail = async (token: string) => {
+    setLoading(true);
+    const result = await axios.post(`/api/bff/users/verify`, { token });
+    setLoading(false);
+    return result.data;
+  };
+
+  const emailVerification = async (email: string) => {
+    setLoading(true);
+    const result = await axios.post(`/api/verify`, { email });
+    setLoading(false);
+    return result.data;
+  };
+
   const deleteUser = async (user_id: string) => {
     setLoading(true);
     const result = await axios.delete(`/api/bff/users/${user_id}`);
@@ -126,7 +140,9 @@ const useUser = ({
     update,
     deleteUser,
     getTotalUserCount,
-    resetPassword
+    resetPassword,
+    confirmEmail,
+    emailVerification
   };
 };
 

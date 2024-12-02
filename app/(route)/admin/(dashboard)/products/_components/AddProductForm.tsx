@@ -100,7 +100,6 @@ const AddProductForm: FC<AddProductProps> = ({ onOpenChange, refresh }) => {
             <ScrollArea className="h-[500px] px-5">
 
                 <form className="space-y-4 mt-5" onSubmit={form.handleSubmit(onSubmit)} >
-
                     <FormField
                         control={form.control}
                         name="category"
@@ -204,6 +203,21 @@ const AddProductForm: FC<AddProductProps> = ({ onOpenChange, refresh }) => {
                                 <FormItem>
                                     <FormLabel>
                                         Quantity <span className="text-red-500">*</span>
+                                    </FormLabel>
+                                    {!productHook.loading ? <FormControl>
+                                        <Input {...field} onChange={(event) => field.onChange(+event.target.value)} />
+                                    </FormControl> : <Skeleton className="h-10 w-[full]" />}
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="limit"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>
+                                        Product threshold <span className="text-red-500">*</span>
                                     </FormLabel>
                                     {!productHook.loading ? <FormControl>
                                         <Input {...field} onChange={(event) => field.onChange(+event.target.value)} />

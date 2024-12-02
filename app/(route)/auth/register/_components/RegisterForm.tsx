@@ -12,6 +12,8 @@ import { Eye, EyeOff, Store } from "lucide-react";
 import Link from "next/link";
 import useUser from "@/hooks/useUser";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import emailjs from '@emailjs/browser';
+
 const RegisterForm = () => {
   const userHook = useUser({ init: false });
   const searchParams = useSearchParams();
@@ -20,15 +22,56 @@ const RegisterForm = () => {
   const srCodeRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const confirmPasswordRef = useRef<HTMLInputElement>(null);
-  const courseRef = useRef<HTMLInputElement>(null);
   const contactNumberRef = useRef<HTMLInputElement>(null);
 
   const [passwordType, setPasswordType] = useState<string>("password");
   const [confirmPasswordType, setConfirmPasswordType] = useState<string>("password");
   const [department, setDepartment] = useState<string>()
+  const [course, setCourse] = useState<string>()
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
+
+  const coursesByDepartment: { [key: string]: string[] } = {
+    'CABEIHM': [
+      'Bachelor of Science in Management Accounting',
+      'Bachelor of Science in Business Administration',
+      'Bachelor of Science in Hospitality Management',
+      'Bachelor of Science in Tourism Management'
+    ],
+    'CICS': [
+      'Bachelor of Science in Information Technology',
+      'BSIT (Business Analytics)',
+      'BSIT (Network Technology)',
+      'BSIT ( Service Management)'
+    ],
+    'CET': [
+      'Bachelor of Computer Engineering Technology',
+      'Bachelor of Food Engineering Technology',
+      'Bachelor of Civil Engineering Technology',
+      'Bachelor of Electrical Engineering Technology',
+      'Bachelor of Electronics Engineering Technology',
+      'Bachelor of Mechanical Engineering Technology',
+      'Bachelor of Mechatronics Engineering Technology',
+      'Bachelor of Automotive Engineering Technology',
+      'Bachelor of Drafting Engineering Technology'
+    ],
+    'CAS': [
+      'Bachelor of Science in Psychology'
+    ],
+    'CCJE': [
+      'Bachelor of Science in Criminology'
+    ],
+    'CTE': [
+      'Bachelor of Secondary Education ( Social Studies)',
+      'Bachelor of Secondary Education ( English)',
+      'Bachelor of Secondary Education ( Filipino)',
+      'Bachelor of Secondary Education ( Mathematics)',
+      'Bachelor of Secondary Education ( Science)',
+      'Bachelor of Elementary Education',
+      'Bachelor of Physical Education'
+    ]
+  };
 
   const handleLogin = async (e: React.SyntheticEvent) => {
     e.preventDefault();
@@ -40,9 +83,9 @@ const RegisterForm = () => {
       department: department as string,
       role: "user",
       password: passwordRef.current?.value,
-      course: courseRef.current?.value,
+      course: course,
       contactNumber: contactNumberRef.current?.value,
-      srCode: srCodeRef.current?.value
+      srCode: srCodeRef.current?.value,
     }
     if (!/^[a-zA-Z0-9._%+-]+@g\.batstate-u\.edu\.ph$/.test(payload.email as string)) {
       setLoading(false);
@@ -75,13 +118,24 @@ const RegisterForm = () => {
     }
 
     const response = await userHook.create(payload);
+    const emailResponse = await userHook.emailVerification(payload.email as string)
+    if (emailResponse.emailVerification) {
+      const res = await emailjs.send('service_7qol6gv', 'template_eqez7ya', {
+        user_email: payload.email,
+        emailVerification: emailResponse.emailVerification,
+      }, {
+        publicKey: 'DL0gCccNkjcEvSL01'
+      })
+      console.log("res", res)
+    }
+    console.log("Email", emailResponse)
     setLoading(false);
     if (response?.user) {
       toast({
         title: "Registration Successfull",
-        description: "You may now login to site and shop"
+        description: "Please check your email for verification"
       });
-      router.push("/auth/login");
+      router.push("/auth/login")
     } else {
       toast({
         title: response.error?.code === 11000 ? "Email already exist" : "Registration Failed",
@@ -109,26 +163,40 @@ const RegisterForm = () => {
           <Input className="w-full  sm:w-[400px]" ref={nameRef} disabled={loading} placeholder="Full name" />
         </div>
         <div className="w-full px-5">
-          <Label className="text-slate-500">Course</Label>
-          <Input className="w-full  sm:w-[400px]" ref={courseRef} disabled={loading} placeholder="Course" />
-        </div>
-        <div className="w-full px-5">
-          <Label className="text-slate-500">Deparment</Label>
-          <Select onValueChange={(value) => setDepartment(value)}>
+          <Label className="text-slate-500">Department</Label>
+          <Select onValueChange={(value) => {
+            setDepartment(value);
+            setCourse(undefined);
+          }}>
             <SelectTrigger className="w-full sm:w-[400px]">
-              <SelectValue placeholder="Depatrment" />
+              <SelectValue placeholder="Department" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="CET">CET</SelectItem>
-              <SelectItem value="CICS">CICS</SelectItem>
-              <SelectItem value="CAS">CAS</SelectItem>
               <SelectItem value="CABEIHM">CABEIHM</SelectItem>
-              <SelectItem value="CTE">CTE</SelectItem>
+              <SelectItem value="CICS">CICS</SelectItem>
+              <SelectItem value="CET">CET</SelectItem>
+              <SelectItem value="CAS">CAS</SelectItem>
               <SelectItem value="CCJE">CCJE</SelectItem>
+              <SelectItem value="CTE">CTE</SelectItem>
             </SelectContent>
           </Select>
-
         </div>
+        <div className="w-full px-5">
+          <Label className="text-slate-500">Course</Label>
+          <Select onValueChange={(value) => setCourse(value)} value={course}>
+            <SelectTrigger className="w-full sm:w-[400px]" disabled={!department}>
+              <SelectValue placeholder="Select Course" />
+            </SelectTrigger>
+            <SelectContent>
+              {department && coursesByDepartment[department]?.map((course) => (
+                <SelectItem key={course} value={course}>
+                  {course}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
         <div className="w-full px-5">
           <Label className="text-slate-500">SR Code</Label>
           <Input className="w-full  sm:w-[400px]" ref={srCodeRef} disabled={loading} />

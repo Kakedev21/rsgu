@@ -20,6 +20,8 @@ import {
 import CryptoJS from "crypto-js"
 import { Eye, EyeOff, Store } from "lucide-react";
 import Link from "next/link";
+import emailjs from '@emailjs/browser';
+
 const LoginForm = () => {
   const searchParams = useSearchParams();
   const usernameRef = useRef<HTMLInputElement>(null);
@@ -41,6 +43,8 @@ const LoginForm = () => {
       }), process.env.NEXT_PUBLIC_AUTH_SECRET as string),
       redirect: false
     }) as SignInResponse;
+
+    console.log("R", result)
 
     if (result.status === 401) {
       setLoading(false)
@@ -70,21 +74,36 @@ const LoginForm = () => {
     e.preventDefault()
 
     try {
-      setLoading(true)
-      const result = await sendForgotPassword(forgotPasswordEmail)
+      const passwordLink = await sendForgotPassword(forgotPasswordEmail)
+      if (passwordLink.passwordLink) {
+        const emailreps = await emailjs.send(
+          'service_7qol6gv',
+          'template_fnpqzra',
+          {
+            passwordLink: passwordLink.passwordLink,
+            user_email: forgotPasswordEmail,
+            from_email: 'rgo.malvar@g.batstate-u.edu.ph'
+          },
+          {
+            publicKey: 'DL0gCccNkjcEvSL01'
+          }
+        );
+        console.log("Email sent successfully:", emailreps);
+
+      }
+
       toast({
         variant: "default",
         title: "Password reset link sent, please check your email",
-      })
+      });
       setForgotPasswordEmail("");
-      setLoading(false)
-    } catch (error: any) {
+    } catch (error) {
+      console.log(error);
       toast({
         variant: "destructive",
-        title: "Oops!",
-        description: error,
-      })
-      setLoading(false)
+        title: "Failed to send reset email",
+        description: "Please try again later",
+      });
     }
   }
   return (

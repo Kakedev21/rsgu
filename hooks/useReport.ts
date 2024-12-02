@@ -30,9 +30,8 @@ const useReport = () => {
 
   const getReportByDay = async (date?: Date | null) => {
     setLoading(true);
-    const result = await axios.get(`/api/bff/reports`, {
+    const result = await axios.get(`/api/bff/reports/daily`, {
       params: {
-        type: 'day',
         date: date?.toISOString() || new Date().toISOString()
       }
     });
@@ -57,9 +56,23 @@ const useReport = () => {
     return result.data;
   };
 
+  const updateSales = async (payload: any) => {
+    setLoading(true);
+    const result = await axios.put(`/api/bff/reports/updatesales`, payload);
+    setLoading(false);
+    return result.data;
+  };
+
   const deleteReport = async (report_id: string) => {
     setLoading(true);
     const result = await axios.delete(`/api/bff/reports/${report_id}`);
+    setLoading(false);
+    return result.data;
+  };
+
+  const createDailyReport = async () => {
+    setLoading(true);
+    const result = await axios.post('/api/bff/reports/daily');
     setLoading(false);
     return result.data;
   };
@@ -70,7 +83,9 @@ const useReport = () => {
     create,
     update,
     deleteReport,
-    getReportByDay
+    getReportByDay,
+    createDailyReport,
+    updateSales
   };
 };
 

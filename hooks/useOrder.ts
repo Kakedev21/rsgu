@@ -124,6 +124,20 @@ const useOrder = ({
     return result.data;
   };
 
+  const getPendingOrders = async () => {
+    setLoading(true);
+    const result = await axios.get('/api/bff/order/cashier/list');
+    setLoading(false);
+    return result.data?.orders;
+  };
+
+  const getCompletedOrders = async () => {
+    setLoading(true);
+    const result = await axios.get('/api/bff/order/admin/list');
+    setLoading(false);
+    return result.data?.orders;
+  };
+
   const getTransactions = async (cashier_id: string) => {
     setLoading(true);
     const result = await axios.get(
@@ -157,6 +171,27 @@ const useOrder = ({
     return result.data?.orders;
   };
 
+  const setProductLimit = async (payload: {product_id: string, limit: number}) => {
+    setLoading(true);
+    const result = await axios.post('/api/bff/limit', payload);
+    setLoading(false);
+    return result.data;
+  }
+
+  const updateProductLimit = async (payload: {product_id: string, limit: number}) => {
+    setLoading(true);
+    const result = await axios.put('/api/bff/limit', payload);
+    setLoading(false);
+    return result.data;
+  }
+
+  const getProductLimit = async () => {
+    setLoading(true);
+    const result = await axios.get('/api/bff/limit');
+    setLoading(false);
+    return result.data;
+  }
+
   useEffect(() => {
     if (!orders && !loading && init) {
       setTimeout(() => {
@@ -181,7 +216,9 @@ const useOrder = ({
     getOrderStatus,
     orderStatusCount,
     getTotalCountPerMonth,
-    getTotalCountPerDayForMonth
+    getTotalCountPerDayForMonth,
+    getPendingOrders,
+    getCompletedOrders
   };
 };
 
