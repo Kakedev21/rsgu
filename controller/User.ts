@@ -140,7 +140,7 @@ const UserController = {
 
     await user.save();
 
-    const passwordLink = `${process.env.NEXTAUTH_URL}/auth/forgotpassword?token=${token}`;
+    const passwordLink = `https://rsgo.vercel.app/auth/forgotpassword?token=${token}`;
     return { passwordLink };
   },
 
@@ -195,7 +195,7 @@ const UserController = {
 
     await user.save();
 
-    const emailVerification = `${process.env.NEXTAUTH_URL}/auth/verifyemail?token=${token}`;
+    const emailVerification = `https://rsgo.vercel.app/auth/verifyemail?token=${token}`;
     return { emailVerification };
   },
 
