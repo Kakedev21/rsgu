@@ -31,6 +31,7 @@ const AddProductForm: FC<AddProductProps> = ({ onOpenChange, refresh }) => {
     const reportHook = useReport()
     const productState = useProductState();
     const [productImage, setProductImage] = useState<string | null>(productState.selected?.image as string);
+    const [selectedCategory, setSelectedCategory] = useState<string>("");
     const { toast } = useToast();
     const form = useForm<ProductProps>({
         resolver: zodResolver(formSchema),
@@ -95,6 +96,7 @@ const AddProductForm: FC<AddProductProps> = ({ onOpenChange, refresh }) => {
     };
 
     console.log("formState", form.formState, productImage)
+    console.log("C", selectedCategory)
     return (
         <Form {...form}>
             <ScrollArea className="h-[500px] px-5">
@@ -109,7 +111,10 @@ const AddProductForm: FC<AddProductProps> = ({ onOpenChange, refresh }) => {
                                     Category <span className="text-red-500">*</span>
                                 </FormLabel>
                                 {(!catergoryHook.loading || !productHook.loading) ? <FormControl>
-                                    <Select {...field} onValueChange={(value) => field.onChange(value)}>
+                                    <Select {...field} onValueChange={(value) => {
+                                        field.onChange(value);
+                                        setSelectedCategory(value);
+                                    }}>
                                         <SelectTrigger className="focus:ring-0">
                                             <SelectValue placeholder="Select" />
                                         </SelectTrigger>
@@ -167,6 +172,52 @@ const AddProductForm: FC<AddProductProps> = ({ onOpenChange, refresh }) => {
                             </FormItem>
                         )}
                     />
+                    {selectedCategory === "672d0b073c4e76e2ba2ff1a8" && (
+                        <>
+                            <FormField
+                                control={form.control}
+                                name="size"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Size
+                                        </FormLabel>
+                                        {!productHook.loading ? <FormControl>
+                                            <Input {...field} />
+                                        </FormControl> : <Skeleton className="h-10 w-[full]" />}
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="textile"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Textile
+                                        </FormLabel>
+                                        {!productHook.loading ? <FormControl>
+                                            <Input {...field} />
+                                        </FormControl> : <Skeleton className="h-10 w-[full]" />}
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="yards"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Yards
+                                        </FormLabel>
+                                        {!productHook.loading ? <FormControl>
+                                            <Input {...field} />
+                                        </FormControl> : <Skeleton className="h-10 w-[full]" />}
+                                    </FormItem>
+                                )}
+                            />
+                        </>
+                    )}
                     <div className="flex gap-4 w-full">
                         <FormField
                             control={form.control}

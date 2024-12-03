@@ -26,6 +26,9 @@ export interface ProductProps {
   image?: string;
   status?: string;
   limit?: number;
+  yards?: string;
+  textile?: string;
+  size?: string;
 }
 
 export const formSchema = z.object({
@@ -36,7 +39,10 @@ export const formSchema = z.object({
   price: z.number().nonnegative(),
   quantity: z.number().nonnegative(),
   cost: z.number().nonnegative(),
-  limit: z.number().nonnegative()
+  limit: z.number().nonnegative(),
+  yards: z.string(),
+  textile: z.string(),
+  size: z.string()
 });
 
 export type ProductFormValues = z.infer<typeof formSchema>;
