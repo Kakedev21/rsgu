@@ -473,6 +473,7 @@ const OrderController = {
             status: 1,
             createdAt: 1,
             updatedAt: 1,
+            productAndQty: 1,
             products: {
               _id: '$products._id',
               name: '$products.name',

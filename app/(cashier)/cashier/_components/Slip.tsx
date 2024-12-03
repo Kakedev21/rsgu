@@ -15,6 +15,11 @@ interface SlipProps {
       price: number;
       quantity?: number;
     }>;
+    productAndQty?: Array<{
+      productId: string;
+      quantity: number;
+      price: number;
+    }>;
     totalAmount: number;
   }>;
 }
@@ -37,13 +42,26 @@ const Slip: React.FC<SlipProps> = ({ orderData }) => {
 
   // Combine all products from all orders into a single array
   const allProducts = orderData.reduce((acc, order) => {
-    return [...acc, ...(Array.isArray(order.products) ? order.products : [order.products])];
+    const products = Array.isArray(order.products) ? order.products : [order.products];
+
+    // Map through products and add quantities from productAndQty
+    const productsWithQty = products.map(product => {
+      const qtyInfo = order.productAndQty?.find(pq => pq.productId === product._id);
+      return {
+        ...product,
+        quantity: qtyInfo?.quantity || product.quantity || 1,
+        price: qtyInfo?.price || product.price
+      };
+    });
+
+    return [...acc, ...productsWithQty];
   }, [] as Array<{
     _id: string;
     name: string;
     price: number;
     quantity?: number;
   }>);
+
   // Format date
   const formatDate = (dateString: string) => {
     try {
@@ -61,6 +79,8 @@ const Slip: React.FC<SlipProps> = ({ orderData }) => {
       return 'XXXXXX';
     }
   };
+
+  console.log("AA", allProducts)
 
   return (
     <div className="border p-4">
@@ -97,9 +117,9 @@ const Slip: React.FC<SlipProps> = ({ orderData }) => {
             allProducts.map((product) => (
               <tr key={product._id}>
                 <td className="border p-2">{product.name || 'N/A'}</td>
-                <td className="border p-2">{product.quantity || 1}</td>
+                <td className="border p-2">{product.quantity || 0}</td>
                 <td className="border p-2">₱{product.price?.toFixed(2) || '0.00'}</td>
-                <td className="border p-2">₱{((product.quantity || 1) * (product.price || 0)).toFixed(2)}</td>
+                <td className="border p-2">₱{((product.quantity || 0) * (product.price || 0)).toFixed(2)}</td>
               </tr>
             ))
           ) : (
