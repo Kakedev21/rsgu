@@ -123,7 +123,7 @@ const AddUserForm: FC<AddUserProps> = ({ onOpenChange, refresh }) => {
                         </FormItem>
                     )}
                 />}
-                {["admin", "root"].includes(session.data?.user?.role as string) && (
+                {["admin"].includes(session.data?.user?.role as string) && (
                     <>
                         <FormField
                             control={form.control}

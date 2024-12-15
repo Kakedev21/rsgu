@@ -22,6 +22,26 @@ import {
 } from "@/components/ui/popover";
 import LoadingOverlay from 'react-loading-overlay-ts';
 
+interface ReportData {
+    _id: string;
+    productId: string | { name: string };
+    beginningInventory?: {
+        quantity: number;
+        unitCost: number;
+        unitPrice: number;
+    };
+    sales?: {
+        quantity: number;
+        unitCost: number;
+        unitPrice: number;
+    };
+    endingInventory?: {
+        quantity: number;
+        unitCost: number;
+        unitPrice: number;
+    };
+}
+
 const RecordsPage = () => {
     const { reports, loading: reportLoading, getReportByDateRange } = useReport();
     const [dateRange, setDateRange] = useState<{
@@ -33,7 +53,7 @@ const RecordsPage = () => {
     });
     const [subTotal, setSubTotal] = useState({ unitCost: 0, unitPrice: 0, sales: 0 });
     const [isLoading, setIsLoading] = useState(false);
-    const [reportData, setReportData] = useState([]);
+    const [reportData, setReportData] = useState<ReportData[]>([]);
 
     const exportToExcel = () => {
         // Create worksheet data with headers
@@ -46,7 +66,7 @@ const RecordsPage = () => {
         ];
 
         // Add data rows
-        const rows = (reportData as any[])?.map(record => [
+        const rows = reportData.map(record => [
             typeof record.productId === 'string'
                 ? record.productId
                 : record.productId && typeof record.productId === 'object' && 'name' in record.productId
@@ -63,7 +83,7 @@ const RecordsPage = () => {
             record.endingInventory?.quantity || '',
             record.endingInventory?.unitCost || '',
             record.endingInventory?.unitPrice || ''
-        ]) || [];
+        ]);
 
         // Add subtotal row
         const subtotalRow = [
@@ -212,10 +232,6 @@ const RecordsPage = () => {
                                 />
                             </PopoverContent>
                         </Popover>
-                        {/* <Button disabled={isLoading || !dateRange.from || !dateRange.to} onClick={handleGenerate} className="flex items-center gap-2">
-                            <Download className="h-4 w-4" />
-                            Generate Report
-                        </Button> */}
                         <Button onClick={exportToExcel} className="flex items-center gap-2">
                             <Download className="h-4 w-4" />
                             Export to Excel
