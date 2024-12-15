@@ -259,7 +259,7 @@ const RecordsPage = () => {
                                             {typeof record.productId === 'string' ? record.productId : (record.productId as { name: string })?.name ?? 'N/A'}
                                         </TableCell>
                                         <TableCell className="text-center border border-gray-300">
-                                            {record.beginningInventory?.unitCost !== 0 ? record.beginningInventory.unitCost : ''}
+                                            {record.beginningInventory?.unitCost !== 0 ? record.beginningInventory?.unitCost : ''}
                                         </TableCell>
                                         <TableCell className="text-center border border-gray-300">
                                             {record.beginningInventory?.unitPrice !== 0 ? record.beginningInventory?.unitPrice : ''}
