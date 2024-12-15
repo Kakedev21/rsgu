@@ -52,7 +52,7 @@ export function PaidOrdersRow({ order }: { order: OrderProps }) {
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-[800px]">
-          <Slip orderData={[order]} />
+          <Slip orderData={[order as any]} />
         </DialogContent>
       </Dialog>
     </>
