@@ -8,6 +8,7 @@ interface SlipProps {
     user?: {
       name: string;
       email: string;
+      contactNumber?: number
     };
     products: Array<{
       _id: string;
