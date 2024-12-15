@@ -77,12 +77,19 @@ const Page = () => {
         try {
             const response = await fetch(`/api/bff/limit`, {
                 method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 body: JSON.stringify(limits)
             })
             if (response.ok) {
                 // Handle success
                 console.log('Limits updated successfully')
+            } else {
+                console.error('Failed to update limits:', response.status)
             }
+        } catch (error) {
+            console.error('Error updating limits:', error)
         } finally {
             setLoading(false)
         }
