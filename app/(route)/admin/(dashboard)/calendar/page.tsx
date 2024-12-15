@@ -76,7 +76,7 @@ const Page = () => {
         setLoading(true)
         try {
             const response = await fetch(`/api/bff/limit`, {
-                method: 'PUT',
+                method: 'PATCH', // Changed from PUT to PATCH since PUT is not allowed
                 headers: {
                     'Content-Type': 'application/json'
                 },

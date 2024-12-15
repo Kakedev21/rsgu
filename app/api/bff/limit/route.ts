@@ -8,7 +8,7 @@ export async function GET() {
   return NextResponse.json(limits);
 }
 
-export async function PUT(req: NextRequest) {
+export async function PATCH(req: NextRequest) {
   try {
     await connectMongoDB();
     const body = await req.json();
