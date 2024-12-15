@@ -31,10 +31,10 @@ interface CategoryTableProps {
   handleSearch?: (page: number, search: string | null) => void;
   refresh?: () => void;
 }
-const CategoryTable: FC<CategoryTableProps> = ({categories, count = 0, limit = 10, page = 1, loading = true, handleSearch, refresh}) => {
+const CategoryTable: FC<CategoryTableProps> = ({ categories, count = 0, limit = 10, page = 1, loading = true, handleSearch, refresh }) => {
   const debounce = useDebounce();
   const categoryState = useCategoryState();
-  const categoryHook = useCategory({init: false});
+  const categoryHook = useCategory({ init: false });
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -42,16 +42,16 @@ const CategoryTable: FC<CategoryTableProps> = ({categories, count = 0, limit = 1
 
 
   function prevPage() {
-    const queryParams ={...Object.fromEntries(searchParams.entries()), page: (page - 1)+""};
+    const queryParams = { ...Object.fromEntries(searchParams.entries()), page: (page - 1) + "" };
     const newQueryString = new URLSearchParams(queryParams).toString();
-    router.push(`${pathname}?${newQueryString}`, { scroll: true})
-    
+    router.push(`${pathname}?${newQueryString}`, { scroll: true })
+
   }
 
   function nextPage() {
-    const queryParams ={...Object.fromEntries(searchParams.entries()), page: (page + 1)+""};
+    const queryParams = { ...Object.fromEntries(searchParams.entries()), page: (page + 1) + "" };
     const newQueryString = new URLSearchParams(queryParams).toString();
-    router.push(`${pathname}?${newQueryString}`, { scroll: true})
+    router.push(`${pathname}?${newQueryString}`, { scroll: true })
   }
 
   useEffect(() => {
@@ -59,95 +59,98 @@ const CategoryTable: FC<CategoryTableProps> = ({categories, count = 0, limit = 1
       handleSearch(page, debounce.debounceValue);
     }
   }, [page, debounce.debounceValue]);
+
+  console.log("ASD", categories)
   return (
     <div className="bg-white shadow-lg rounded-lg p-8 space-y-10">
-        <div className='w-full flex justify-between items-center'>
-            <div>
-              <h3 className="text-2xl font-semibold leading-none tracking-tight text-slate-700">Products Category</h3>
-              <p className='text-xs'>
-                Manage your product categories.
-              </p>
-            </div>
-            <div className='mt-2 w-1/2'>
-              <SearchInput
-                placeholder="Search category..."
-                onChange={(event) => debounce.setValue(event.target.value)}
-              />
-            </div>
-          </div>
-          {
-            loading && <div className='w-full flex justify-center p-5 items-center gap-2'>
-              <LoaderCircle className=' animate-spin text-slate-600' />
-              <p className='text-slate-600 animate-pulse'>Loading...</p>
-            </div>
-          }
-          {!loading && <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>
-                  <span className="sr-only">Actions</span>
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {categories?.map((category) => (
-                <Category key={category?.["_id"]} category={category} />
-              ))}
-            </TableBody>
-          </Table>}
-        <div className="flex items-center w-full justify-between border-t border-slate-100">
-          <div className="mt-3  text-xs text-muted-foreground">
-            Showing{' '}
-            <strong>
-              {Math.min(page === 1 ? (categories?.length || limit) : itemsCount * (page - 1), count)}
-            </strong>{' '}
-            of <strong>{count}</strong> categories
-          </div>
-          <div className="mt-3  flex">
-            <Button
-              onClick={prevPage}
-              variant="ghost"
-              size="sm"
-              disabled={!(page > 1)}
-            >
-              <ChevronLeft className="mr-2 h-4 w-4" />
-              Prev
-            </Button>
-            <Button
-              onClick={nextPage}
-              variant="ghost"
-              size="sm"
-              disabled={(page) >= Math.ceil(count / limit)}
-            >
-              Next
-              <ChevronRight className="ml-2 h-4 w-4" />
-            </Button>
-          </div>
+      <div className='w-full flex justify-between items-center'>
+        <div>
+          <h3 className="text-2xl font-semibold leading-none tracking-tight text-slate-700">Products Category</h3>
+          <p className='text-xs'>
+            Manage your product categories.
+          </p>
         </div>
-        <ConfirmDialog
-          title="Delete Confirmation"
-          description="This action cannot be undone. This will permanently delete
+        <div className='mt-2 w-1/2'>
+          <SearchInput
+            placeholder="Search category..."
+            onChange={(event) => debounce.setValue(event.target.value)}
+          />
+        </div>
+      </div>
+      {
+        loading && <div className='w-full flex justify-center p-5 items-center gap-2'>
+          <LoaderCircle className=' animate-spin text-slate-600' />
+          <p className='text-slate-600 animate-pulse'>Loading...</p>
+        </div>
+      }
+      {!loading && <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Name</TableHead>
+            <TableHead>Products Count</TableHead> {/* Add this line */}
+            <TableHead>Date</TableHead>
+            <TableHead>
+              <span className="sr-only">Actions</span>
+            </TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {categories?.map((category) => (
+            <Category key={category?.["_id"]} category={category} />
+          ))}
+        </TableBody>
+      </Table>}
+      <div className="flex items-center w-full justify-between border-t border-slate-100">
+        <div className="mt-3  text-xs text-muted-foreground">
+          Showing{' '}
+          <strong>
+            {Math.min(page === 1 ? (categories?.length || limit) : itemsCount * (page - 1), count)}
+          </strong>{' '}
+          of <strong>{count}</strong> categories
+        </div>
+        <div className="mt-3  flex">
+          <Button
+            onClick={prevPage}
+            variant="ghost"
+            size="sm"
+            disabled={!(page > 1)}
+          >
+            <ChevronLeft className="mr-2 h-4 w-4" />
+            Prev
+          </Button>
+          <Button
+            onClick={nextPage}
+            variant="ghost"
+            size="sm"
+            disabled={(page) >= Math.ceil(count / limit)}
+          >
+            Next
+            <ChevronRight className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      </div>
+      <ConfirmDialog
+        title="Delete Confirmation"
+        description="This action cannot be undone. This will permanently delete
         and remove your data from our servers."
-          open={categoryState.openDeleteDialog}
-          onOpenChange={categoryState.setOpenDeleteDialog}
-          confirmLabel="Delete"
-          cancelLabel="Cancel"
-          handleClickConfirm={async () => {
-            categoryState.setOpenDeleteDialog(false);
-            await categoryHook.deleteCategory(categoryState.selected?._id as string);
-            categoryState.setSelected(null);
-            categoryHook.getAllCategory(Number(page), Number(limit));
-            if (refresh) {
-              refresh();
-            }
-          }}
-          handleClickCancel={() => {
-            categoryState.setSelected(null);
-            categoryState.setOpenDeleteDialog(false);
-          }}
-        />
+        open={categoryState.openDeleteDialog}
+        onOpenChange={categoryState.setOpenDeleteDialog}
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        handleClickConfirm={async () => {
+          categoryState.setOpenDeleteDialog(false);
+          await categoryHook.deleteCategory(categoryState.selected?._id as string);
+          categoryState.setSelected(null);
+          categoryHook.getAllCategory(Number(page), Number(limit));
+          if (refresh) {
+            refresh();
+          }
+        }}
+        handleClickCancel={() => {
+          categoryState.setSelected(null);
+          categoryState.setOpenDeleteDialog(false);
+        }}
+      />
     </div>
   );
 }

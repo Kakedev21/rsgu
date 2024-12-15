@@ -45,6 +45,20 @@ const OrderController = {
         },
         {
           $lookup: {
+            from: 'users',
+            localField: 'userId',
+            foreignField: '_id',
+            as: 'user'
+          }
+        },
+        {
+          $unwind: {
+            path: '$user',
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $lookup: {
             from: 'users', // Name of the users collection
             let: {
               ...(status === 'Paid' ? { cashierId: '$cashier' } : {}),
@@ -87,6 +101,14 @@ const OrderController = {
           }
         },
         {
+          $lookup: {
+            from: 'products',
+            localField: 'productId',
+            foreignField: '_id',
+            as: 'products'
+          }
+        },
+        {
           $skip: (page - 1) * limit // Pagination
         },
         {
@@ -100,6 +122,14 @@ const OrderController = {
             status: 1,
             createdAt: 1,
             updatedAt: 1,
+            products: 1,
+            productAndQty: 1,
+            user: {
+              _id: '$user._id',
+              name: '$user.name',
+              email: '$user.email',
+              contactNumber: '$user.contactNumber'
+            },
             cashier: {
               _id: {
                 $cond: [

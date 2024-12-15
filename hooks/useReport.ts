@@ -77,6 +77,15 @@ const useReport = () => {
     return result.data;
   };
 
+  const getReportByDateRange = async (startDate: Date, endDate: Date) => {
+    setLoading(true);
+    const result = await axios.get('/api/bff/reports/range', {
+      params: { startDate, endDate }
+    });
+    setLoading(false);
+    return result.data;
+  };
+
   return {
     reports,
     loading,
@@ -85,7 +94,8 @@ const useReport = () => {
     deleteReport,
     getReportByDay,
     createDailyReport,
-    updateSales
+    updateSales,
+    getReportByDateRange
   };
 };
 

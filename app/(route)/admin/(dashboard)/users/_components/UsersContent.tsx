@@ -11,17 +11,16 @@ import useUser, { useUserState } from '@/hooks/useUser';
 import UsersTable from './users-table';
 import AddUser from './AddUser';
 
-
 const UsersContentPage = () => {
-  const userHook = useUser({init: false});
+  const userHook = useUser({ init: false });
   const userState = useUserState();
   const searchParams = useSearchParams();
-  const pageOffset =  Number(searchParams.get("page")) || 1;
+  const pageOffset = Number(searchParams.get("page")) || 1;
   const handleSearch = (page: number = pageOffset, search: string | null) => {
     userHook.getAll(page, 10, search);
   }
   const handleRefresh = () => {
-    userHook.getAll(pageOffset, 10);
+    userHook.getAll(pageOffset, 10,);
   }
 
   return (
@@ -29,8 +28,8 @@ const UsersContentPage = () => {
       <div className="flex items-center gap-2 justify-end">
         <Tooltip
           trigger={
-            <div className='p-3'  onClick={() => handleRefresh()}>
-              <RefreshCw className="h-3.5 w-3.5"/>
+            <div className='p-3' onClick={() => handleRefresh()}>
+              <RefreshCw className="h-3.5 w-3.5" />
             </div>
           }
           tooltip="Refresh"
@@ -46,11 +45,11 @@ const UsersContentPage = () => {
         </Button>
       </div>
       <UsersTable
-       {...userHook.users}
-       loading={userHook.loading}
-       handleSearch={handleSearch}
-       refresh={handleRefresh}
-       page={pageOffset}
+        {...userHook.users}
+        loading={userHook.loading}
+        handleSearch={handleSearch}
+        refresh={handleRefresh}
+        page={pageOffset}
       />
       <AddUser
         open={userState.openFormDialog}
@@ -58,7 +57,7 @@ const UsersContentPage = () => {
         refresh={handleRefresh}
       />
     </div>
-    
+
   );
 }
 

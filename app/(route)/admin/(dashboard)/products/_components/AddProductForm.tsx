@@ -36,7 +36,7 @@ const AddProductForm: FC<AddProductProps> = ({ onOpenChange, refresh }) => {
     const form = useForm<ProductProps>({
         resolver: zodResolver(formSchema),
         mode: "all",
-        defaultValues: productState.selected || { description: "" }
+        defaultValues: productState.selected || { description: "", availableSizes: [] }
     })
 
     const onSubmit: SubmitHandler<ProductProps> = async (data) => {
@@ -176,43 +176,56 @@ const AddProductForm: FC<AddProductProps> = ({ onOpenChange, refresh }) => {
                         <>
                             <FormField
                                 control={form.control}
-                                name="size"
+                                name="availableSizes"
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            Size
+                                            Available Sizes
                                         </FormLabel>
-                                        {!productHook.loading ? <FormControl>
-                                            <Input {...field} />
-                                        </FormControl> : <Skeleton className="h-10 w-[full]" />}
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="textile"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>
-                                            Textile
-                                        </FormLabel>
-                                        {!productHook.loading ? <FormControl>
-                                            <Input {...field} />
-                                        </FormControl> : <Skeleton className="h-10 w-[full]" />}
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="yards"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>
-                                            Yards
-                                        </FormLabel>
-                                        {!productHook.loading ? <FormControl>
-                                            <Input {...field} />
-                                        </FormControl> : <Skeleton className="h-10 w-[full]" />}
+                                        <div className="space-y-4">
+                                            {field.value?.map((sizeItem, index) => (
+                                                <div key={index} className="flex items-center gap-4">
+                                                    <Input
+                                                        placeholder="Size"
+                                                        value={sizeItem.size}
+                                                        onChange={(e) => {
+                                                            const newSizes = [...(field.value || [])];
+                                                            newSizes[index].size = e.target.value;
+                                                            field.onChange(newSizes);
+                                                        }}
+                                                    />
+                                                    <Input
+                                                        type="number"
+                                                        placeholder="Yards"
+                                                        value={sizeItem.yards}
+                                                        onChange={(e) => {
+                                                            const newSizes = [...(field.value || [])];
+                                                            newSizes[index].yards = parseFloat(e.target.value);
+                                                            field.onChange(newSizes);
+                                                        }}
+                                                    />
+                                                    <Button
+                                                        type="button"
+                                                        variant="destructive"
+                                                        onClick={() => {
+                                                            const newSizes = field.value?.filter((_, i) => i !== index);
+                                                            field.onChange(newSizes);
+                                                        }}
+                                                    >
+                                                        -
+                                                    </Button>
+                                                </div>
+                                            ))}
+                                            <Button
+                                                type="button"
+                                                onClick={() => {
+                                                    const newSizes = [...(field.value || []), { size: '', yards: 0 }];
+                                                    field.onChange(newSizes);
+                                                }}
+                                            >
+                                                +
+                                            </Button>
+                                        </div>
                                     </FormItem>
                                 )}
                             />

@@ -12,14 +12,14 @@ import {
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { ChevronLeft, ChevronRight, LoaderCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import {  User } from './user';
+import { User } from './user';
 import SearchInput from '@/components/SearchInput';
 import { FC, useEffect, useState } from 'react';
 import useDebounce from '@/hooks/useDebounce';
 import ConfirmDialog from '@/components/ConfirmationDialog';
 import { UserProps } from '@/types/User';
 import useUser, { useUserState } from '@/hooks/useUser';
-import { generatePassword } from '@/lib/utils';
+import { Input } from '@/components/ui/input';
 
 interface UserTableProps {
   users?: UserProps[];
@@ -30,27 +30,28 @@ interface UserTableProps {
   handleSearch?: (page: number, search: string | null) => void;
   refresh?: () => void;
 }
-const UsersTable: FC<UserTableProps> = ({users, count = 0, limit = 10, page = 1, loading = true, handleSearch, refresh}) => {
+const UsersTable: FC<UserTableProps> = ({ users, count = 0, limit = 10, page = 1, loading = true, handleSearch, refresh }) => {
   const debounce = useDebounce();
   const userState = useUserState();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const userHook = useUser({init: false});
+  const userHook = useUser({ init: false });
   const router = useRouter();
-  const [newPass, setNewPass] = useState<string | null>(null);
+  const [newPass, setNewPass] = useState<string>('');
+  const [showNewPass, setShowNewPass] = useState(false);
   const itemsCount = (users?.length || 0) + limit;
   const prevPage = () => {
-    const queryParams ={...Object.fromEntries(searchParams.entries()), page: (page - 1)+""};
+    const queryParams = { ...Object.fromEntries(searchParams.entries()), page: (page - 1) + "" };
     const newQueryString = new URLSearchParams(queryParams).toString();
-    router.push(`${pathname}?${newQueryString}`, { scroll: true})
-    
+    router.push(`${pathname}?${newQueryString}`, { scroll: true })
+
   }
 
   const nextPage = () => {
-    const queryParams ={...Object.fromEntries(searchParams.entries()), page: (page + 1)+""};
+    const queryParams = { ...Object.fromEntries(searchParams.entries()), page: (page + 1) + "" };
     const newQueryString = new URLSearchParams(queryParams).toString();
-    
-    router.push(`${pathname}?${newQueryString}`, { scroll: true})
+
+    router.push(`${pathname}?${newQueryString}`, { scroll: true })
   }
 
   useEffect(() => {
@@ -81,13 +82,11 @@ const UsersTable: FC<UserTableProps> = ({users, count = 0, limit = 10, page = 1,
           <p className='text-slate-600 animate-pulse'>Loading...</p>
         </div>
       }
-     {!loading && <Table>
+      {!loading && <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>Department</TableHead>
-            <TableHead>Email</TableHead>
             <TableHead>Username</TableHead>
+            <TableHead>Role</TableHead>
             <TableHead>
               <span className="sr-only">Actions</span>
             </TableHead>
@@ -131,63 +130,79 @@ const UsersTable: FC<UserTableProps> = ({users, count = 0, limit = 10, page = 1,
         </div>
       </div>
       <ConfirmDialog
-          title="Delete Confirmation"
-          description="This action cannot be undone. This will permanently delete your account
+        title="Delete Confirmation"
+        description="This action cannot be undone. This will permanently delete your account
         and remove your data from our servers."
-          open={userState.openDeleteDialog}
-          onOpenChange={userState.setOpenDeleteDialog}
-          confirmLabel="Delete"
-          cancelLabel="Cancel"
-          handleClickConfirm={async () => {
-            userState.setOpenDeleteDialog(false);
-            await userHook.deleteUser(userState.selected?._id as string);
-            userState.setSelected(null);
-            userHook.getAll(Number(page), Number(limit));
-            if (refresh) {
-              refresh();
-            }
-          }}
-          handleClickCancel={() => {
-            userState.setSelected(null);
-            userState.setOpenDeleteDialog(false);
-          }}
-        />
-        <ConfirmDialog
-          title="Update Password Confirmation"
-          description={<div>Are you sure you want to update <span className='font-bold'>{userState.selected?.name}</span> password?</div>}
-          open={userState.updatePassword}
-          onOpenChange={userState.setUpdatePassword}
-          confirmLabel="Update"
-          cancelLabel="Cancel"
-          handleClickConfirm={async () => {
-            const password = generatePassword();
-            await userHook.update({
-              ...userState.selected,
-              password: password,
-            } as UserProps, userState.selected?._id as string);
-            setNewPass(password);
-            userState.setUpdatePassword(false);
-            userState.setSelected(null);
-            userHook.getAll(Number(page), Number(limit));
-            if (refresh) {
-              refresh();
-            }
-          }}
-          handleClickCancel={() => {
-            userState.setSelected(null);
-            userState.setUpdatePassword(false);
-          }}
-        />
-        <ConfirmDialog
-          title="Update Password"
-          description={<div>New Password: <span className='font-bold'>{newPass}</span></div>}
-          open={!!newPass}
-          onOpenChange={() => setNewPass(null)}
-          confirmLabel="Ok"
-          cancelLabel="Close"
-          handleClickConfirm={() =>  setNewPass(null)}
-          handleClickCancel={() => setNewPass(null)}
-        />
+        open={userState.openDeleteDialog}
+        onOpenChange={userState.setOpenDeleteDialog}
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        handleClickConfirm={async () => {
+          userState.setOpenDeleteDialog(false);
+          await userHook.deleteUser(userState.selected?._id as string);
+          userState.setSelected(null);
+          userHook.getAll(Number(page), Number(limit));
+          if (refresh) {
+            refresh();
+          }
+        }}
+        handleClickCancel={() => {
+          userState.setSelected(null);
+          userState.setOpenDeleteDialog(false);
+        }}
+      />
+      <ConfirmDialog
+        title="Update Password"
+        description={
+          <div className="space-y-4">
+            <div>Update password for user: <span className='font-bold'>{userState.selected?.name}</span></div>
+            <Input
+              type="password"
+              placeholder="Enter new password"
+              value={newPass}
+              onChange={(e) => setNewPass(e.target.value)}
+            />
+          </div>
+        }
+        open={userState.updatePassword}
+        onOpenChange={(open) => {
+          userState.setUpdatePassword(open);
+          if (!open) {
+            setNewPass('');
+          }
+        }}
+        confirmLabel="Update"
+        cancelLabel="Cancel"
+        handleClickConfirm={async () => {
+          if (!newPass) return;
+          await userHook.update({
+            ...userState.selected,
+            password: newPass,
+          } as UserProps, userState.selected?._id as string);
+          setShowNewPass(true);
+          userState.setUpdatePassword(false);
+          userState.setSelected(null);
+          userHook.getAll(Number(page), Number(limit));
+          if (refresh) {
+            refresh();
+          }
+        }}
+        handleClickCancel={() => {
+          userState.setSelected(null);
+          userState.setUpdatePassword(false);
+          setNewPass('');
+        }}
+      />
+      <ConfirmDialog
+        title="Password Updated"
+        description={<div>Password has been successfully updated</div>}
+        open={showNewPass}
+        onOpenChange={setShowNewPass}
+        confirmLabel="Ok"
+        cancelLabel="Close"
+        handleClickConfirm={() => setShowNewPass(false)}
+        handleClickCancel={() => setShowNewPass(false)}
+      />
     </div>
   );
 }

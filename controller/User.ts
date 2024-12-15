@@ -21,6 +21,8 @@ const UserController = {
     await connectMongoDB();
     const regex = new RegExp(q as string, 'i');
     const session = await getServerSession(authOptions);
+    const isAdmin = session?.user?.role === 'admin';
+    const isCashier = session?.user?.role === 'cashier';
     const filter = {
       ...(q
         ? {
@@ -44,6 +46,8 @@ const UserController = {
         $and: [
           { role: { $ne: 'root' } },
           { username: { $ne: session?.user?.username } },
+          isAdmin ? { role: 'admin' } : {},
+          isCashier ? { role: 'cashier' } : {},
           {
             ...filter
           }
@@ -55,6 +59,8 @@ const UserController = {
         $and: [
           { role: { $ne: 'root' } },
           { username: { $ne: session?.user?.username } },
+          isAdmin ? { role: 'admin' } : {},
+          isCashier ? { role: 'cashier' } : {},
           {
             ...filter
           }

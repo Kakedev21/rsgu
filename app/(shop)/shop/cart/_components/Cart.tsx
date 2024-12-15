@@ -9,7 +9,7 @@ import numeral from "numeral";
 import { FC } from "react";
 import DeleteConfirmationMessage from "./DeleteConfirmationMessage";
 
-const Cart: FC<CartProps> = ({ name, description, price, _id, qty, }) => {
+const Cart: FC<CartProps> = ({ name, description, price, _id, qty, pickedSize }) => {
     const cartHook = useCart({ init: false });
     const session = useSession();
     const handleDeleteCart = async () => {
@@ -79,6 +79,7 @@ const Cart: FC<CartProps> = ({ name, description, price, _id, qty, }) => {
         <div>
             <p className="font-semibold text-slate-700">{name}</p>
             <p className="font-semibold text-xs text-slate-500">{description}</p>
+            <p className="font-semibold text-xs text-slate-500">Size: {pickedSize}</p>
         </div>
         <div className="space-y-1">
             <p className="font-semibold">₱{numeral(price).format('0,0.00')}</p>

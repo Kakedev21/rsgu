@@ -12,29 +12,27 @@ import { useToast } from "@/components/ui/use-toast";
 import constant from "@/utils/constant";
 import useUser, { useUserState } from "@/hooks/useUser";
 import { UserProps } from "@/types/User";
-
-import { KeySquare } from "lucide-react";
-import { generatePassword } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useSession } from "next-auth/react";
+
 interface AddUserProps {
     onOpenChange: (value: boolean) => void;
     refresh?: () => void;
 }
 
-const AddUserForm: FC<AddUserProps> = ({onOpenChange, refresh}) => {
-    const userHook = useUser({init: false});
+const AddUserForm: FC<AddUserProps> = ({ onOpenChange, refresh }) => {
+    const userHook = useUser({ init: false });
     const session = useSession();
     const userState = useUserState();
     const { toast } = useToast();
     const form = useForm<UserProps>({
         resolver: zodResolver(formSchema),
         mode: "all",
-        defaultValues: userState.selected  || {}
-      })
+        defaultValues: userState.selected || {}
+    })
 
     const onSubmit: SubmitHandler<UserProps> = async (data) => {
-        let response = userState.selected ? await  userHook.update(data, userState.selected?.["_id"] as string) : await userHook.create(data);
+        let response = userState.selected ? await userHook.update(data, userState.selected?.["_id"] as string) : await userHook.create(data);
         if (response?.error) {
             return toast({
                 title: "Something went wrong",
@@ -54,7 +52,7 @@ const AddUserForm: FC<AddUserProps> = ({onOpenChange, refresh}) => {
     return (
         <Form {...form}>
             <form className="space-y-4 mt-5" onSubmit={form.handleSubmit(onSubmit)} >
-                
+
                 <FormField
                     control={form.control}
                     name="name"
@@ -64,8 +62,8 @@ const AddUserForm: FC<AddUserProps> = ({onOpenChange, refresh}) => {
                                 Name <span className="text-red-500">*</span>
                             </FormLabel>
                             {!userHook.loading ? <FormControl>
-                                <Input {...field}/>
-                            </FormControl> : <Skeleton className="h-10 w-[full]"/>}
+                                <Input {...field} />
+                            </FormControl> : <Skeleton className="h-10 w-[full]" />}
                         </FormItem>
                     )}
                 />
@@ -78,8 +76,8 @@ const AddUserForm: FC<AddUserProps> = ({onOpenChange, refresh}) => {
                                 Email <span className="text-red-500">*</span>
                             </FormLabel>
                             {!userHook.loading ? <FormControl>
-                                <Input {...field}/>
-                            </FormControl> : <Skeleton className="h-10 w-[full]"/>}
+                                <Input {...field} />
+                            </FormControl> : <Skeleton className="h-10 w-[full]" />}
                         </FormItem>
                     )}
                 />
@@ -92,8 +90,8 @@ const AddUserForm: FC<AddUserProps> = ({onOpenChange, refresh}) => {
                                 Department <span className="text-red-500">*</span>
                             </FormLabel>
                             {!userHook.loading ? <FormControl>
-                                <Input {...field}/>
-                            </FormControl> : <Skeleton className="h-10 w-[full]"/>}
+                                <Input {...field} />
+                            </FormControl> : <Skeleton className="h-10 w-[full]" />}
                         </FormItem>
                     )}
                 />
@@ -106,8 +104,8 @@ const AddUserForm: FC<AddUserProps> = ({onOpenChange, refresh}) => {
                                 Username
                             </FormLabel>
                             {!userHook.loading ? <FormControl>
-                                <Input {...field}/>
-                            </FormControl> : <Skeleton className="h-10 w-[full]"/>}
+                                <Input {...field} />
+                            </FormControl> : <Skeleton className="h-10 w-[full]" />}
                         </FormItem>
                     )}
                 />
@@ -116,62 +114,115 @@ const AddUserForm: FC<AddUserProps> = ({onOpenChange, refresh}) => {
                     name="password"
                     render={({ field }) => (
                         <FormItem>
-                        <FormLabel>
-                            Password <span className="text-red-500">*</span>
-                        </FormLabel>
-                        {!userHook.loading ? <FormControl>
-                            <div  className="flex items-center gap-2">
-
-                                <Input {...field} 
-                                    readOnly
-                                />
-                                <Button
-                                    className="flex items-center gap-2"
-                                    variant="ghost"
-                                    type="button"
-                                    onClick={() => {
-                                        const password = generatePassword();
-                                        form.setValue("password", password, {shouldValidate: true, shouldDirty: true})
-                                    }}
-                                >
-                                   <KeySquare size={16} className="cursor-pointer"/>  Generate Password
-                                </Button>
-                            </div>
-                            
-                        </FormControl> : <Skeleton className="h-10 w-[full]"/>}
+                            <FormLabel>
+                                Password <span className="text-red-500">*</span>
+                            </FormLabel>
+                            {!userHook.loading ? <FormControl>
+                                <Input {...field} type="password" />
+                            </FormControl> : <Skeleton className="h-10 w-[full]" />}
                         </FormItem>
                     )}
                 />}
-                {["admin", "root"].includes(session.data?.user?.role as string) && <FormField
-                    control={form.control}
-                    name="role"
-                    render={({field}) => {
-                        return <FormItem>
-                        <FormLabel>
-                            Role <span className="text-red-500">*</span>
-                        </FormLabel>
-                        {!userHook.loading ? <FormControl>
-                            <Select {...field}
-                                onValueChange={(value) => field.onChange({target: {value}})}
-                            >
-                                <SelectTrigger className="w-[180px]">
-                                    <SelectValue placeholder="Role" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="admin">Admin</SelectItem>
-                                    <SelectItem value="cashier">Cashier</SelectItem>
-                                </SelectContent>
-                            </Select>
-                            
-                        </FormControl> : <Skeleton className="h-10 w-[full]"/>}
-                        </FormItem>
-
-                    }}
-                />}
+                {["admin", "root"].includes(session.data?.user?.role as string) && (
+                    <>
+                        <FormField
+                            control={form.control}
+                            name="role"
+                            render={({ field }) => {
+                                return <FormItem>
+                                    <FormLabel>
+                                        Role <span className="text-red-500">*</span>
+                                    </FormLabel>
+                                    {!userHook.loading ? <FormControl>
+                                        <Select {...field}
+                                            onValueChange={(value) => {
+                                                // If value is sub-admin, set role as admin and subRole as sub-admin
+                                                if (value === 'sub-admin') {
+                                                    form.setValue('role', 'admin');
+                                                    form.setValue('subRole', 'sub-admin');
+                                                } else {
+                                                    field.onChange({ target: { value } });
+                                                    form.setValue('subRole', ''); // Clear subRole if not sub-admin
+                                                }
+                                            }}
+                                        >
+                                            <SelectTrigger className="w-[180px]">
+                                                <SelectValue placeholder="Role" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="admin">Admin</SelectItem>
+                                                <SelectItem value="sub-admin">Sub Admin</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </FormControl> : <Skeleton className="h-10 w-[full]" />}
+                                </FormItem>
+                            }}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="subRole"
+                            render={({ field }) => {
+                                return <FormItem className="hidden">
+                                    <FormControl>
+                                        <Input {...field} />
+                                    </FormControl>
+                                </FormItem>
+                            }}
+                        />
+                    </>
+                )}
+                {["cashier"].includes(session.data?.user?.role as string) && (
+                    <>
+                        <FormField
+                            control={form.control}
+                            name="role"
+                            render={({ field }) => {
+                                return <FormItem>
+                                    <FormLabel>
+                                        Role <span className="text-red-500">*</span>
+                                    </FormLabel>
+                                    {!userHook.loading ? <FormControl>
+                                        <Select {...field}
+                                            onValueChange={(value) => {
+                                                // If value is sub-admin, set role as admin and subRole as sub-admin
+                                                if (value === 'sub-cashier') {
+                                                    form.setValue('role', 'cashier');
+                                                    form.setValue('subRole', 'sub-cashier');
+                                                } else {
+                                                    field.onChange({ target: { value } });
+                                                    form.setValue('subRole', ''); // Clear subRole if not sub-admin
+                                                }
+                                            }}
+                                        >
+                                            <SelectTrigger className="w-[180px]">
+                                                <SelectValue placeholder="Role" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="cashier">Cashier</SelectItem>
+                                                <SelectItem value="sub-cashier">Sub Cashier</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </FormControl> : <Skeleton className="h-10 w-[full]" />}
+                                </FormItem>
+                            }}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="subRole"
+                            render={({ field }) => {
+                                return <FormItem className="hidden">
+                                    <FormControl>
+                                        <Input {...field} />
+                                    </FormControl>
+                                </FormItem>
+                            }}
+                        />
+                    </>
+                )}
                 <div>
                     <div className="flex gap-2 justify-end mt-10">
 
-                        <Button 
+                        <Button
                             type="button"
                             variant="ghost"
                             onClick={() => onOpenChange(false)}
@@ -180,7 +231,7 @@ const AddUserForm: FC<AddUserProps> = ({onOpenChange, refresh}) => {
                             Close
                         </Button>
                         <Button type="submit"
-                            disabled={!form.formState.isValid || userHook.loading}
+                            disabled={userHook.loading}
                         >
                             Save
                         </Button>

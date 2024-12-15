@@ -12,18 +12,18 @@ import useCategory from "@/hooks/useCategory";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { twMerge } from "tailwind-merge";
 
-const ProductList = ({searchValue}: {searchValue: string}) => {
-   
+const ProductList = ({ searchValue }: { searchValue: string }) => {
+
     const searchParams = useSearchParams();
-    const productHook = useProduct({init: false});
-    const pageOffset =  Number(searchParams.get("page")) || 1;
-    const categoryHook = useCategory({init: true, limit: 100});
+    const productHook = useProduct({ init: false });
+    const pageOffset = Number(searchParams.get("page")) || 1;
+    const categoryHook = useCategory({ init: true, limit: 100 });
     const [category, setCategory] = useState<string>("");
     useEffect(() => {
         if (!productHook.loading) {
-           (async () => {
-            await  productHook.getAll(pageOffset, 10, searchValue);
-           })()
+            (async () => {
+                await productHook.getAll(pageOffset, 10, searchValue);
+            })()
         }
     }, [searchValue])
     if (productHook.loading) {
@@ -48,7 +48,6 @@ const ProductList = ({searchValue}: {searchValue: string}) => {
         setCategory(category_id);
     }
 
-   
     return <div className="space-y-5 overflow-y-scroll">
         <div className="w-full overflow-x-scroll py-5">
             <div className="flex gap-3 items-center w-max">
@@ -62,20 +61,20 @@ const ProductList = ({searchValue}: {searchValue: string}) => {
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-5 overflow-y-scroll pb-5">
             {
-                productHook.products?.products.map(product => (<ProductItem {...product} key={product?._id}/>))
+                productHook.products?.products.map(product => (<ProductItem {...product} key={product?._id} />))
             }
             {
                 !productHook.products?.products.length && <div className="mx-auto col-span-4 my-5">
                     <p>No Products to display</p>
                     <div className="flex gap-3 items-center">
-                        
-                        <Button variant="ghost" 
+
+                        <Button variant="ghost"
                             className="flex gap-3 items-center"
                             onClick={async () => {
                                 await productHook.getAll(pageOffset, 10)
                             }}
                         >
-                            <RefreshCcw size={18}/>
+                            <RefreshCcw size={18} />
                             Refresh
                         </Button>
                     </div>
@@ -93,7 +92,6 @@ const ProductList = ({searchValue}: {searchValue: string}) => {
             </Button>
         </div>
     </div>
-
 }
 
 

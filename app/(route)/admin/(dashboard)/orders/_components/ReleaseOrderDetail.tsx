@@ -8,6 +8,7 @@ import ConfirmReleaseOrder from "./ConfirmReleaseOrder";
 import { useSession } from "next-auth/react";
 import { useToast } from "@/components/ui/use-toast";
 import useReport from "@/hooks/useReport";
+import emailjs from '@emailjs/browser';
 
 interface ReleaseOrderDetailProps {
     orderNo: string;
@@ -62,6 +63,15 @@ const ReleaseOrderDetail: FC<ReleaseOrderDetailProps> = ({ orderNo }) => {
                     date: new Date()
                 })
             }))
+
+            // Send email notification
+            await emailjs.send('service_7qol6gv', 'template_zimysjt', {
+                order_no: orderHook?.order?.[0]._id?.slice(-6),
+                user_name: orderHook?.order?.[0]?.user?.name,
+                user_email: orderHook?.order?.[0]?.user?.email
+            }, {
+                publicKey: 'DL0gCccNkjcEvSL01'
+            });
         }
 
         await orderHook.orderDetail(orderNo as string)

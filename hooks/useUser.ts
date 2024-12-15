@@ -55,13 +55,19 @@ const useUser = ({
     count: number;
   } | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const getAll = async (page: number, limit: number, q?: string | null) => {
+  const getAll = async (
+    page: number,
+    limit: number,
+    q?: string | null,
+    admin?: boolean
+  ) => {
     setLoading(true);
     const result = await axios.get(`/api/bff/users`, {
       params: {
         page,
         limit,
-        ...(q ? { q: q } : {})
+        ...(q ? { q: q } : {}),
+        ...(admin ? { admin: admin } : {})
       }
     });
     setLoading(false);
