@@ -16,42 +16,38 @@ const Page = () => {
         product: 0,
         release: 0
     })
+
     const [loading, setLoading] = useState(false)
 
     useEffect(() => {
-        const fetchOrders = async () => {
+        const fetchData = async () => {
             setLoading(true)
             try {
-                const completedOrders = await orderHook.getCompletedOrders()
-                setOrders(completedOrders)
-            } finally {
-                setLoading(false)
-            }
-        }
-        const fetchLimits = async () => {
-            setLoading(true)
-            try {
-                const response = await fetch('/api/bff/limit', {
-                    cache: 'no-store', // Disable caching
-                    headers: {
-                        'Cache-Control': 'no-cache',
-                        'Pragma': 'no-cache'
-                    }
-                })
-                const data = await response.json()
-                if (data[0]) {
+                // Execute both fetches in parallel
+                const [ordersPromise, limitsPromise] = await Promise.all([
+                    orderHook.getCompletedOrders(),
+                    fetch('/api/bff/limit').then(res => res.json())
+                ]);
+
+                // Set the orders
+                setOrders(ordersPromise);
+
+                // Set the limits
+                if (limitsPromise[0]) {
                     setLimits({
-                        product: data[0].product || 0,
-                        release: data[0].release || 0
-                    })
+                        product: limitsPromise[0].product || 0,
+                        release: limitsPromise[0].release || 0
+                    });
                 }
+            } catch (error) {
+                console.error('Error fetching data:', error);
             } finally {
-                setLoading(false)
+                setLoading(false);
             }
-        }
-        fetchOrders()
-        fetchLimits()
-    }, [])
+        };
+
+        fetchData();
+    }, []);
 
     useEffect(() => {
         if (orders) {
