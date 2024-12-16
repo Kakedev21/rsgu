@@ -31,7 +31,13 @@ const Page = () => {
         const fetchLimits = async () => {
             setLoading(true)
             try {
-                const response = await fetch('/api/bff/limit')
+                const response = await fetch('/api/bff/limit', {
+                    cache: 'no-store', // Disable caching
+                    headers: {
+                        'Cache-Control': 'no-cache',
+                        'Pragma': 'no-cache'
+                    }
+                })
                 const data = await response.json()
                 if (data[0]) {
                     setLimits({
@@ -94,6 +100,8 @@ const Page = () => {
             setLoading(false)
         }
     }
+
+    console.log("ASDAS", limits.release)
 
     return (
         <LoadingOverlay active={loading} spinner>
