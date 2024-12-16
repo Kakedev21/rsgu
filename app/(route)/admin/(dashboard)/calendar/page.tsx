@@ -94,9 +94,10 @@ const Page = () => {
 
     useEffect(() => {
         if (orders) {
-            // Group orders by date
+            // Group orders by date (using local timezone)
             const groupedOrders = orders.reduce((acc: any, order) => {
-                const date = new Date(order.createdAt!).toISOString().split('T')[0]
+                // Convert to local timezone date string
+                const date = new Date(order.createdAt!).toLocaleDateString('en-CA') // YYYY-MM-DD format
                 if (!acc[date]) {
                     acc[date] = []
                 }
@@ -109,7 +110,7 @@ const Page = () => {
                 title: `Released:\n${dateOrders.length}`,
                 date,
                 display: 'auto',
-                textColor: '#000', // Blue text
+                textColor: '#000',
                 className: 'text-lg font-bold text-center flex flex-col items-center justify-center'
             }))
 
