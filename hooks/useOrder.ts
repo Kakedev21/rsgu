@@ -133,11 +133,25 @@ const useOrder = ({
 
   const getCompletedOrders = async () => {
     setLoading(true);
-    const result = await axios.get(
-      `/api/bff/order/admin/list?t=${new Date().getTime()}`
-    );
-    setLoading(false);
-    return result.data?.orders;
+    try {
+      const result = await axios.get(
+        `/api/bff/order/admin/list?t=${new Date().getTime()}`,
+        {
+          headers: {
+            'Cache-Control': 'no-cache',
+            Pragma: 'no-cache'
+          },
+          // Add this to prevent axios from caching
+          adapter: undefined
+        }
+      );
+      setLoading(false);
+      return result.data?.orders;
+    } catch (error) {
+      setLoading(false);
+      console.error('Error fetching completed orders:', error);
+      throw error;
+    }
   };
 
   const getTransactions = async (cashier_id: string) => {

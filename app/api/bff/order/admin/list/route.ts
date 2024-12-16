@@ -1,20 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OrderController from '@/controller/Order';
 
+export const dynamic = 'force-dynamic'; // Add this line
+export const revalidate = 0; // Add this line
+
 export async function GET(req: NextRequest) {
   try {
-    // Add cache control headers to prevent caching
-    const response = NextResponse.json({
-      orders: await OrderController.getCompletedOrders()
-    });
+    const orders = await OrderController.getCompletedOrders();
+    const response = NextResponse.json({ orders });
 
-    // Set headers to prevent caching
-    response.headers.set(
-      'Cache-Control',
-      'no-store, no-cache, must-revalidate, max-age=0'
-    );
+    // Add these headers
+    response.headers.set('Cache-Control', 'no-store, max-age=0');
     response.headers.set('Pragma', 'no-cache');
-    response.headers.set('Expires', '0');
 
     return response;
   } catch (e) {

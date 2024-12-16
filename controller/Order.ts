@@ -202,10 +202,58 @@ const OrderController = {
 
   getCompletedOrders: async () => {
     await connectMongoDB();
-    const orders = await Order.find({ status: 'Completed' })
-      .sort({ updatedAt: -1 }) // Add sorting to get the most recent data
-      .lean() // For better performance
-      .exec();
+    const orders = await Order.aggregate([
+      {
+        $match: {
+          status: 'Completed'
+        }
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'userId',
+          foreignField: '_id',
+          as: 'user'
+        }
+      },
+      {
+        $unwind: {
+          path: '$user',
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $lookup: {
+          from: 'products',
+          localField: 'productId',
+          foreignField: '_id',
+          as: 'products'
+        }
+      },
+      {
+        $sort: {
+          createdAt: -1 // Sort by newest first
+        }
+      },
+      {
+        $project: {
+          _id: 1,
+          userId: 1,
+          totalAmount: 1,
+          status: 1,
+          createdAt: 1,
+          updatedAt: 1,
+          productAndQty: 1,
+          products: 1,
+          user: {
+            _id: '$user._id',
+            name: '$user.name',
+            email: '$user.email'
+          }
+        }
+      }
+    ]).allowDiskUse(true); // Add this for large datasets
+
     return orders;
   },
   get: async (order_id: string) => {
