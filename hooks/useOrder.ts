@@ -133,7 +133,9 @@ const useOrder = ({
 
   const getCompletedOrders = async () => {
     setLoading(true);
-    const result = await axios.get('/api/bff/order/admin/list');
+    const result = await axios.get(
+      `/api/bff/order/admin/list?t=${new Date().getTime()}`
+    );
     setLoading(false);
     return result.data?.orders;
   };
@@ -171,26 +173,32 @@ const useOrder = ({
     return result.data?.orders;
   };
 
-  const setProductLimit = async (payload: {product_id: string, limit: number}) => {
+  const setProductLimit = async (payload: {
+    product_id: string;
+    limit: number;
+  }) => {
     setLoading(true);
     const result = await axios.post('/api/bff/limit', payload);
     setLoading(false);
     return result.data;
-  }
+  };
 
-  const updateProductLimit = async (payload: {product_id: string, limit: number}) => {
+  const updateProductLimit = async (payload: {
+    product_id: string;
+    limit: number;
+  }) => {
     setLoading(true);
     const result = await axios.put('/api/bff/limit', payload);
     setLoading(false);
     return result.data;
-  }
+  };
 
   const getProductLimit = async () => {
     setLoading(true);
     const result = await axios.get('/api/bff/limit');
     setLoading(false);
     return result.data;
-  }
+  };
 
   useEffect(() => {
     if (!orders && !loading && init) {
