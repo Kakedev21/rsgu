@@ -13,7 +13,7 @@ interface CashierUserDrawerProps {
 }
 
 const CashierUserDrawer: FC<CashierUserDrawerProps> = ({ trigger }) => {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
 
   return (
     <Drawer open={open} onOpenChange={setOpen}>

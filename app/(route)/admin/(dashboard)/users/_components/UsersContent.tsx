@@ -10,9 +10,11 @@ import { useSearchParams } from 'next/navigation';
 import useUser, { useUserState } from '@/hooks/useUser';
 import UsersTable from './users-table';
 import AddUser from './AddUser';
+import { useSession } from 'next-auth/react';
 
 const UsersContentPage = () => {
   const userHook = useUser({ init: false });
+  const session = useSession();
   const userState = useUserState();
   const searchParams = useSearchParams();
   const pageOffset = Number(searchParams.get("page")) || 1;
@@ -22,6 +24,8 @@ const UsersContentPage = () => {
   const handleRefresh = () => {
     userHook.getAll(pageOffset, 10,);
   }
+
+
 
   return (
     <div className="mt-5 space-y-5">
@@ -34,7 +38,7 @@ const UsersContentPage = () => {
           }
           tooltip="Refresh"
         />
-        <Button size="sm" className="h-8 gap-1" onClick={() => {
+        <Button disabled={session.data?.user.subRole === "sub-admin" || session.data?.user.subRole === "sub-cashier"} size="sm" className="h-8 gap-1" onClick={() => {
           userState.setSelected(null);
           userState.setOpenFormDialog(true);
         }}>

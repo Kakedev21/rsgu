@@ -235,8 +235,13 @@ const OrderController = {
         // Execute the bulk operations
         const result = await Product.bulkWrite(bulkOps);
 
+        // Get updated products
+        const updatedProducts = await Product.find({
+          _id: { $in: productAndQty.map((item) => item.productId) }
+        });
+
         console.log('Quantities updated successfully:', result);
-        return result;
+        return updatedProducts;
       } catch (error) {
         console.error('Error updating product quantities:', error);
         return;
@@ -248,10 +253,14 @@ const OrderController = {
       { new: true, upsert: true, runValidators: true }
     );
     // Only decrement quantities if admin is updating
+    let updatedProducts;
     if (data.status === 'Completed') {
-      await decrementProductQtys(order?.['productAndQty']);
+      updatedProducts = await decrementProductQtys(order?.['productAndQty']);
     }
-    return order;
+    return {
+      order,
+      updatedProducts
+    };
   },
   delete: async (order_id: string) => {
     await connectMongoDB();
@@ -327,7 +336,9 @@ const OrderController = {
                   name: '$$product.name',
                   price: '$$product.price',
                   description: '$$product.description',
-                  image: '$$product.image'
+                  image: '$$product.image',
+                  quantity: '$$product.quantity',
+                  limit: '$$product.limit'
                 }
               }
             }
@@ -509,7 +520,9 @@ const OrderController = {
               name: '$products.name',
               price: '$products.price',
               description: '$products.description',
-              image: '$products.image'
+              image: '$products.image',
+              quantity: '$products.quantity',
+              limit: '$products.limit'
             },
             user: {
               _id: '$user._id',

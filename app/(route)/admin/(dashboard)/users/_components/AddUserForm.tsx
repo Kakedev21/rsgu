@@ -12,7 +12,7 @@ import { useToast } from "@/components/ui/use-toast";
 import constant from "@/utils/constant";
 import useUser, { useUserState } from "@/hooks/useUser";
 import { UserProps } from "@/types/User";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useSession } from "next-auth/react";
 
 interface AddUserProps {
@@ -134,26 +134,28 @@ const AddUserForm: FC<AddUserProps> = ({ onOpenChange, refresh }) => {
                                         Role <span className="text-red-500">*</span>
                                     </FormLabel>
                                     {!userHook.loading ? <FormControl>
-                                        <Select {...field}
+                                        <RadioGroup
                                             onValueChange={(value) => {
-                                                // If value is sub-admin, set role as admin and subRole as sub-admin
                                                 if (value === 'sub-admin') {
                                                     form.setValue('role', 'admin');
                                                     form.setValue('subRole', 'sub-admin');
                                                 } else {
-                                                    field.onChange({ target: { value } });
-                                                    form.setValue('subRole', ''); // Clear subRole if not sub-admin
+                                                    form.setValue('role', value);
+                                                    form.setValue('subRole', '');
                                                 }
                                             }}
+                                            defaultValue={field.value}
+                                            className="flex flex-col space-y-1"
                                         >
-                                            <SelectTrigger className="w-[180px]">
-                                                <SelectValue placeholder="Role" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="admin">Admin</SelectItem>
-                                                <SelectItem value="sub-admin">Sub Admin</SelectItem>
-                                            </SelectContent>
-                                        </Select>
+                                            <div className="flex items-center space-x-2">
+                                                <RadioGroupItem value="admin" id="admin" />
+                                                <label htmlFor="admin">Admin</label>
+                                            </div>
+                                            <div className="flex items-center space-x-2">
+                                                <RadioGroupItem value="sub-admin" id="sub-admin" />
+                                                <label htmlFor="sub-admin">Sub Admin</label>
+                                            </div>
+                                        </RadioGroup>
                                     </FormControl> : <Skeleton className="h-10 w-[full]" />}
                                 </FormItem>
                             }}
@@ -182,26 +184,28 @@ const AddUserForm: FC<AddUserProps> = ({ onOpenChange, refresh }) => {
                                         Role <span className="text-red-500">*</span>
                                     </FormLabel>
                                     {!userHook.loading ? <FormControl>
-                                        <Select {...field}
+                                        <RadioGroup
                                             onValueChange={(value) => {
-                                                // If value is sub-admin, set role as admin and subRole as sub-admin
                                                 if (value === 'sub-cashier') {
                                                     form.setValue('role', 'cashier');
                                                     form.setValue('subRole', 'sub-cashier');
                                                 } else {
-                                                    field.onChange({ target: { value } });
-                                                    form.setValue('subRole', ''); // Clear subRole if not sub-admin
+                                                    form.setValue('role', value);
+                                                    form.setValue('subRole', '');
                                                 }
                                             }}
+                                            defaultValue={field.value}
+                                            className="flex flex-col space-y-1"
                                         >
-                                            <SelectTrigger className="w-[180px]">
-                                                <SelectValue placeholder="Role" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="cashier">Cashier</SelectItem>
-                                                <SelectItem value="sub-cashier">Sub Cashier</SelectItem>
-                                            </SelectContent>
-                                        </Select>
+                                            <div className="flex items-center space-x-2">
+                                                <RadioGroupItem value="cashier" id="cashier" />
+                                                <label htmlFor="cashier">Cashier</label>
+                                            </div>
+                                            <div className="flex items-center space-x-2">
+                                                <RadioGroupItem value="sub-cashier" id="sub-cashier" />
+                                                <label htmlFor="sub-cashier">Sub Cashier</label>
+                                            </div>
+                                        </RadioGroup>
                                     </FormControl> : <Skeleton className="h-10 w-[full]" />}
                                 </FormItem>
                             }}
