@@ -126,7 +126,9 @@ const useOrder = ({
 
   const getPendingOrders = async () => {
     setLoading(true);
-    const result = await axios.get('/api/bff/order/cashier/list');
+    const result = await axios.get(
+      `/api/bff/order/cashier/list?t=${new Date().getTime()}`
+    );
     setLoading(false);
     return result.data?.orders;
   };

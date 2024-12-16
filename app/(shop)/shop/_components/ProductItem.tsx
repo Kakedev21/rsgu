@@ -128,12 +128,12 @@ const ProductItem: FC<ProductProps> = (props) => {
                 </div>
             )}
         </div>
-        <div className="flex justify-end gap-3 mt-4">
+        <div className="flex justify-end gap-2 mt-4">
             <Button variant="outline"
                 onClick={handleAddToCartClick}
                 size="sm"
                 disabled={(status || "Available") === "Not Available"}
-                className="px-3"
+                className="px-2 min-w-[32px]"
             >
                 <ShoppingCart className="h-4 w-4" />
             </Button>
@@ -141,7 +141,7 @@ const ProductItem: FC<ProductProps> = (props) => {
                 onClick={handleBuyNow}
                 size="sm"
                 disabled={(status || "Available") === "Not Available"}
-                className="text-sm whitespace-nowrap"
+                className="text-xs px-2"
             >
                 Buy now
             </Button>
