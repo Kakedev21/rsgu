@@ -36,15 +36,12 @@ const ProductSchema = new Schema(
     status: {
       type: String
     },
-    size: {
-      type: String
-    },
-    textile: {
-      type: String
-    },
-    yards: {
-      type: Number
-    },
+    availableSizes: [
+      {
+        size: String,
+        yards: Number
+      }
+    ],
     limit: {
       type: Number
     }

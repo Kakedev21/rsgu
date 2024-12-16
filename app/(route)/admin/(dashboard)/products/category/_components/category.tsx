@@ -25,11 +25,13 @@ export function Category({ category }: { category: CategoryProps }) {
     categoryState.setSelected(category);
     categoryState.setOpenFormDialog(true);
   }
+
   return (
     <TableRow>
-      
+
       <TableCell className="font-medium">{category.name}</TableCell>
-      <TableCell className="font-medium">{moment(category?.createdAt).format("lll")}</TableCell>      
+      <TableCell className="font-medium">{category.productsCount || 0}</TableCell> {/* Add this line */}
+      <TableCell className="font-medium">{moment(category?.createdAt).format("lll")}</TableCell>
       <TableCell>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

@@ -18,33 +18,78 @@ const Page = () => {
     })
     const [loading, setLoading] = useState(false)
 
+    const fetchOrders = async () => {
+        setLoading(true)
+        try {
+            const completedOrders = await orderHook.getCompletedOrders()
+            setOrders(completedOrders)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const fetchLimits = async () => {
+        setLoading(true)
+        try {
+            const response = await fetch('/api/bff/limit', {
+                cache: 'no-store' // Disable caching
+            })
+            const data = await response.json()
+            if (data[0]) {
+                setLimits({
+                    product: data[0].product || 0,
+                    release: data[0].release || 0
+                })
+            }
+        } finally {
+            setLoading(false)
+        }
+    }
+
+
+
+    const handleUpdateLimits = async () => {
+        setLoading(true)
+        try {
+            const response = await fetch(`/api/bff/limit`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(limits),
+                cache: 'no-store' // Disable caching
+            })
+            if (response.ok) {
+                // Handle success
+                console.log('Limits updated successfully')
+                // Refresh data after update
+                fetchOrders()
+                fetchLimits()
+            } else {
+                console.error('Failed to update limits:', response.status)
+            }
+        } catch (error) {
+            console.error('Error updating limits:', error)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    // Initial load
     useEffect(() => {
-        const fetchOrders = async () => {
-            setLoading(true)
-            try {
-                const completedOrders = await orderHook.getCompletedOrders()
-                setOrders(completedOrders)
-            } finally {
-                setLoading(false)
-            }
-        }
-        const fetchLimits = async () => {
-            setLoading(true)
-            try {
-                const response = await fetch('/api/bff/limit')
-                const data = await response.json()
-                if (data[0]) {
-                    setLimits({
-                        product: data[0].product || 0,
-                        release: data[0].release || 0
-                    })
-                }
-            } finally {
-                setLoading(false)
-            }
-        }
         fetchOrders()
         fetchLimits()
+    }, [])
+
+    // Set up polling for updates every 30 seconds
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            fetchOrders()
+            fetchLimits()
+        }, 30000) // 30 seconds
+
+        // Cleanup interval on component unmount
+        return () => clearInterval(intervalId)
     }, [])
 
     useEffect(() => {
@@ -71,22 +116,6 @@ const Page = () => {
             setEvents(calendarEvents)
         }
     }, [orders])
-
-    const handleUpdateLimits = async () => {
-        setLoading(true)
-        try {
-            const response = await fetch(`/api/bff/limit`, {
-                method: 'PUT',
-                body: JSON.stringify(limits)
-            })
-            if (response.ok) {
-                // Handle success
-                console.log('Limits updated successfully')
-            }
-        } finally {
-            setLoading(false)
-        }
-    }
 
     return (
         <LoadingOverlay active={loading} spinner>

@@ -10,32 +10,35 @@ import { useSearchParams } from 'next/navigation';
 import useUser, { useUserState } from '@/hooks/useUser';
 import UsersTable from './users-table';
 import AddUser from './AddUser';
-
+import { useSession } from 'next-auth/react';
 
 const UsersContentPage = () => {
-  const userHook = useUser({init: false});
+  const userHook = useUser({ init: false });
+  const session = useSession();
   const userState = useUserState();
   const searchParams = useSearchParams();
-  const pageOffset =  Number(searchParams.get("page")) || 1;
+  const pageOffset = Number(searchParams.get("page")) || 1;
   const handleSearch = (page: number = pageOffset, search: string | null) => {
     userHook.getAll(page, 10, search);
   }
   const handleRefresh = () => {
-    userHook.getAll(pageOffset, 10);
+    userHook.getAll(pageOffset, 10,);
   }
+
+
 
   return (
     <div className="mt-5 space-y-5">
       <div className="flex items-center gap-2 justify-end">
         <Tooltip
           trigger={
-            <div className='p-3'  onClick={() => handleRefresh()}>
-              <RefreshCw className="h-3.5 w-3.5"/>
+            <div className='p-3' onClick={() => handleRefresh()}>
+              <RefreshCw className="h-3.5 w-3.5" />
             </div>
           }
           tooltip="Refresh"
         />
-        <Button size="sm" className="h-8 gap-1" onClick={() => {
+        <Button disabled={session.data?.user.subRole === "sub-admin" || session.data?.user.subRole === "sub-cashier"} size="sm" className="h-8 gap-1" onClick={() => {
           userState.setSelected(null);
           userState.setOpenFormDialog(true);
         }}>
@@ -46,11 +49,11 @@ const UsersContentPage = () => {
         </Button>
       </div>
       <UsersTable
-       {...userHook.users}
-       loading={userHook.loading}
-       handleSearch={handleSearch}
-       refresh={handleRefresh}
-       page={pageOffset}
+        {...userHook.users}
+        loading={userHook.loading}
+        handleSearch={handleSearch}
+        refresh={handleRefresh}
+        page={pageOffset}
       />
       <AddUser
         open={userState.openFormDialog}
@@ -58,7 +61,7 @@ const UsersContentPage = () => {
         refresh={handleRefresh}
       />
     </div>
-    
+
   );
 }
 

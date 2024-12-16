@@ -1,7 +1,3 @@
-
-
-
-
 import AxiosInterceptor from '@/components/axiosInterceptor';
 import { Toaster } from '@/components/ui/toaster';
 import Providers from '@/app/(route)/admin/(dashboard)/providers';
@@ -9,14 +5,20 @@ import User from '@/app/(route)/admin/(dashboard)/user';
 import Image from 'next/image';
 import CashierAuthProvider from './_components/CashierAuthProvider';
 import UserProfile from '@/components/userProfile/Profile';
-import { ClipboardList } from 'lucide-react';
+import { ClipboardList, UserPlus, Users } from 'lucide-react';
 import Transactions from './_components/Transactions';
+import CashierUserDrawer from './_components/CashierUserDrawer';
+import CashierUserTable from './_components/CashierUserTable';
+import { useSession } from 'next-auth/react';
 
 export default function CashierLayout({
   children
 }: {
   children: React.ReactNode;
 }) {
+
+
+
   return (
     <Providers>
       <CashierAuthProvider>
@@ -41,11 +43,23 @@ export default function CashierLayout({
                 </div>
               </div>
               <div className='flex gap-5 items-center'>
+                <CashierUserTable
+                  trigger={<Users className='text-slate-50 cursor-pointer' />}
+                />
+              </div>
+              {<div className='flex gap-5 items-center'>
+                <CashierUserDrawer
+                  trigger={<UserPlus className='text-slate-50 cursor-pointer' />}
+                />
+              </div>}
+
+              <div className='flex gap-5 items-center'>
                 <Transactions
                   trigger={<ClipboardList className='text-slate-50 cursor-pointer' />}
                 />
                 <User />
               </div>
+
               <UserProfile />
             </header>
             <main className="grid flex-1 items-start gap-2 p-5 sm:px-6 sm:py-0 md:gap-4 bg-muted/40">

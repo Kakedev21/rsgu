@@ -4,6 +4,7 @@ export interface CategoryProps {
   _id?: string;
   name: string;
   createdAt?: string;
+  productsCount?: number;
 }
 
 export const categoryFormSchema = z.object({
@@ -26,9 +27,7 @@ export interface ProductProps {
   image?: string;
   status?: string;
   limit?: number;
-  yards?: string;
-  textile?: string;
-  size?: string;
+  availableSizes?: { size: string; yards: number }[];
 }
 
 export const formSchema = z.object({
@@ -40,9 +39,9 @@ export const formSchema = z.object({
   quantity: z.number().nonnegative(),
   cost: z.number().nonnegative(),
   limit: z.number().nonnegative(),
-  yards: z.string(),
-  textile: z.string(),
-  size: z.string()
+  availableSizes: z
+    .array(z.object({ size: z.string(), yards: z.number() }))
+    .optional()
 });
 
 export type ProductFormValues = z.infer<typeof formSchema>;

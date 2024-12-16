@@ -110,6 +110,31 @@ const ReportController = {
     }
   },
 
+  getReportByDateRange: async (startDate: Date, endDate: Date) => {
+    await connectMongoDB();
+
+    // Create start date at midnight in local timezone
+    const start = new Date(startDate);
+    start.setHours(0, 0, 0, 0);
+
+    // Create end date at end of day in local timezone
+    const end = new Date(endDate);
+    end.setHours(23, 59, 59, 999);
+
+    // Convert to UTC for MongoDB query
+    const utcStartDate = new Date(start.toISOString());
+    const utcEndDate = new Date(end.toISOString());
+
+    const reports = await Report.find({
+      createdAt: {
+        $gte: utcStartDate,
+        $lte: utcEndDate
+      }
+    }).populate('productId');
+
+    return reports;
+  },
+
   getReportBySpecificDay: async (date: Date) => {
     await connectMongoDB();
 

@@ -8,6 +8,7 @@ interface SlipProps {
     user?: {
       name: string;
       email: string;
+      contactNumber?: number
     };
     products: Array<{
       _id: string;
@@ -19,6 +20,7 @@ interface SlipProps {
       productId: string;
       quantity: number;
       price: number;
+      size: number | null;
     }>;
     totalAmount: number;
   }>;
@@ -50,7 +52,8 @@ const Slip: React.FC<SlipProps> = ({ orderData }) => {
       return {
         ...product,
         quantity: qtyInfo?.quantity || product.quantity || 1,
-        price: qtyInfo?.price || product.price
+        price: qtyInfo?.price || product.price,
+        size: qtyInfo?.size
       };
     });
 
@@ -60,6 +63,7 @@ const Slip: React.FC<SlipProps> = ({ orderData }) => {
     name: string;
     price: number;
     quantity?: number;
+    size?: number | null;
   }>);
 
   // Format date
@@ -96,7 +100,7 @@ const Slip: React.FC<SlipProps> = ({ orderData }) => {
             <p>NAME OF CUSTOMER: {order.user?.name || 'N/A'}</p>
           </div>
           <div className="border-b border pb-2 mb-2">
-            <p>CONTACT NUMBER: N/A</p>
+            <p>CONTACT NUMBER: {order.user?.contactNumber}</p>
           </div>
           <div className="border-b border pb-2 mb-2">
             <p>EMAIL: {order.user?.email || 'N/A'}</p>
@@ -107,6 +111,7 @@ const Slip: React.FC<SlipProps> = ({ orderData }) => {
         <thead>
           <tr>
             <th className="border p-2">PRODUCT NAME</th>
+            <th className="border p-2">SIZE</th>
             <th className="border p-2">QTY</th>
             <th className="border p-2">UNIT PRICE</th>
             <th className="border p-2">AMOUNT</th>
@@ -117,6 +122,7 @@ const Slip: React.FC<SlipProps> = ({ orderData }) => {
             allProducts.map((product) => (
               <tr key={product._id}>
                 <td className="border p-2">{product.name || 'N/A'}</td>
+                <td className="border p-2">{product.size || 'N/A'}</td>
                 <td className="border p-2">{product.quantity || 0}</td>
                 <td className="border p-2">₱{product.price?.toFixed(2) || '0.00'}</td>
                 <td className="border p-2">₱{((product.quantity || 0) * (product.price || 0)).toFixed(2)}</td>

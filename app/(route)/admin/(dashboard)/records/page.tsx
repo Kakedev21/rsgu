@@ -22,27 +22,56 @@ import {
 } from "@/components/ui/popover";
 import LoadingOverlay from 'react-loading-overlay-ts';
 
+interface ReportData {
+    _id: string;
+    productId: string | { name: string };
+    beginningInventory?: {
+        quantity: number;
+        unitCost: number;
+        unitPrice: number;
+    };
+    sales?: {
+        quantity: number;
+        unitCost: number;
+        unitPrice: number;
+    };
+    endingInventory?: {
+        quantity: number;
+        unitCost: number;
+        unitPrice: number;
+    };
+}
+
 const RecordsPage = () => {
-    const reportHook = useReport();
-    const [date, setDate] = useState<Date>(new Date());
+    const { reports, loading: reportLoading, getReportByDateRange } = useReport();
+    const [dateRange, setDateRange] = useState<{
+        from: Date | undefined;
+        to: Date | undefined;
+    }>({
+        from: new Date(),
+        to: new Date()
+    });
     const [subTotal, setSubTotal] = useState({ unitCost: 0, unitPrice: 0, sales: 0 });
     const [isLoading, setIsLoading] = useState(false);
-
-
+    const [reportData, setReportData] = useState<ReportData[]>([]);
 
     const exportToExcel = () => {
         // Create worksheet data with headers
         const headers = [
             ['INVENTORY RECORDS REPORT'],
-            ['Date:', new Date().toLocaleDateString()],
+            ['Date Range:', dateRange.from?.toLocaleDateString(), 'to', dateRange.to?.toLocaleDateString()],
             [],
             ['ITEMS', 'UNIT COST (UC)', 'UNIT PRICE (UP)', 'BEGINNING INVENTORY', '', '', 'SALES', '', '', 'ENDING INVENTORY', '', ''],
             ['', '', '', 'QTY', 'UC', 'UP', 'QTY', 'UC', 'UP', 'QTY', 'UC', 'UP']
         ];
 
         // Add data rows
-        const rows = reportHook.reports?.map(record => [
-            typeof record.productId === 'string' ? record.productId : (record.productId as { name?: string }).name || '',
+        const rows = reportData.map(record => [
+            typeof record.productId === 'string'
+                ? record.productId
+                : record.productId && typeof record.productId === 'object' && 'name' in record.productId
+                    ? record.productId.name
+                    : 'N/A',
             record.beginningInventory?.unitCost || 0,
             record.beginningInventory?.unitPrice || 0,
             record.beginningInventory?.quantity || 0,
@@ -54,7 +83,7 @@ const RecordsPage = () => {
             record.endingInventory?.quantity || '',
             record.endingInventory?.unitCost || '',
             record.endingInventory?.unitPrice || ''
-        ]) || [];
+        ]);
 
         // Add subtotal row
         const subtotalRow = [
@@ -106,41 +135,54 @@ const RecordsPage = () => {
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Inventory Records");
 
-        // Generate filename with current date
-        const date = new Date().toISOString().split('T')[0];
-        const filename = `inventory_records_${date}.xlsx`;
+        // Generate filename with date range
+        const fromDate = dateRange.from?.toISOString().split('T')[0];
+        const toDate = dateRange.to?.toISOString().split('T')[0];
+        const filename = `inventory_records_${fromDate}_to_${toDate}.xlsx`;
 
         // Save file
         XLSX.writeFile(wb, filename);
     };
 
     const handleGenerate = async () => {
-        setIsLoading(true)
-        await reportHook.createDailyReport()
-        await reportHook.getReportByDay(date) // Add this line to refresh the data
-        setIsLoading(false)
-    }
+        if (!dateRange.from || !dateRange.to) return;
 
+        setIsLoading(true);
+        try {
+            const result = await getReportByDateRange(dateRange.from, dateRange.to);
+            setReportData(result);
+            console.log("Generated reports:", result); // Debug log
+        } catch (error) {
+            console.error("Error generating report:", error);
+        }
+        setIsLoading(false);
+    }
 
     useEffect(() => {
         let totalUnitCost = 0;
         let totalUnitPrice = 0;
         let totalSales = 0;
 
-        reportHook.reports?.forEach((record) => {
-            totalUnitCost += (record.beginningInventory?.quantity || 0) * (record.beginningInventory?.unitCost || 0);
-            totalUnitPrice += (record.endingInventory?.quantity || 0) * (record.endingInventory?.unitPrice || 0);
-            totalSales += (record.sales?.quantity || 0) * (record.sales?.unitPrice || 0);
-        });
+        if (reportData && reportData.length > 0) {
+            reportData.forEach((record) => {
+                totalUnitCost += (record.beginningInventory?.quantity || 0) * (record.beginningInventory?.unitCost || 0);
+                totalUnitPrice += (record.endingInventory?.quantity || 0) * (record.endingInventory?.unitPrice || 0);
+                totalSales += (record.sales?.quantity || 0) * (record.sales?.unitPrice || 0);
+            });
+        }
 
         setSubTotal({ unitCost: totalUnitCost, unitPrice: totalUnitPrice, sales: totalSales });
-    }, [reportHook.reports?.length]);
+    }, [reportData]);
 
     useEffect(() => {
         const fetchRecords = async () => {
+            if (!dateRange.from || !dateRange.to) return;
+
             try {
                 setIsLoading(true);
-                await reportHook.getReportByDay(date);
+                const result = await getReportByDateRange(dateRange.from, dateRange.to);
+                setReportData(result);
+                console.log("Fetched reports:", result); // Debug log
             } catch (error) {
                 console.error('Error fetching records:', error);
             } finally {
@@ -149,7 +191,7 @@ const RecordsPage = () => {
         };
 
         fetchRecords();
-    }, [date]);
+    }, [dateRange.from, dateRange.to]);
 
     return (
         <LoadingOverlay active={isLoading} spinner>
@@ -161,22 +203,35 @@ const RecordsPage = () => {
                             <PopoverTrigger asChild>
                                 <Button variant="outline" className="flex items-center gap-2">
                                     <Calendar className="h-4 w-4" />
-                                    {format(date, "PPP")}
+                                    {dateRange.from ? (
+                                        dateRange.to ? (
+                                            <>
+                                                {format(dateRange.from, "PPP")} - {format(dateRange.to, "PPP")}
+                                            </>
+                                        ) : (
+                                            format(dateRange.from, "PPP")
+                                        )
+                                    ) : (
+                                        "Select date range"
+                                    )}
                                 </Button>
                             </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0">
+                            <PopoverContent className="w-auto p-0" align="start">
                                 <CalendarComponent
-                                    mode="single"
-                                    selected={date}
-                                    onSelect={(date) => date && setDate(date)}
                                     initialFocus
+                                    mode="range"
+                                    defaultMonth={dateRange.from}
+                                    selected={{
+                                        from: dateRange.from,
+                                        to: dateRange.to,
+                                    }}
+                                    onSelect={(range) => {
+                                        setDateRange({ from: range?.from, to: range?.to });
+                                    }}
+                                    numberOfMonths={1}
                                 />
                             </PopoverContent>
                         </Popover>
-                        <Button disabled={isLoading} onClick={() => handleGenerate()} className="flex items-center gap-2">
-                            <Download className="h-4 w-4" />
-                            Generate Report
-                        </Button>
                         <Button onClick={exportToExcel} className="flex items-center gap-2">
                             <Download className="h-4 w-4" />
                             Export to Excel
@@ -197,36 +252,44 @@ const RecordsPage = () => {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {reportHook.reports?.map((record) => (
-                                <TableRow key={record._id} className="border border-gray-300">
-                                    <TableCell className="text-center border border-gray-300">
-                                        {typeof record.productId === 'string' ? record.productId : (record.productId as { name: string })?.name ?? 'N/A'}
-                                    </TableCell>
-                                    <TableCell className="text-center border border-gray-300">
-                                        {record.beginningInventory?.unitCost !== 0 ? record.beginningInventory.unitCost : ''}
-                                    </TableCell>
-                                    <TableCell className="text-center border border-gray-300">
-                                        {record.beginningInventory?.unitPrice !== 0 ? record.beginningInventory?.unitPrice : ''}
-                                    </TableCell>
-                                    <TableCell className="text-center border border-gray-300">
-                                        <div>QTY: {record.beginningInventory?.quantity !== 0 ? record.beginningInventory?.quantity : ''}</div>
-                                        <div>UC: {record.beginningInventory?.unitCost !== 0 ? record.beginningInventory?.unitCost : ''}</div>
-                                        <div>UP: {record.beginningInventory?.unitPrice !== 0 ? record.beginningInventory?.unitPrice : ''}</div>
-                                    </TableCell>
+                            {reportData && reportData.length > 0 ? (
+                                reportData.map((record) => (
+                                    <TableRow key={record._id} className="border border-gray-300">
+                                        <TableCell className="text-center border border-gray-300">
+                                            {typeof record.productId === 'string' ? record.productId : (record.productId as { name: string })?.name ?? 'N/A'}
+                                        </TableCell>
+                                        <TableCell className="text-center border border-gray-300">
+                                            {record.beginningInventory?.unitCost !== 0 ? record.beginningInventory?.unitCost : ''}
+                                        </TableCell>
+                                        <TableCell className="text-center border border-gray-300">
+                                            {record.beginningInventory?.unitPrice !== 0 ? record.beginningInventory?.unitPrice : ''}
+                                        </TableCell>
+                                        <TableCell className="text-center border border-gray-300">
+                                            <div>QTY: {record.beginningInventory?.quantity !== 0 ? record.beginningInventory?.quantity : ''}</div>
+                                            <div>UC: {record.beginningInventory?.unitCost !== 0 ? record.beginningInventory?.unitCost : ''}</div>
+                                            <div>UP: {record.beginningInventory?.unitPrice !== 0 ? record.beginningInventory?.unitPrice : ''}</div>
+                                        </TableCell>
 
-                                    <TableCell className="text-center border border-gray-300">
-                                        <div>QTY: {record.sales?.quantity !== 0 ? record.sales?.quantity : ''}</div>
-                                        <div>UC: {record.sales?.unitCost !== 0 ? record.sales?.unitCost : ''}</div>
-                                        <div>UP: {record.sales?.unitPrice !== 0 ? record.sales?.unitPrice : ''}</div>
-                                    </TableCell>
+                                        <TableCell className="text-center border border-gray-300">
+                                            <div>QTY: {record.sales?.quantity !== 0 ? record.sales?.quantity : ''}</div>
+                                            <div>UC: {record.sales?.unitCost !== 0 ? record.sales?.unitCost : ''}</div>
+                                            <div>UP: {record.sales?.unitPrice !== 0 ? record.sales?.unitPrice : ''}</div>
+                                        </TableCell>
 
-                                    <TableCell className="text-center border border-gray-300">
-                                        <div>QTY: {record.endingInventory?.quantity !== 0 ? record.endingInventory?.quantity : ''}</div>
-                                        <div>UC: {record.endingInventory?.unitCost !== 0 ? record.endingInventory?.unitCost : ''}</div>
-                                        <div>UP: {record.endingInventory?.unitPrice !== 0 ? record.endingInventory?.unitPrice : ''}</div>
+                                        <TableCell className="text-center border border-gray-300">
+                                            <div>QTY: {record.endingInventory?.quantity !== 0 ? record.endingInventory?.quantity : ''}</div>
+                                            <div>UC: {record.endingInventory?.unitCost !== 0 ? record.endingInventory?.unitCost : ''}</div>
+                                            <div>UP: {record.endingInventory?.unitPrice !== 0 ? record.endingInventory?.unitPrice : ''}</div>
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            ) : (
+                                <TableRow>
+                                    <TableCell colSpan={6} className="text-center">
+                                        No records found
                                     </TableCell>
                                 </TableRow>
-                            ))}
+                            )}
                         </TableBody>
                     </Table>
                     <div className="flex justify-between mt-4">

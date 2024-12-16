@@ -8,6 +8,7 @@ import ConfirmReleaseOrder from "./ConfirmReleaseOrder";
 import { useSession } from "next-auth/react";
 import { useToast } from "@/components/ui/use-toast";
 import useReport from "@/hooks/useReport";
+import emailjs from '@emailjs/browser';
 
 interface ReleaseOrderDetailProps {
     orderNo: string;
@@ -51,17 +52,41 @@ const ReleaseOrderDetail: FC<ReleaseOrderDetailProps> = ({ orderNo }) => {
 
         const orderResponse = await orderHook.confirmOrder({ status: "Completed", admin: session?.data?.user?.session_id as string }, orderHook?.order?.[0]?._id as string);
 
-        console.log("orderresponse", orderResponse)
+        console.log("orderresponse", orderResponse.order)
 
-        if (orderResponse) {
+        if (orderResponse.order) {
             console.log("Updating sales quantities")
-            await Promise.all(orderResponse.order.productAndQty.map(async (item: any) => {
+            await Promise.all(orderResponse.order.order.productAndQty.map(async (item: any) => {
                 await reportHook.updateSales({
                     productId: item.productId,
                     salesQuantity: item.quantity,
                     date: new Date()
                 })
             }))
+
+            // Send threshold notification email if product quantity is low
+            if (orderResponse.order.updatedProducts) {
+                await Promise.all(orderResponse.order.updatedProducts.map(async (product: any) => {
+                    if (product.quantity <= product.limit) {
+                        await emailjs.send('service_7qol6gv', 'template_bmg2z7v', {
+                            product_name: product.name,
+                            threshold_quantity: product.limit,
+                            current_stock: product.quantity
+                        }, {
+                            publicKey: 'DL0gCccNkjcEvSL01'
+                        });
+                    }
+                }));
+            }
+
+            // Send email notification
+            await emailjs.send('service_7qol6gv', 'template_zimysjt', {
+                order_no: orderHook?.order?.[0]._id?.slice(-6),
+                user_name: orderHook?.order?.[0]?.user?.name,
+                user_email: orderHook?.order?.[0]?.user?.email
+            }, {
+                publicKey: 'DL0gCccNkjcEvSL01'
+            });
         }
 
         await orderHook.orderDetail(orderNo as string)
@@ -108,6 +133,7 @@ const ReleaseOrderDetail: FC<ReleaseOrderDetailProps> = ({ orderNo }) => {
         </div>
     }
 
+    console.log(orderHook.order)
     return (
         <div className="space-y-4">
             <div className="">

@@ -25,6 +25,9 @@ const CartSchema = new Schema(
     },
     qty: {
       type: Number
+    },
+    pickedSize: {
+      type: String
     }
   },
   { timestamps: true }

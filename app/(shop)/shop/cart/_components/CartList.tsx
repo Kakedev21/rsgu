@@ -16,10 +16,13 @@ import useOrder from "@/hooks/useOrder";
 import { useToast } from "@/components/ui/use-toast";
 import Barcode from 'react-barcode';
 import Cart from "./Cart";
+import useSize from "@/hooks/useSize";
+
 const CartLists = () => {
     const router = useRouter();
     const session = useSession();
     const cartHook = useCart({ init: !!session.data?.user?.session_id, q: session.data?.user?.session_id });
+    const sizeHook = useSize({ init: false })
     const orderHook = useOrder({ init: false });
     const { toast } = useToast();
     const localStorageCart = JSON.parse(window.localStorage.getItem("cartItem") || "[]") as CartProps[];
@@ -29,6 +32,7 @@ const CartLists = () => {
         }
         return cartHook.cart?.carts || [];
     }, [cartHook.cart?.carts]);
+
     const total = useMemo(() => {
         if (cartList) {
             return (cartList || [])?.reduce((acc, val) => {
@@ -44,40 +48,48 @@ const CartLists = () => {
         }
     }, [session.data?.user?.session_id])
 
-
     const handlePlaceOrder = async () => {
-        const payload = {
-            productId: cartList?.map(cart => cart?.productId),
-            productAndQty: cartList?.map(cart => ({
-                productId: cart.productId,
-                quantity: cart.qty || 1,
-                price: cart.price
-            })),
-            userId: session.data?.user?.session_id as string,
-            status: "Pending",
-            totalAmount: total
-        }
+        try {
+            // const sizeId = await sizeHook.create()
+            const payload = {
+                productId: cartList?.map(cart => cart?.productId),
+                productAndQty: cartList?.map(cart => ({
+                    productId: cart.productId,
+                    quantity: cart.qty || 1,
+                    price: cart.price,
+                    size: cart.pickedSize
+                })),
+                userId: session.data?.user?.session_id as string,
+                status: "Pending",
+                totalAmount: total
+            }
 
-        const result = await orderHook.create([payload]);
-        if (result?.order) {
-            await cartHook.clearCart(session.data?.user?.session_id as string);
-            const orderNumber = result?.order?.[0]?.["_id"]?.slice(-8);
+            const result = await orderHook.create([payload]);
+            if (result?.order) {
+                await cartHook.clearCart(session.data?.user?.session_id as string);
+                const orderNumber = result?.order?.[0]?.["_id"]?.slice(-8);
+                toast({
+                    title: `Order Number ${orderNumber}`,
+                    description: <div>
+                        <p>You have successfully created an order</p>
+                        <Barcode value={orderNumber} />
+                    </div>,
+                    duration: 10000
+                });
+            } else {
+                toast({
+                    title: `Place order failed`,
+                    description: "Please try again later"
+                });
+            }
+        } catch (error) {
             toast({
-                title: `Order Number ${orderNumber}`,
-                description: <div>
-                    <p>You have successfully created an order</p>
-                    <Barcode value={orderNumber} />
-                </div>,
-                duration: 10000
-            });
-        } else {
-            toast({
-                title: `Place order failed`,
-                description: "Please try again later"
-            });
+                title: "error",
+                description: error as unknown as any
+            })
         }
-
     }
+
     const loading = useMemo(() => {
         return cartHook.loading || orderHook.loading;
     }, [cartHook.loading, orderHook.loading]);

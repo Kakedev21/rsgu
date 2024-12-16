@@ -30,24 +30,24 @@ interface PaidOrderTableProps {
   handleSearch?: (page: number, search: string | null) => void;
   refresh?: () => void;
 }
-const PaidOrdersTable: FC<PaidOrderTableProps> = ({orders, count = 0, limit = 10, page = 1, loading = true, handleSearch, refresh}) => {
+const PaidOrdersTable: FC<PaidOrderTableProps> = ({ orders, count = 0, limit = 10, page = 1, loading = true, handleSearch, refresh }) => {
   const debounce = useDebounce();
-  
+
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
   const itemsCount = (orders?.length || 0) + limit;
   const prevPage = () => {
-    const queryParams ={...Object.fromEntries(searchParams.entries()), page: (page - 1)+""};
+    const queryParams = { ...Object.fromEntries(searchParams.entries()), page: (page - 1) + "" };
     const newQueryString = new URLSearchParams(queryParams).toString();
-    router.push(`${pathname}?${newQueryString}`, { scroll: true})
-    
+    router.push(`${pathname}?${newQueryString}`, { scroll: true })
+
   }
 
   const nextPage = () => {
-    const queryParams ={...Object.fromEntries(searchParams.entries()), page: (page + 1)+""};
+    const queryParams = { ...Object.fromEntries(searchParams.entries()), page: (page + 1) + "" };
     const newQueryString = new URLSearchParams(queryParams).toString();
-    router.push(`${pathname}?${newQueryString}`, { scroll: true})
+    router.push(`${pathname}?${newQueryString}`, { scroll: true })
   }
 
   useEffect(() => {
@@ -55,6 +55,9 @@ const PaidOrdersTable: FC<PaidOrderTableProps> = ({orders, count = 0, limit = 10
       handleSearch(page, debounce.debounceValue);
     }
   }, [page, debounce.debounceValue]);
+
+  console.log("ORders", orders)
+
   return (
     <div className=" p-5 space-y-10">
       <div className='w-full flex justify-between items-center'>
@@ -66,12 +69,12 @@ const PaidOrdersTable: FC<PaidOrderTableProps> = ({orders, count = 0, limit = 10
         </div>
       </div>
       {
-          loading && <div className='w-full flex justify-center p-5 items-center gap-2'>
-            <LoaderCircle className=' animate-spin text-slate-600' />
-            <p className='text-slate-600 animate-pulse'>Loading...</p>
-          </div>
-        }
-     {!loading && <Table>
+        loading && <div className='w-full flex justify-center p-5 items-center gap-2'>
+          <LoaderCircle className=' animate-spin text-slate-600' />
+          <p className='text-slate-600 animate-pulse'>Loading...</p>
+        </div>
+      }
+      {!loading && <Table>
         <TableHeader>
           <TableRow>
             <TableHead>Order No</TableHead>

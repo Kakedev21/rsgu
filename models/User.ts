@@ -22,6 +22,9 @@ const UserSchema = new Schema(
     role: {
       type: String
     },
+    subRole: {
+      type: String
+    },
     department: {
       type: String,
       required: true

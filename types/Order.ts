@@ -17,6 +17,7 @@ export interface OrderProps {
   productAndQty?: {
     productId: string;
     quantity: number;
+    size: string;
   }[];
   status: string;
   totalAmount: number;

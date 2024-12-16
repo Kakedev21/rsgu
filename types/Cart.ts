@@ -6,7 +6,8 @@ export const CartFormSchema = z.object({
   description: z.string().min(1),
   price: z.number(),
   userId: z.string().min(1),
-  qty: z.number()
+  qty: z.number(),
+  pickedSize: z.string().optional()
 });
 
 export type CartFormValues = z.infer<typeof CartFormSchema>;
@@ -20,4 +21,5 @@ export interface CartProps {
   userId: string;
   qty: number;
   createdAt?: string;
+  pickedSize?: string;
 }

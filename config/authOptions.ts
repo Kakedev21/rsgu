@@ -17,6 +17,7 @@ interface UserProps {
   username: string;
   department: string;
   isVerified?: boolean;
+  subRole?: string;
 }
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -46,11 +47,18 @@ export const authOptions: NextAuthOptions = {
         );
         if (isPasswordCorrect) {
           return {
-            ...pick(user, ['name', 'email', 'username', 'department']),
+            ...pick(user, [
+              'name',
+              'email',
+              'username',
+              'department',
+              'subRole'
+            ]),
             id: user?.['_id'] as string,
             role: user.role as string,
             profilePicture: user.profilePicture,
-            session_id: user?._id as string
+            session_id: user?._id as string,
+            subRole: user.subRole as string
           };
         }
         return null;
@@ -79,7 +87,8 @@ export const authOptions: NextAuthOptions = {
           username: user.username,
           role: user.role,
           session_id: user?.id as string,
-          department: user.department
+          department: user.department,
+          subRole: user.subRole as string
         };
       }
       return token;
@@ -94,7 +103,8 @@ export const authOptions: NextAuthOptions = {
           username: token?.username,
           role: token.role,
           session_id: token?.session_id,
-          department: token.department
+          department: token.department,
+          subRole: token?.subRole
         }
       };
     }
