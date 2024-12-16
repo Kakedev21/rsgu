@@ -202,7 +202,10 @@ const OrderController = {
 
   getCompletedOrders: async () => {
     await connectMongoDB();
-    const orders = await Order.find({ status: 'Completed' }).exec();
+    const orders = await Order.find({ status: 'Completed' })
+      .sort({ updatedAt: -1 }) // Add sorting to get the most recent data
+      .lean() // For better performance
+      .exec();
     return orders;
   },
   get: async (order_id: string) => {
