@@ -11,7 +11,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import useReport from "@/hooks/useReport";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Download, Calendar } from "lucide-react";
+import { Download, Calendar, List } from "lucide-react";
 import * as XLSX from 'xlsx';
 import { format } from "date-fns";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
@@ -232,6 +232,10 @@ const RecordsPage = () => {
                                 />
                             </PopoverContent>
                         </Popover>
+                        <Button onClick={handleGenerate} className="flex items-center gap-2">
+                            <List className="h-4 w-4" />
+                            Generate Report
+                        </Button>
                         <Button onClick={exportToExcel} className="flex items-center gap-2">
                             <Download className="h-4 w-4" />
                             Export to Excel

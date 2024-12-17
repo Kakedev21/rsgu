@@ -39,7 +39,8 @@ const ProductSchema = new Schema(
     availableSizes: [
       {
         size: String,
-        yards: Number
+        yards: Number,
+        price: Number
       }
     ],
     limit: {

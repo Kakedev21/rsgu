@@ -22,6 +22,7 @@ const ProductItem: FC<ProductProps> = (props) => {
     const router = useRouter();
     const [categoryName, setCategoryName] = useState<string>("");
     const [selectedSize, setSelectedSize] = useState<string>("");
+    const [selectedPrice, setSelectedPrice] = useState<number>(price);
 
     const handleAddToCartClick = async () => {
         if (categoryName === "Uniforms" && !selectedSize) {
@@ -29,11 +30,10 @@ const ProductItem: FC<ProductProps> = (props) => {
             return;
         }
 
-        console.log("session.data?.user?.id", session.data?.user)
         const payload = [
             {
                 name: name as string,
-                price: price as number,
+                price: selectedPrice,
                 description: description as string,
                 productId: _id as string,
                 userId: session.data?.user?.session_id as string,
@@ -66,7 +66,7 @@ const ProductItem: FC<ProductProps> = (props) => {
         const payload = [
             {
                 name: name as string,
-                price: price as number,
+                price: selectedPrice,
                 description: description as string,
                 productId: _id as string,
                 userId: session.data?.user?.session_id as string,
@@ -98,6 +98,16 @@ const ProductItem: FC<ProductProps> = (props) => {
         }
     }, [category]);
 
+    const handleSizeChange = (size: string) => {
+        setSelectedSize(size);
+        if (availableSizes) {
+            const sizeOption = availableSizes.find(option => option.size === size);
+            if (sizeOption) {
+                setSelectedPrice(sizeOption.price);
+            }
+        }
+    }
+
     return <div className="space-y-2 border border-slate-50 shadow rounded-md p-3 hover:shadow-lg transition-all duration-300">
         <div className="flex flex-col">
             <img src={image || "/no-image.png"} className="h-[150px] w-full object-cover rounded" />
@@ -106,21 +116,21 @@ const ProductItem: FC<ProductProps> = (props) => {
                 <p className="text-sm text-slate-600 line-clamp-2">{description}</p>
             </div>
             <div className="space-y-1">
-                <span className="font-semibold text-base sm:text-lg text-slate-600 block">₱{numeral(price).format('0,0.00')}</span>
+                <span className="font-semibold text-base sm:text-lg text-slate-600 block">₱{numeral(selectedPrice).format('0,0.00')}</span>
                 <span className="text-xs text-slate-600 block">Stocks: {quantity}</span>
                 <span className={twMerge("text-xs", (status || "Available") === "Available" ? "text-green-500" : "text-red-500")}>{status || "Available"}</span>
             </div>
 
             {categoryName === "Uniforms" && availableSizes && (
                 <div className="mt-3">
-                    <Select value={selectedSize} onValueChange={setSelectedSize}>
+                    <Select value={selectedSize} onValueChange={handleSizeChange}>
                         <SelectTrigger className="w-full">
                             <SelectValue placeholder="Select size" />
                         </SelectTrigger>
                         <SelectContent>
                             {availableSizes.map((sizeOption) => (
                                 <SelectItem key={sizeOption.size} value={sizeOption.size}>
-                                    {sizeOption.size} - {sizeOption.yards} yards
+                                    {sizeOption.size} - {sizeOption.yards} yards : ₱{numeral(sizeOption.price).format('0,0.00')}
                                 </SelectItem>
                             ))}
                         </SelectContent>
@@ -149,6 +159,5 @@ const ProductItem: FC<ProductProps> = (props) => {
     </div>
 
 }
-
 
 export default ProductItem;

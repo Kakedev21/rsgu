@@ -27,7 +27,7 @@ export interface ProductProps {
   image?: string;
   status?: string;
   limit?: number;
-  availableSizes?: { size: string; yards: number }[];
+  availableSizes?: { size: string; yards: number; price: number }[];
 }
 
 export const formSchema = z.object({
@@ -40,7 +40,7 @@ export const formSchema = z.object({
   cost: z.number().nonnegative(),
   limit: z.number().nonnegative(),
   availableSizes: z
-    .array(z.object({ size: z.string(), yards: z.number() }))
+    .array(z.object({ size: z.string(), yards: z.number(), price: z.number() }))
     .optional()
 });
 

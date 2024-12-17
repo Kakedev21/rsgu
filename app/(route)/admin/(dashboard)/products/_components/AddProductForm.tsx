@@ -95,8 +95,14 @@ const AddProductForm: FC<AddProductProps> = ({ onOpenChange, refresh }) => {
         }
     };
 
-    console.log("formState", form.formState, productImage)
-    console.log("C", selectedCategory)
+    useEffect(() => {
+        if (productState.selected?.category === "672d0b073c4e76e2ba2ff1a8") {
+            setSelectedCategory('672d0b073c4e76e2ba2ff1a8')
+        }
+    }, [productState.selected])
+
+
+    console.log("C", productState.selected?.category)
     return (
         <Form {...form}>
             <ScrollArea className="h-[500px] px-5">
@@ -204,6 +210,16 @@ const AddProductForm: FC<AddProductProps> = ({ onOpenChange, refresh }) => {
                                                             field.onChange(newSizes);
                                                         }}
                                                     />
+                                                    <Input
+                                                        type="number"
+                                                        placeholder="Price"
+                                                        value={sizeItem.price}
+                                                        onChange={(e) => {
+                                                            const newSizes = [...(field.value || [])];
+                                                            newSizes[index].price = parseFloat(e.target.value);
+                                                            field.onChange(newSizes);
+                                                        }}
+                                                    />
                                                     <Button
                                                         type="button"
                                                         variant="destructive"
@@ -219,7 +235,7 @@ const AddProductForm: FC<AddProductProps> = ({ onOpenChange, refresh }) => {
                                             <Button
                                                 type="button"
                                                 onClick={() => {
-                                                    const newSizes = [...(field.value || []), { size: '', yards: 0 }];
+                                                    const newSizes = [...(field.value || []), { size: '', yards: 0, price: 0 }];
                                                     field.onChange(newSizes);
                                                 }}
                                             >
