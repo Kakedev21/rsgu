@@ -29,6 +29,21 @@ export async function GET(req: NextRequest) {
   }
 }
 
+export async function PUT(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const report = await ReportController.updateReport(body);
+    return NextResponse.json({
+      report
+    });
+  } catch (e) {
+    console.log('e', e);
+    return NextResponse.json({
+      error: e
+    });
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
     if (!RequestHeaderValidator.authenticate(req)) {

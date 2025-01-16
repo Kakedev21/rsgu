@@ -43,7 +43,7 @@ interface ReportData {
 }
 
 const RecordsPage = () => {
-    const { reports, loading: reportLoading, getReportByDateRange } = useReport();
+    const { reports, loading: reportLoading, getReportByDateRange, createDailyReport } = useReport();
     const [dateRange, setDateRange] = useState<{
         from: Date | undefined;
         to: Date | undefined;
@@ -149,6 +149,7 @@ const RecordsPage = () => {
 
         setIsLoading(true);
         try {
+            createDailyReport()
             const result = await getReportByDateRange(dateRange.from, dateRange.to);
             setReportData(result);
             console.log("Generated reports:", result); // Debug log

@@ -49,9 +49,10 @@ const useReport = () => {
     return result.data;
   };
 
-  const update = async (payload: any, report_id: string) => {
+  const update = async (payload: any) => {
     setLoading(true);
-    const result = await axios.put(`/api/bff/reports/${report_id}`, payload);
+    const result = await axios.put(`/api/bff/reports`, payload);
+    console.log('result', result);
     setLoading(false);
     return result.data;
   };

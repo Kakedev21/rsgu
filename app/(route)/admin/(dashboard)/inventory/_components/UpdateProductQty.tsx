@@ -9,7 +9,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { UseProductStateProps } from "@/hooks/useProduct";
 import { FC, useRef, useState } from "react";
 import { boolean } from "zod";
-
+import useReport from "@/hooks/useReport";
 interface UpdateProductQtyProps {
   open: boolean;
   onOpenChange: (val: boolean) => void;
@@ -22,15 +22,25 @@ const UpdateProductQty: FC<UpdateProductQtyProps> = ({ open, onOpenChange, produ
   const qtyRef = useRef<any>();
   const { toast } = useToast();
   const [isIncrement, setIsIncrement] = useState(true);
+  const reportHook = useReport()
+
 
   const handleUpdateQty = async () => {
     const currentQty = productState.selected?.quantity || 0;
     const changeAmount = Number(qtyRef?.current?.value) || 0;
     const newQuantity = isIncrement ? currentQty + changeAmount : currentQty - changeAmount;
 
-    await productHook?.update({
+    const products = await productHook?.update({
       quantity: newQuantity,
     }, productState.selected?._id);
+
+    const reportUpdate = await reportHook.update({
+      productId: products.product?._id,
+      endingInventory: {
+        quantity: products.product.quantity,
+      }
+    });
+
     handleRefresh();
     productState.setSelected(null);
     productState.setOpenFormDialog(false);
@@ -68,7 +78,7 @@ const UpdateProductQty: FC<UpdateProductQtyProps> = ({ open, onOpenChange, produ
               </div>
             </div>
             <div>
-              <Label>Change Amount</Label>
+              <Label>Add Quantity</Label>
               <Input
                 type="number"
                 placeholder="Enter quantity to change"

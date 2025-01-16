@@ -188,8 +188,44 @@ const ReportController = {
 
   updateReport: async (data: any) => {
     await connectMongoDB();
-    const report = await Report.findByIdAndUpdate(data._id, { $set: data });
-    return report;
+
+    // Get today's date range
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    // Check for existing report today
+    const existingReport = await Report.findOne({
+      productId: data.productId,
+      createdAt: {
+        $gte: today,
+        $lt: tomorrow
+      }
+    });
+
+    if (existingReport) {
+      // Update existing report with $set for nested fields
+      const report = await Report.findByIdAndUpdate(
+        existingReport._id,
+        {
+          $set: {
+            'endingInventory.quantity': data.endingInventory.quantity
+          }
+        },
+        { new: true }
+      );
+      return report;
+    } else {
+      // Create new report if none exists
+      const report = await Report.create({
+        productId: data.productId,
+        endingInventory: {
+          quantity: data.endingInventory.quantity
+        }
+      });
+      return report;
+    }
   },
 
   deleteReport: async (data: any) => {
